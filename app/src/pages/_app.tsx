@@ -1,6 +1,18 @@
+import RootLayout from '@/components/root-layout';
 import '@/styles/globals.css';
+import { Session } from 'next-auth';
 import type { AppProps } from 'next/app';
 
-export default function App({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />;
+type PageProps = {
+  session: Session | null;
+};
+
+export default function App({ Component, pageProps }: AppProps<PageProps>) {
+  return (
+    <RootLayout {...pageProps}>
+      <main className="px-10 pt-5">
+        <Component {...pageProps} />
+      </main>
+    </RootLayout>
+  );
 }
