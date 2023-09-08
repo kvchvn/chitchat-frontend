@@ -1,5 +1,5 @@
 import { Session } from 'next-auth';
-import Header from './header';
+import Sidebar from './sidebar';
 
 type RootLayoutProps = {
   children: React.ReactNode;
@@ -9,8 +9,10 @@ type RootLayoutProps = {
 export default function RootLayout({ children, session }: RootLayoutProps) {
   return (
     <>
-      <Header session={session} />
-      {children}
+      <main className="flex h-full">
+        <Sidebar session={session} />
+        <div className="w-full px-10 pt-5">{children}</div>
+      </main>
     </>
   );
 }
