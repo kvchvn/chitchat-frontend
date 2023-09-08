@@ -10,6 +10,15 @@ const config: Config = {
         '.plate-shadow': {
           boxShadow: '0px 2px 4px #BFC4C933, 0px 3px 4px #BFC4C92D, 0px 1px 5px #BFC4C93D',
         },
+        '.active-link': {
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: 'lightblue',
+          width: '100%',
+          height: '100%',
+          borderRadius: '50%',
+        },
       });
     }),
   ],
