@@ -1,5 +1,9 @@
+import { ROUTES } from '@/constants';
+import Icon from '@/ui/icon';
 import { Session } from 'next-auth';
 import Image from 'next/image';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import UserInfo from './user-info';
 
@@ -9,6 +13,7 @@ type SidebarProps = {
 
 export default function Sidebar({ session }: SidebarProps) {
   const [isShowUserInfo, setIsShowUserInfo] = useState(false);
+  const pathname = usePathname();
 
   const handleMouseOver = () => {
     setIsShowUserInfo(true);
@@ -25,7 +30,12 @@ export default function Sidebar({ session }: SidebarProps) {
   return (
     <aside>
       {session.user?.image && (
-        <ul className="flex h-full w-20 flex-col items-center bg-sky-100 py-6">
+        <ul className="flex h-full w-20 flex-col items-center justify-center bg-sky-100 py-6">
+          <li className="mt-auto h-12 w-12">
+            <Link href={ROUTES.home} className={pathname === ROUTES.home ? 'active-link' : ''}>
+              <Icon id="message" size={25} color="black" />
+            </Link>
+          </li>
           <li
             className="relative mt-auto w-full"
             onMouseOver={handleMouseOver}
@@ -33,8 +43,8 @@ export default function Sidebar({ session }: SidebarProps) {
           >
             <Image
               src={session.user.image}
-              width={40}
-              height={40}
+              width={30}
+              height={30}
               alt="Avatar"
               className="mx-auto rounded-full hover:cursor-pointer"
             />
