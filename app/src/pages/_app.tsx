@@ -10,9 +10,7 @@ type PageProps = {
 export default function App({ Component, pageProps }: AppProps<PageProps>) {
   return (
     <RootLayout {...pageProps}>
-      <main className="px-10 pt-5">
-        <Component {...pageProps} />
-      </main>
+      <Component {...pageProps} />
     </RootLayout>
   );
 }
