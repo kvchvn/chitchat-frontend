@@ -33,6 +33,14 @@ export const authOptions: AuthOptions = {
       clientSecret: process.env.FACEBOOK_SECRET || '',
     }),
   ],
+  callbacks: {
+    session: ({ session, user }) => {
+      if (session.user) {
+        session.user.id = user.id;
+      }
+      return session;
+    },
+  },
 };
 
 export default NextAuth(authOptions);
