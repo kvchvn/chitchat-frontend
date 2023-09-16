@@ -9,8 +9,11 @@ type PageProps = {
 
 export default function App({ Component, pageProps }: AppProps<PageProps>) {
   return (
+    <SessionProvider session={pageProps.session}>
     <RootLayout {...pageProps}>
       <Component {...pageProps} />
+        <Component socket={socketRef.current} {...pageProps} />
     </RootLayout>
+    </SessionProvider>
   );
 }
