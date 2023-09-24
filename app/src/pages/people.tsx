@@ -1,4 +1,4 @@
-import UsersList from '@/components/users-list';
+import { UsersList } from '@/components/users-list';
 import { API_ENDPOINTS, ROUTES } from '@/constants';
 import { customKy } from '@/ky';
 import { GetUsersResponse } from '@/types';
@@ -8,7 +8,7 @@ import { Session, getServerSession } from 'next-auth';
 import { useRouter } from 'next/router';
 import { authOptions } from './api/auth/[...nextauth]';
 
-export default function SearchPage({
+export default function PeoplePage({
   allUsersExceptOneself,
   friends,
   incomingRequests,
@@ -76,7 +76,7 @@ export const getServerSideProps = (async (ctx) => {
 
   try {
     const users: GetUsersResponse = await customKy
-      .get(`${API_ENDPOINTS.users.base}/${session.user.id}`)
+      .get(API_ENDPOINTS.users.all(session.user.id))
       .json();
 
     props.allUsersExceptOneself = users.allUsersExceptOneself;
