@@ -1,5 +1,5 @@
-import RootLayout from '@/components/root-layout';
 import { useSocketInitialization } from '@/hooks';
+import { RootLayout } from '@/layouts/root-layout';
 import '@/styles/globals.css';
 import { Session } from 'next-auth';
 import { SessionProvider } from 'next-auth/react';
