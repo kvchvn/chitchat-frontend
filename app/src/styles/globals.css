@@ -9,3 +9,7 @@ body {
 #__next {
   @apply h-full;
 }
+
+* {
+  box-sizing: border-box;
+}
