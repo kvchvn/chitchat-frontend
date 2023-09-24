@@ -3,14 +3,17 @@ export const ROUTES = {
   about: '/about',
   signIn: '/sign-in',
   profile: '/profile',
-  search: '/search',
+  people: '/people',
 } as const;
+
+const API_USER_ENDPOINTS_BASE = 'users';
 
 export const API_ENDPOINTS = {
   users: {
-    base: 'users',
-    friendRequest: 'users/friend-request',
-    friendResponse: 'users/friend-response',
-    friendRemoving: 'users/friend-removing',
+    all: (userId: string) => `${API_USER_ENDPOINTS_BASE}/${userId}`,
+    friends: (userId: string) => `${API_USER_ENDPOINTS_BASE}/${userId}/friends`,
+    friendRequest: `${API_USER_ENDPOINTS_BASE}/friend-request`,
+    friendResponse: `${API_USER_ENDPOINTS_BASE}/friend-response`,
+    friendRemoving: `${API_USER_ENDPOINTS_BASE}/friend-removing`,
   },
 } as const;
