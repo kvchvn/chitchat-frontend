@@ -1,5 +1,5 @@
 import { Nullable, UserRelevant, UsersListVariant } from '@/types';
-import UserItem from './user-item';
+import { UserItem } from '../user-item';
 
 type UsersListProps = {
   variant: UsersListVariant;
@@ -8,7 +8,7 @@ type UsersListProps = {
   emptinessMessage?: string;
 };
 
-export default function UsersList({
+export function UsersList({
   variant,
   users,
   listName,

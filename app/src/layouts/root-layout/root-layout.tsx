@@ -1,12 +1,12 @@
 import { Session } from 'next-auth';
-import Sidebar from './sidebar';
+import { Sidebar } from '../../components/sidebar';
 
 type RootLayoutProps = {
   children: React.ReactNode;
   session: Session | null;
 };
 
-export default function RootLayout({ children, session }: RootLayoutProps) {
+export function RootLayout({ children, session }: RootLayoutProps) {
   return (
     <>
       <main className="flex h-full">

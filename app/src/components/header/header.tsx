@@ -7,10 +7,10 @@ type HeaderProps = {
   session: Session | null;
 };
 
-export default function Header({ session }: HeaderProps) {
+export function Header({ session }: HeaderProps) {
   return (
-    <header className="flex justify-between px-10 py-5 bg-slate-800 text-white">
-      <h1 className="font-bold text-xl border-b border-transparent hover:border-b hover:border-b-white">
+    <header className="flex justify-between bg-slate-800 px-10 py-5 text-white">
+      <h1 className="border-b border-transparent text-xl font-bold hover:border-b hover:border-b-white">
         <Link href={ROUTES.home}>Chit-Chat</Link>
       </h1>
       <ul className="flex gap-3">
