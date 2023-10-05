@@ -4,6 +4,6 @@ export const useSocketSelector = () => useMergedStore((state) => state.socket);
 
 export const useSocketActionsSelector = () =>
   useMergedStore((state) => ({
-    connectToSocket: state.connectToSocket,
-    disconnectFromSocket: state.disconnectFromSocket,
+    setSocket: state.setSocket,
+    resetSocket: state.resetSocket,
   }));

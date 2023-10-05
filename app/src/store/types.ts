@@ -6,8 +6,8 @@ export type ImmerStateCreator<T> = StateCreator<T, [['zustand/immer', never], ne
 
 export type SocketSlice = {
   socket: Nullable<Socket>;
-  connectToSocket: (socket: Socket) => void;
-  disconnectFromSocket: () => void;
+  setSocket: (socket: Socket) => void;
+  resetSocket: () => void;
 };
 
 export type Store = SocketSlice;
