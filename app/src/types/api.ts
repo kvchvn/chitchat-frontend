@@ -1,3 +1,4 @@
+import { Chat, Message } from '@prisma/client';
 import { Nullable, UserCounts, UserRelevant } from '.';
 
 export type ErrorResponse = {
@@ -13,3 +14,5 @@ export type GetUsersResponse = {
   incomingRequests: Nullable<UserRelevant[]>;
   outcomingRequests: Nullable<UserRelevant[]>;
 };
+
+export type ChatWithMessages = Chat & { messages: Message[] };
