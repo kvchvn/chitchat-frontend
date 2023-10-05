@@ -1,19 +1,27 @@
+import { registerChatListeners } from '@/listeners';
 import { useSocketActionsSelector, useSocketSelector } from '@/store';
+import { CustomSocket } from '@/types';
 import { useEffect } from 'react';
 import { io } from 'socket.io-client';
 
-export const useSocketInitialization = () => {
+export const useSocketInitialization = ({ userId }: { userId: string | undefined }) => {
   const socket = useSocketSelector();
-  const { connectToSocket, disconnectFromSocket } = useSocketActionsSelector();
+  const { setSocket, resetSocket } = useSocketActionsSelector();
 
   useEffect(() => {
-    if (!socket) {
-      const socketClient = io(process.env.NEXT_PUBLIC_SERVER_URL as string);
+    if (userId && !socket) {
+      const socketInstance: CustomSocket = io(process.env.NEXT_PUBLIC_SERVER_URL as string);
+      socketInstance.auth = { userId };
 
-      socketClient.on('connect', () => {
-        connectToSocket(socketClient);
+      socketInstance.on('connect', () => {
+        setSocket(socketInstance);
       });
-      socketClient.on('disconnect', disconnectFromSocket);
+
+      socketInstance.on('disconnect', () => {
+        resetSocket();
+      });
+
+      registerChatListeners(socketInstance);
     }
 
     return () => {
@@ -21,5 +29,5 @@ export const useSocketInitialization = () => {
         socket.disconnect();
       }
     };
-  }, [socket, connectToSocket, disconnectFromSocket]);
+  }, [userId, socket, setSocket, resetSocket]);
 };

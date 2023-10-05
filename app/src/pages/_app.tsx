@@ -1,16 +1,12 @@
 import { useSocketInitialization } from '@/hooks';
 import { RootLayout } from '@/layouts/root-layout';
 import '@/styles/globals.css';
-import { Session } from 'next-auth';
+import { PageProps } from '@/types';
 import { SessionProvider } from 'next-auth/react';
 import type { AppProps } from 'next/app';
 
-type PageProps = {
-  session: Session | null;
-};
-
 export default function App({ Component, pageProps }: AppProps<PageProps>) {
-  useSocketInitialization();
+  useSocketInitialization({ userId: pageProps.session?.user.id });
 
   return (
     <SessionProvider session={pageProps.session}>
