@@ -35,16 +35,16 @@ export function Sidebar({ session }: SidebarProps) {
   }
 
   return (
-    <aside className="bg-sky-100 py-6">
+    <aside className="max-h-screen bg-sky-100 py-6">
       <h3
         className={`${
           socket ? 'bg-green-200 text-green-600' : 'bg-red-200 text-red-600'
-        } mb-4 text-center text-xl font-semibold italic`}
+        } text-center text-xl font-semibold italic`}
       >
         {socket ? 'ON' : 'OFF'}
       </h3>
       {session.user?.image && (
-        <ul className="flex h-full w-20 flex-col items-center justify-start gap-3">
+        <ul className="flex h-full w-20 flex-col items-center justify-start gap-3 pt-4">
           <li className="h-12 w-12">
             <Link
               href={ROUTES.people}
@@ -59,28 +59,24 @@ export function Sidebar({ session }: SidebarProps) {
             <Link
               href={ROUTES.home}
               className={`${
-                pathname === ROUTES.home && 'active-link'
+                pathname.startsWith(ROUTES.chats) && 'active-link'
               } flex h-full w-full items-center justify-center`}
             >
               <Icon id="message" size={25} />
             </Link>
           </li>
-          <li className="h-12 w-12 hover:cursor-pointer" onClick={handleClick}>
-            <Icon id="sign-out" />
-          </li>
-          <li
-            className="relative mt-auto w-full"
-            onMouseOver={handleMouseOver}
-            onMouseOut={handleMouseOut}
-          >
+          <li className="relative w-full" onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}>
             <Image
               src={session.user.image}
-              width={30}
-              height={30}
+              width={40}
+              height={40}
               alt="Avatar"
               className="mx-auto rounded-full hover:cursor-pointer"
             />
             {isShowUserInfo && <UserInfo session={session} />}
+          </li>
+          <li className="h-12 w-12 hover:cursor-pointer" onClick={handleClick}>
+            <Icon id="sign-out" />
           </li>
         </ul>
       )}

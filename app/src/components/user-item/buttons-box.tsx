@@ -1,7 +1,7 @@
-import { API_ENDPOINTS } from '@/constants';
+import { API_ENDPOINTS, ROUTES } from '@/constants';
 import { customKy } from '@/ky';
+import { logError } from '@/lib';
 import { UsersListVariant } from '@/types';
-import { logError } from '@/utils';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 
@@ -26,12 +26,9 @@ export default function ButtonsBox({
   const sendRequestToAddToFriends = async () => {
     try {
       if (session && session.user) {
-        await customKy.post(`${API_ENDPOINTS.users.friendRequest}`, {
-          json: {
-            senderId: session?.user.id,
-            receiverId: currentUserId,
-          },
-        });
+        await customKy.post(
+          `${API_ENDPOINTS.user.sendFriendRequest({ from: session.user.id, to: currentUserId })}`
+        );
       } else {
         throw new Error('Session is not found.');
       }
@@ -45,12 +42,12 @@ export default function ButtonsBox({
   const removeFromFriends = async () => {
     try {
       if (session && session.user) {
-        await customKy.delete(`${API_ENDPOINTS.users.friendRemoving}`, {
-          json: {
-            userId: session?.user.id,
-            userFriendId: currentUserId,
-          },
-        });
+        await customKy.delete(
+          `${API_ENDPOINTS.user.removeFriend({
+            userId: session.user.id,
+            friendId: currentUserId,
+          })}`
+        );
       } else {
         throw new Error('Session is not found.');
       }
@@ -64,13 +61,10 @@ export default function ButtonsBox({
   const respondToFriendRequest = async (response: 'accept' | 'refuse') => {
     try {
       if (session?.user) {
-        await customKy.post(`${API_ENDPOINTS.users.friendResponse}`, {
-          json: {
-            isAccepted: response === 'accept',
-            receiverId: session.user.id,
-            senderId: currentUserId,
-          },
-        });
+        await customKy.post(
+          `${API_ENDPOINTS.user.getFriendResponse({ from: session.user.id, to: currentUserId })}`,
+          { json: { isAccepted: response === 'accept' } }
+        );
       } else {
         throw new Error('Session is not found.');
       }
@@ -79,6 +73,10 @@ export default function ButtonsBox({
     } finally {
       refreshPage();
     }
+  };
+
+  const goToChat = (friendId: string) => {
+    router.replace(ROUTES.chatWith(friendId));
   };
 
   return (
@@ -92,12 +90,20 @@ export default function ButtonsBox({
         </button>
       )}
       {listVariant === 'friends' && (
-        <button
-          onClick={removeFromFriends}
-          className="rounded-2xl border-2 border-sky-700 bg-gray-100 px-4 py-1 font-semibold text-sky-900 hover:bg-gray-300"
-        >
-          Remove from Friends
-        </button>
+        <>
+          <button
+            onClick={removeFromFriends}
+            className="rounded-2xl border-2 border-sky-700 bg-gray-100 px-4 py-1 font-semibold text-sky-900 hover:bg-gray-300"
+          >
+            Remove from Friends
+          </button>
+          <button
+            onClick={() => goToChat(currentUserId)}
+            className="rounded-2xl border-2 border-green-700 bg-green-100 px-4 py-1 font-semibold text-green-900 hover:bg-green-300"
+          >
+            Message
+          </button>
+        </>
       )}
       {listVariant === 'incoming' && (
         <>

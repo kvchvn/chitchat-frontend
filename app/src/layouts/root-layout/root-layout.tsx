@@ -11,7 +11,7 @@ export function RootLayout({ children, session }: RootLayoutProps) {
     <>
       <main className="flex h-full">
         <Sidebar session={session} />
-        <div className="w-full px-10 pt-5">{children}</div>
+        <div className="w-full px-10 py-5">{children}</div>
       </main>
     </>
   );
