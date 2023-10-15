@@ -1,4 +1,4 @@
-import { API_ENDPOINTS, ROUTES } from '@/constants';
+import { API_ENDPOINTS } from '@/constants';
 import { customKy } from '@/ky';
 import { logError } from '@/lib';
 import { UsersListVariant } from '@/types';
@@ -75,10 +75,6 @@ export default function ButtonsBox({
     }
   };
 
-  const goToChat = (friendId: string) => {
-    router.replace(ROUTES.chatWith(friendId));
-  };
-
   return (
     <div className="flex gap-2">
       {listVariant === 'all' && !isFriendOrRequested && (
@@ -96,12 +92,6 @@ export default function ButtonsBox({
             className="rounded-2xl border-2 border-sky-700 bg-gray-100 px-4 py-1 font-semibold text-sky-900 hover:bg-gray-300"
           >
             Remove from Friends
-          </button>
-          <button
-            onClick={() => goToChat(currentUserId)}
-            className="rounded-2xl border-2 border-green-700 bg-green-100 px-4 py-1 font-semibold text-green-900 hover:bg-green-300"
-          >
-            Message
           </button>
         </>
       )}
