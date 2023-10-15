@@ -5,7 +5,7 @@ export const ROUTES = {
   profile: '/profile',
   people: '/people',
   chats: '/chats',
-  chatWith: (userId: string) => `/chats/${userId}`,
+  chat: (id: string) => `/chats/${id}`,
 } as const;
 
 const API_ENDPOINTS_BASES = {
@@ -17,7 +17,7 @@ export const API_ENDPOINTS = {
   user: {
     getById: (userId: string) => `${API_ENDPOINTS_BASES.user}/${userId}`,
     getAll: (userId: string) => `${API_ENDPOINTS_BASES.user}/${userId}/all`,
-    getFriendsOf: (userId: string) => `${API_ENDPOINTS_BASES.user}/${userId}/friends`,
+    getChatsOf: (userId: string) => `${API_ENDPOINTS_BASES.user}/${userId}/chats`,
     sendFriendRequest: ({ from, to }: { from: string; to: string }) =>
       `${API_ENDPOINTS_BASES.user}/${from}/friend-request?receiverId=${to}`,
     getFriendResponse: ({ from, to }: { from: string; to: string }) =>
@@ -26,8 +26,7 @@ export const API_ENDPOINTS = {
       `${API_ENDPOINTS_BASES.user}/${userId}/friend-removal?friendId=${friendId}`,
   },
   chat: {
-    getChatBetween: ({ userId, friendId }: { userId: string; friendId: string }) =>
-      `${API_ENDPOINTS_BASES.chat}/${userId}?friendId=${friendId}`,
+    getChat: (id: string) => `${API_ENDPOINTS_BASES.chat}/${id}`,
     sendMessage: ({ chatId, senderId }: { chatId: string; senderId: string }) =>
       `${API_ENDPOINTS_BASES.chat}/${chatId}?senderId=${senderId}`,
   },
