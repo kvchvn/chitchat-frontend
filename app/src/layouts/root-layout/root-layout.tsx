@@ -1,9 +1,10 @@
+import { Nullable } from '@/types';
 import { Session } from 'next-auth';
 import { Sidebar } from '../../components/sidebar';
 
 type RootLayoutProps = {
   children: React.ReactNode;
-  session: Session | null;
+  session?: Nullable<Session>;
 };
 
 export function RootLayout({ children, session }: RootLayoutProps) {
