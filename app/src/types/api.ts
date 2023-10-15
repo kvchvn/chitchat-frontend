@@ -15,4 +15,13 @@ export type Users = {
   outcomingRequests: Nullable<UserRelevant[]>;
 };
 
-export type ChatWithMessages = Chat & { messages: Message[] };
+export type ChatRelevant = Chat & { messages: Message[] } & { users: UserRelevant[] };
+
+export type ChatsRecord = Record<
+  string,
+  {
+    lastMessage: Pick<Message, 'content' | 'senderId'> | undefined;
+    users: UserRelevant[];
+    unseenMessagesCount: number;
+  }
+>;
