@@ -1,5 +1,6 @@
 import { ROUTES } from '@/constants';
 import { useSocketSelector } from '@/store';
+import { Nullable } from '@/types';
 import Icon from '@/ui/icon';
 import { Session } from 'next-auth';
 import { signOut } from 'next-auth/react';
@@ -10,7 +11,7 @@ import { useState } from 'react';
 import { UserInfo } from '../user-info';
 
 type SidebarProps = {
-  session: Session | null;
+  session?: Nullable<Session>;
 };
 
 export function Sidebar({ session }: SidebarProps) {
