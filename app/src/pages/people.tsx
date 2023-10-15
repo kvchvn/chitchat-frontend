@@ -2,7 +2,7 @@ import { UsersList } from '@/components/users-list';
 import { API_ENDPOINTS, ROUTES } from '@/constants';
 import { customKy } from '@/ky';
 import { logError } from '@/lib';
-import { GetUsersResponse } from '@/types';
+import { Users } from '@/types';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { Session, getServerSession } from 'next-auth';
 import { useRouter } from 'next/router';
@@ -66,7 +66,7 @@ export const getServerSideProps = (async (ctx) => {
 
   const props: {
     session: Session;
-  } & GetUsersResponse = {
+  } & Users = {
     session,
     allUsersExceptOneself: null,
     friends: null,
@@ -75,9 +75,7 @@ export const getServerSideProps = (async (ctx) => {
   };
 
   try {
-    const users: GetUsersResponse = await customKy
-      .get(API_ENDPOINTS.user.getAll(session.user.id))
-      .json();
+    const users: Users = await customKy.get(API_ENDPOINTS.user.getAll(session.user.id)).json();
 
     props.allUsersExceptOneself = users.allUsersExceptOneself;
     props.friends = users.friends;
@@ -87,4 +85,4 @@ export const getServerSideProps = (async (ctx) => {
     logError('People Page (getServerSideProps)', err);
   }
   return { props };
-}) satisfies GetServerSideProps<{ session: Session } & GetUsersResponse>;
+}) satisfies GetServerSideProps<{ session: Session } & Users>;

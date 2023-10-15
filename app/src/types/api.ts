@@ -8,7 +8,7 @@ export type ErrorResponse = {
   issues?: string[];
 };
 
-export type GetUsersResponse = {
+export type Users = {
   allUsersExceptOneself: Nullable<(UserRelevant & { _count: UserCounts })[]>;
   friends: Nullable<UserRelevant[]>;
   incomingRequests: Nullable<UserRelevant[]>;
