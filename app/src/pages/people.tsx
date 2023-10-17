@@ -22,7 +22,7 @@ export default function PeoplePage({
 
   return (
     <>
-      <h2 className="text-2xl font-semibold">Search</h2>
+      <h2 className="text-2xl font-semibold">People</h2>
       <button
         onClick={refreshPage}
         className="mt-2 rounded-2xl border-2 border-black bg-gray-400 px-4 py-1 font-semibold hover:bg-gray-700 hover:text-white"
@@ -77,12 +77,9 @@ export const getServerSideProps = (async (ctx) => {
   try {
     const users: Users = await customKy.get(API_ENDPOINTS.user.getAll(session.user.id)).json();
 
-    props.allUsersExceptOneself = users.allUsersExceptOneself;
-    props.friends = users.friends;
-    props.incomingRequests = users.incomingRequests;
-    props.outcomingRequests = users.outcomingRequests;
+    Object.assign(props, users);
   } catch (err) {
     logError('People Page (getServerSideProps)', err);
   }
   return { props };
-}) satisfies GetServerSideProps<{ session: Session } & Users>;
+}) satisfies GetServerSideProps;
