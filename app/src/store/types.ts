@@ -14,18 +14,20 @@ export type SocketSlice = {
 export type ChatSlice = {
   chats: Nullable<ChatsRecord>;
   messages: Nullable<Message[]>;
-  setMessages: (messages: Nullable<Message[]>) => void;
-  setChats: (chats: Nullable<ChatsRecord>) => void;
-  removeMessagesFromChat: (chatId: string) => void;
-  pushMessage: (message: Message) => void;
-  incrementUnseenMessagesCount: ({
-    chatId,
-    newLastMessage,
-  }: {
-    chatId: string;
-    newLastMessage: Pick<Message, 'senderId' | 'content'>;
-  }) => void;
-  resetUnseenMessageCount: (chatId: string) => void;
+  actions: {
+    setMessages: (messages: Nullable<Message[]>) => void;
+    setChats: (chats: Nullable<ChatsRecord>) => void;
+    removeMessagesFromChat: (chatId: string) => void;
+    pushMessage: (message: Message) => void;
+    incrementUnseenMessagesCount: ({
+      chatId,
+      newLastMessage,
+    }: {
+      chatId: string;
+      newLastMessage: Pick<Message, 'senderId' | 'content'>;
+    }) => void;
+    resetUnseenMessageCount: (chatId: string) => void;
+  };
 };
 
 export type Store = SocketSlice & ChatSlice;
