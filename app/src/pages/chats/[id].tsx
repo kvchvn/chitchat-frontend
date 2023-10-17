@@ -169,7 +169,8 @@ export const getServerSideProps = (async (ctx) => {
     };
   }
 
-  const props: { session: Session } & {
+  const props: {
+    session: Session;
     chat?: Nullable<ChatRelevant>;
   } = {
     session,
