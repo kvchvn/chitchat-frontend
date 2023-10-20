@@ -8,7 +8,7 @@ import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { Session, getServerSession } from 'next-auth';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent, FormEvent, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { authOptions } from '../api/auth/[...nextauth]';
 
 export default function ChatPage({
@@ -16,12 +16,24 @@ export default function ChatPage({
   chat,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [messageContent, setMessageContent] = useState('');
+  const [contextMenu, setContextMenu] = useState<{
+    isVisible: boolean;
+    yCoordinate: number;
+    xCoordinate: number;
+  }>({
+    isVisible: false,
+    yCoordinate: 0,
+    xCoordinate: 0,
+  });
 
   const router = useRouter();
 
   const messages = useMessagesSelector();
   const { setMessages } = useChatActionsSelector();
   const socket = useSocketSelector();
+
+  const contextMenuRef = useRef<Nullable<HTMLDivElement>>(null);
+  const containerRef = useRef<Nullable<HTMLDivElement>>(null);
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setMessageContent(e.target.value);
@@ -53,6 +65,57 @@ export default function ChatPage({
       socket.emit('chat:clear', { chatId: chat.id });
     }
   };
+
+  const handleContextMenu = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setContextMenu((prevState) => ({
+      ...prevState,
+      isVisible: !prevState.isVisible,
+      yCoordinate: e.clientY,
+      xCoordinate: e.clientX,
+    }));
+  };
+
+  useLayoutEffect(() => {
+    if (contextMenuRef.current && containerRef.current) {
+      const DELTA = 10;
+      const { width: contextMenuWidth, height: contextMenuHeight } =
+        contextMenuRef.current.getBoundingClientRect();
+      const {
+        width: parentWidth,
+        left: parentLeft,
+        top: parentTop,
+      } = containerRef.current.getBoundingClientRect();
+      const left =
+        parentLeft + parentWidth - contextMenu.xCoordinate > contextMenuWidth + DELTA
+          ? contextMenu.xCoordinate
+          : contextMenu.xCoordinate - contextMenuWidth;
+      const top =
+        contextMenu.yCoordinate - parentTop < contextMenuHeight + DELTA
+          ? contextMenu.yCoordinate
+          : contextMenu.yCoordinate - contextMenuHeight;
+      contextMenuRef.current.style.left = `${left}px`;
+      contextMenuRef.current.style.top = `${top}px`;
+    }
+  });
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+
+      if (!contextMenuRef.current?.contains(target)) {
+        setContextMenu((prevState) => ({ ...prevState, isVisible: false, top: 0, left: 0 }));
+      }
+    };
+
+    if (contextMenu.isVisible) {
+      document.body.addEventListener('click', handleClickOutside);
+    }
+
+    return () => {
+      document.body.removeEventListener('click', handleClickOutside);
+    };
+  });
 
   useEffect(() => {
     if (socket && chat) {
@@ -111,7 +174,18 @@ export default function ChatPage({
               Clear
             </button>
           </div>
-          <div className="flex flex-1 items-center justify-center overflow-auto">
+          <div
+            ref={containerRef}
+            className="relative flex flex-1 items-center justify-center overflow-auto"
+          >
+            {contextMenu.isVisible && (
+              <div ref={contextMenuRef} className={`fixed z-10 border border-black bg-white py-2`}>
+                <ul className="flex flex-col gap-1">
+                  <li className="cursor-pointer px-4 py-1 hover:bg-gray-300">Remove</li>
+                  <li className="cursor-pointer px-4 py-1 hover:bg-gray-300">Edit</li>
+                </ul>
+              </div>
+            )}
             {messages && messages.length ? (
               <ul
                 id="messages-list"
@@ -120,6 +194,7 @@ export default function ChatPage({
                 {messages.map((message, index) => (
                   <li
                     key={index}
+                    onContextMenu={handleContextMenu}
                     className={classNames('w-fit rounded-full border-2 px-4 py-1.5', {
                       'self-end border-black bg-white': message.senderId === session.user.id,
                       'border-cyan-900 bg-cyan-500 text-white':
