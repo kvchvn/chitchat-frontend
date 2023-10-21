@@ -50,14 +50,19 @@ export default function ChatPage({
         throw new Error('Socket is not connected.');
       }
 
+      const trimmedMessage = messageContent.trim();
+
+      if (trimmedMessage) {
       socket.emit('message:create', {
         chatId: chat.id,
         senderId: session.user.id,
-        content: messageContent,
+          content: trimmedMessage,
       });
-      setMessageContent('');
+      }
     } catch (err) {
       logError('Chat Page (handleSubmit): ', err);
+    } finally {
+      setMessageContent('');
     }
   };
 
@@ -151,7 +156,7 @@ export default function ChatPage({
       document.removeEventListener('keypress', handleKeyPress);
     };
   });
-  console.log(messageContent);
+
   useEffect(() => {
     if (chat) {
       setMessages(chat.messages);
