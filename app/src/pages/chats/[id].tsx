@@ -236,7 +236,7 @@ export default function ChatPage({
                     key={index}
                     onContextMenu={(e) => handleContextMenu({ e, messageId: message.id })}
                     className={classNames(
-                      'w-fit whitespace-pre-line rounded-full border-2 px-4 py-1.5',
+                      'overflow-anywhere w-fit max-w-[45%] whitespace-pre-line rounded-md border-2 px-4 py-1.5',
                       {
                         'self-end border-black bg-white': message.senderId === session.user.id,
                         'border-cyan-900 bg-cyan-500 text-white':
