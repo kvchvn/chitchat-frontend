@@ -205,10 +205,7 @@ export default function ChatPage({
               Clear
             </button>
           </div>
-          <div
-            ref={containerRef}
-            className="relative flex flex-1 items-center justify-center overflow-auto"
-          >
+          <div ref={containerRef} className="relative h-[85%] overflow-y-auto">
             {contextMenu.isVisible && (
               <div ref={contextMenuRef} className={`fixed z-10 border border-black bg-white py-2`}>
                 <ul className="flex flex-col gap-1">
@@ -224,7 +221,7 @@ export default function ChatPage({
             {messages && messages.length ? (
               <ul
                 id="messages-list"
-                className="flex h-full w-full flex-col justify-end gap-2 border bg-cyan-100 p-1 pb-8"
+                className="flex w-full flex-col justify-end gap-2 border bg-cyan-100 p-1 pb-8"
               >
                 {messages.map((message, index) => (
                   <li
@@ -244,10 +241,12 @@ export default function ChatPage({
                 ))}
               </ul>
             ) : (
-              <p className="my-auto font-light text-gray-500">{NO_MESSAGES_TEXT}</p>
+              <div className="flex h-full items-center justify-center">
+                <p className="font-light text-gray-500">{NO_MESSAGES_TEXT}</p>
+              </div>
             )}
           </div>
-          <form className="flex min-h-[7%] border-t border-black p-1">
+          <form className="flex h-[7%] border-t border-black p-1">
             <textarea
               name="message"
               placeholder="Write your message here..."
