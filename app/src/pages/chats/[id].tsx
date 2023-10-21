@@ -8,7 +8,7 @@ import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { Session, getServerSession } from 'next-auth';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import React, { ChangeEvent, FormEvent, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { ChangeEvent, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { authOptions } from '../api/auth/[...nextauth]';
 
 export default function ChatPage({
@@ -41,8 +41,7 @@ export default function ChatPage({
     setMessageContent(e.target.value);
   };
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+  const handleSendMessage = async () => {
     try {
       if (!chat) {
         throw new Error('There are no chat or/and friend.');
@@ -56,13 +55,13 @@ export default function ChatPage({
         senderId: session.user.id,
         content: messageContent,
       });
+      setMessageContent('');
     } catch (err) {
       logError('Chat Page (handleSubmit): ', err);
     }
-    setMessageContent('');
   };
 
-  const handleClick = () => {
+  const handleClearChat = () => {
     if (socket && chat) {
       socket.emit('chat:clear', { chatId: chat.id });
     }
@@ -139,6 +138,21 @@ export default function ChatPage({
   }, [chat, socket, session.user.id]);
 
   useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if ((e.code === 'Enter' || e.key === 'Enter') && messageContent && !e.shiftKey) {
+        e.preventDefault();
+        handleSendMessage();
+      }
+    };
+
+    document.addEventListener('keypress', handleKeyPress);
+
+    return () => {
+      document.removeEventListener('keypress', handleKeyPress);
+    };
+  });
+  console.log(messageContent);
+  useEffect(() => {
     if (chat) {
       setMessages(chat.messages);
     }
@@ -180,7 +194,7 @@ export default function ChatPage({
                 .join(', ')}
             </h3>
             <button
-              onClick={handleClick}
+              onClick={handleClearChat}
               className="ml-auto rounded-full border-2 border-red-900 bg-red-400 px-3 py-1 text-white hover:bg-red-600"
             >
               Clear
@@ -214,9 +228,9 @@ export default function ChatPage({
                     className={classNames(
                       'w-fit whitespace-pre-line rounded-full border-2 px-4 py-1.5',
                       {
-                      'self-end border-black bg-white': message.senderId === session.user.id,
-                      'border-cyan-900 bg-cyan-500 text-white':
-                        message.senderId !== session.user.id,
+                        'self-end border-black bg-white': message.senderId === session.user.id,
+                        'border-cyan-900 bg-cyan-500 text-white':
+                          message.senderId !== session.user.id,
                       }
                     )}
                   >
@@ -228,17 +242,18 @@ export default function ChatPage({
               <p className="my-auto font-light text-gray-500">{NO_MESSAGES_TEXT}</p>
             )}
           </div>
-          <form onSubmit={handleSubmit} className="flex min-h-[7%] border-t border-black p-1">
+          <form className="flex min-h-[7%] border-t border-black p-1">
             <textarea
               name="message"
               placeholder="Write your message here..."
+              autoFocus
               value={messageContent}
               maxLength={150}
               onChange={handleChange}
               className="h-full w-full resize-none outline-none"
             />
             <button
-              type="submit"
+              onClick={handleSendMessage}
               disabled={!messageContent}
               className="text-cyan h-10 self-end rounded-full border-2 border-cyan-900 bg-cyan-300 px-3 py-1 hover:bg-cyan-500 disabled:grayscale"
             >
