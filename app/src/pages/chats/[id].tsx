@@ -36,6 +36,7 @@ export default function ChatPage({
 
   const contextMenuRef = useRef<Nullable<HTMLDivElement>>(null);
   const containerRef = useRef<Nullable<HTMLDivElement>>(null);
+  const lowestElementRef = useRef<Nullable<HTMLLIElement>>(null);
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setMessageContent(e.target.value);
@@ -53,11 +54,11 @@ export default function ChatPage({
       const trimmedMessage = messageContent.trim();
 
       if (trimmedMessage) {
-      socket.emit('message:create', {
-        chatId: chat.id,
-        senderId: session.user.id,
+        socket.emit('message:create', {
+          chatId: chat.id,
+          senderId: session.user.id,
           content: trimmedMessage,
-      });
+        });
       }
     } catch (err) {
       logError('Chat Page (handleSubmit): ', err);
@@ -167,6 +168,13 @@ export default function ChatPage({
     };
   }, [chat, setMessages]);
 
+  useEffect(() => {
+    if (lowestElementRef.current && messages) {
+      console.log('scroll down');
+      lowestElementRef.current.scrollIntoView();
+    }
+  }, [messages]);
+
   return (
     <>
       {!chat ? (
@@ -239,6 +247,7 @@ export default function ChatPage({
                     {message.content}
                   </li>
                 ))}
+                <li ref={lowestElementRef} />
               </ul>
             ) : (
               <div className="flex h-full items-center justify-center">
