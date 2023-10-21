@@ -14,6 +14,9 @@ const config: Config = {
           backgroundColor: 'lightblue',
           borderRadius: '50%',
         },
+        '.overflow-anywhere': {
+          overflowWrap: 'anywhere',
+        },
       });
     }),
   ],
