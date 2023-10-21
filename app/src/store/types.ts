@@ -19,6 +19,7 @@ export type ChatSlice = {
     setChats: (chats: Nullable<ChatsRecord>) => void;
     removeMessagesFromChat: (chatId: string) => void;
     pushMessage: (message: Message) => void;
+    removeMessage: (messageId: string) => void;
     incrementUnseenMessagesCount: ({
       chatId,
       newLastMessage,

@@ -10,12 +10,14 @@ export type ServerToClientListenersArgs = {
   'message:create': Nullable<Message>;
   'message:read': { chatId: string };
   'chat:clear': { chatId: string };
+  'message:remove': { messageId: string };
 };
 
 export type ClientToServerListenersArgs = {
   'message:create': { chatId: string; senderId: string; content: string };
   'message:read': { chatId: string };
   'chat:clear': { chatId: string };
+  'message:remove': { chatId: string; messageId: string };
 };
 
 export type ServerToClientEvents = SocketEvents<ServerToClientListenersArgs>;

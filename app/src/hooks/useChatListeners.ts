@@ -10,6 +10,7 @@ export const useChatListeners = ({ session }: { session?: Nullable<Session> }) =
     incrementUnseenMessagesCount,
     resetUnseenMessageCount,
     removeMessagesFromChat,
+    removeMessage,
   } = useChatActionsSelector();
 
   const onMessageCreate = useCallback(
@@ -45,13 +46,22 @@ export const useChatListeners = ({ session }: { session?: Nullable<Session> }) =
     [removeMessagesFromChat]
   );
 
+  const onMessageRemove = useCallback(
+    ({ messageId }: ServerToClientListenersArgs['message:remove']) => {
+      console.log('removeMessage');
+      removeMessage(messageId);
+    },
+    [removeMessage]
+  );
+
   const registerChatListeners = useCallback(
     (socket: CustomSocket) => {
       socket.on('message:create', onMessageCreate);
       socket.on('message:read', onMessageRead);
       socket.on('chat:clear', onChatClear);
+      socket.on('message:remove', onMessageRemove);
     },
-    [onMessageCreate, onMessageRead, onChatClear]
+    [onMessageCreate, onMessageRead, onChatClear, onMessageRemove]
   );
 
   return { registerChatListeners };

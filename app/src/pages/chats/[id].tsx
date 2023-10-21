@@ -17,10 +17,12 @@ export default function ChatPage({
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [messageContent, setMessageContent] = useState('');
   const [contextMenu, setContextMenu] = useState<{
+    messageId: Nullable<string>;
     isVisible: boolean;
     yCoordinate: number;
     xCoordinate: number;
   }>({
+    messageId: null,
     isVisible: false,
     yCoordinate: 0,
     xCoordinate: 0,
@@ -66,14 +68,21 @@ export default function ChatPage({
     }
   };
 
-  const handleContextMenu = (e: React.MouseEvent) => {
+  const handleContextMenu = ({ e, messageId }: { e: React.MouseEvent; messageId: string }) => {
     e.preventDefault();
     setContextMenu((prevState) => ({
       ...prevState,
+      messageId,
       isVisible: !prevState.isVisible,
       yCoordinate: e.clientY,
       xCoordinate: e.clientX,
     }));
+  };
+
+  const handleRemoveMessage = () => {
+    if (socket && chat && contextMenu.messageId) {
+      socket.emit('message:remove', { chatId: chat.id, messageId: contextMenu.messageId });
+    }
   };
 
   useLayoutEffect(() => {
@@ -103,7 +112,10 @@ export default function ChatPage({
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
 
-      if (!contextMenuRef.current?.contains(target)) {
+      if (
+        !contextMenuRef.current?.contains(target) ||
+        (contextMenuRef.current.contains(target) && target.tagName === 'BUTTON')
+      ) {
         setContextMenu((prevState) => ({ ...prevState, isVisible: false, top: 0, left: 0 }));
       }
     };
@@ -181,8 +193,12 @@ export default function ChatPage({
             {contextMenu.isVisible && (
               <div ref={contextMenuRef} className={`fixed z-10 border border-black bg-white py-2`}>
                 <ul className="flex flex-col gap-1">
-                  <li className="cursor-pointer px-4 py-1 hover:bg-gray-300">Remove</li>
-                  <li className="cursor-pointer px-4 py-1 hover:bg-gray-300">Edit</li>
+                  <li className="cursor-pointer px-4 py-1 hover:bg-gray-300">
+                    <button onClick={handleRemoveMessage}>Remove</button>
+                  </li>
+                  <li className="cursor-pointer px-4 py-1 hover:bg-gray-300">
+                    <button>Edit</button>
+                  </li>
                 </ul>
               </div>
             )}
@@ -194,12 +210,15 @@ export default function ChatPage({
                 {messages.map((message, index) => (
                   <li
                     key={index}
-                    onContextMenu={handleContextMenu}
-                    className={classNames('w-fit rounded-full border-2 px-4 py-1.5', {
+                    onContextMenu={(e) => handleContextMenu({ e, messageId: message.id })}
+                    className={classNames(
+                      'w-fit whitespace-pre-line rounded-full border-2 px-4 py-1.5',
+                      {
                       'self-end border-black bg-white': message.senderId === session.user.id,
                       'border-cyan-900 bg-cyan-500 text-white':
                         message.senderId !== session.user.id,
-                    })}
+                      }
+                    )}
                   >
                     {message.content}
                   </li>
