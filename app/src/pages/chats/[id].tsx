@@ -1,55 +1,25 @@
 import { ChatHeader } from '@/components/chat-header';
 import { ChatMessagesList } from '@/components/chat-messages-list';
 import { MessageContextMenu } from '@/components/message-context-menu';
+import { MessageForm } from '@/components/message-form';
 import { NO_MESSAGES_TEXT, ROUTES } from '@/constants';
 import { useChatActionsSelector, useMessagesSelector, useSocketSelector } from '@/store';
 import { Nullable } from '@/types';
-import { getChatById, logError } from '@/utils';
+import { getChatById } from '@/utils';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { getServerSession } from 'next-auth';
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { authOptions } from '../api/auth/[...nextauth]';
 
 export default function ChatPage({
   session,
   chat,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const [messageContent, setMessageContent] = useState('');
-
   const messages = useMessagesSelector();
   const { setMessages } = useChatActionsSelector();
   const socket = useSocketSelector();
 
   const containerRef = useRef<Nullable<HTMLDivElement>>(null);
-
-  const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    setMessageContent(e.target.value);
-  };
-
-  const handleSendMessage = async () => {
-    try {
-      if (!chat) {
-        throw new Error('There are no chat or/and friend.');
-      }
-      if (!socket) {
-        throw new Error('Socket is not connected.');
-      }
-
-      const trimmedMessage = messageContent.trim();
-
-      if (trimmedMessage) {
-        socket.emit('message:create', {
-          chatId: chat.id,
-          senderId: session.user.id,
-          content: trimmedMessage,
-        });
-      }
-    } catch (err) {
-      logError('Chat Page (handleSubmit): ', err);
-    } finally {
-      setMessageContent('');
-    }
-  };
 
   useEffect(() => {
     if (socket && chat) {
@@ -59,21 +29,6 @@ export default function ChatPage({
       }
     }
   }, [chat, socket, session.user.id]);
-
-  useEffect(() => {
-    const handleKeyPress = (e: KeyboardEvent) => {
-      if ((e.code === 'Enter' || e.key === 'Enter') && messageContent && !e.shiftKey) {
-        e.preventDefault();
-        handleSendMessage();
-      }
-    };
-
-    document.addEventListener('keypress', handleKeyPress);
-
-    return () => {
-      document.removeEventListener('keypress', handleKeyPress);
-    };
-  });
 
   useEffect(() => {
     if (chat) {
@@ -105,24 +60,7 @@ export default function ChatPage({
               </div>
             )}
           </div>
-          <form className="flex h-[7%] border-t border-black p-1">
-            <textarea
-              name="message"
-              placeholder="Write your message here..."
-              autoFocus
-              value={messageContent}
-              maxLength={150}
-              onChange={handleChange}
-              className="h-full w-full resize-none outline-none"
-            />
-            <button
-              onClick={handleSendMessage}
-              disabled={!messageContent}
-              className="text-cyan h-10 self-end rounded-full border-2 border-cyan-900 bg-cyan-300 px-3 py-1 hover:bg-cyan-500 disabled:grayscale"
-            >
-              Send
-            </button>
-          </form>
+          <MessageForm chatId={chat.id} userId={session.user.id} />
         </section>
       )}
     </>
