@@ -8,7 +8,7 @@ export const getChatById = async (id?: string): Promise<Nullable<ChatRelevant>> 
     if (!id || typeof id !== 'string') {
       throw new Error('id is not defined or its definition is wrong.');
     }
-    return await customKy.get(API_ENDPOINTS.chat.getChat(id) + 'a').json();
+    return await customKy.get(API_ENDPOINTS.chat.getChat(id)).json();
   } catch (err) {
     logError('getChatById', err);
     return null;
