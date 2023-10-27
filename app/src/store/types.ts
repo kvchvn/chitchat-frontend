@@ -8,8 +8,8 @@ export type ImmerStateCreator<T> = StateCreator<T, [['zustand/immer', never], ne
 export type SocketSlice = {
   socket: Nullable<CustomSocket>;
   socketActions: {
-  setSocket: (socket: Socket) => void;
-  resetSocket: () => void;
+    setSocket: (socket: Socket) => void;
+    resetSocket: () => void;
   };
 };
 
@@ -30,4 +30,16 @@ export type ChatSlice = {
   };
 };
 
-export type Store = SocketSlice & ChatSlice;
+export type MessageSlice = {
+  contextMenu: {
+    chosenMessageId: Nullable<string>;
+    isOpen: boolean;
+    coordinates: Nullable<{ x: number; y: number }>;
+  };
+  contextMenuActions: {
+    openContextMenu: (args: { messageId: string; coordinates: { x: number; y: number } }) => void;
+    closeContextMenu: () => void;
+  };
+};
+
+export type Store = SocketSlice & ChatSlice & MessageSlice;
