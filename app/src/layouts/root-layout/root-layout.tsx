@@ -1,6 +1,6 @@
 import { Nullable } from '@/types';
 import { Session } from 'next-auth';
-import { Sidebar } from '../../components/sidebar';
+import { Sidebar } from './sidebar';
 
 type RootLayoutProps = {
   children: React.ReactNode;
