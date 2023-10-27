@@ -30,7 +30,7 @@ export function Sidebar({ session }: SidebarProps) {
   }
 
   return (
-    <aside className="h-full bg-slate-200">
+    <aside className="h-full bg-stone-100">
       <ul className="flex h-full w-20 flex-col items-center justify-center gap-4">
         <SidebarItem href={ROUTES.people} isActive={pathname === ROUTES.people}>
           <Icon id="users" />

@@ -27,7 +27,7 @@ export function ChatHeader({ chatId, chatUsers }: ChatHeaderProps) {
   };
 
   return (
-    <div className="flex items-center gap-2 py-3">
+    <div className="flex items-center gap-2 px-2 py-3">
       <button
         onClick={router.back}
         className="hover: h-8 w-8 rounded-full border border-black p-1 hover:bg-slate-100"

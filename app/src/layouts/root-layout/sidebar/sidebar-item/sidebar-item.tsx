@@ -14,7 +14,7 @@ export function SidebarItem({ href, isActive, children }: SidebarItemProps) {
         <Link
           href={href}
           className={classNames(
-            'block h-full w-full border-r-2 border-transparent py-1 hover:bg-slate-300',
+            'block h-full w-full border-r-2 border-transparent py-1 hover:bg-stone-200',
             {
               'active-link': isActive,
             }

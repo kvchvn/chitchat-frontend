@@ -22,7 +22,7 @@ export function UserInfo({ session, closeModal }: UserInfoProps) {
   }
 
   return (
-    <div className="absolute left-[200%] top-[-75%] border border-black bg-slate-100 py-4 pl-4 pr-8">
+    <div className="absolute left-[200%] top-[-75%] z-20 border border-black bg-stone-200 py-4 pl-4 pr-8">
       <button onClick={handleCloseModal} className="absolute right-1 top-1 h-6 w-6">
         <Icon id="close-md" />
       </button>
