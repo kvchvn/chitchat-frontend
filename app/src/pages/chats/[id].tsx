@@ -1,3 +1,4 @@
+import { ChatHeader } from '@/components/chat-header';
 import { NO_MESSAGES_TEXT, ROUTES } from '@/constants';
 import { useChatActionsSelector, useMessagesSelector, useSocketSelector } from '@/store';
 import { Nullable } from '@/types';
@@ -5,8 +6,6 @@ import { getChatById, logError } from '@/utils';
 import classNames from 'classnames';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { getServerSession } from 'next-auth';
-import Image from 'next/image';
-import { useRouter } from 'next/router';
 import React, { ChangeEvent, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { authOptions } from '../api/auth/[...nextauth]';
 
@@ -26,8 +25,6 @@ export default function ChatPage({
     yCoordinate: 0,
     xCoordinate: 0,
   });
-
-  const router = useRouter();
 
   const messages = useMessagesSelector();
   const { setMessages } = useChatActionsSelector();
@@ -63,12 +60,6 @@ export default function ChatPage({
       logError('Chat Page (handleSubmit): ', err);
     } finally {
       setMessageContent('');
-    }
-  };
-
-  const handleClearChat = () => {
-    if (socket && chat) {
-      socket.emit('chat:clear', { chatId: chat.id });
     }
   };
 
@@ -179,39 +170,8 @@ export default function ChatPage({
       {!chat ? (
         <p>Fetching error</p>
       ) : (
-        <section className="flex h-full flex-col border border-red-900">
-          <div className="flex h-[8%] items-center gap-4 border-b border-t border-gray-400 bg-gray-50 px-1 py-2">
-            <button
-              onClick={router.back}
-              className="rounded-full border-2 border-black bg-gray-400 px-3 py-1 text-white hover:bg-gray-600"
-            >
-              Back
-            </button>
-            {chat.users.map((user) =>
-              user.id !== session.user.id && user.image ? (
-                <Image
-                  key={user.id}
-                  src={user.image}
-                  alt={`${user.name} avatar`}
-                  width={30}
-                  height={30}
-                  className="rounded-full"
-                />
-              ) : null
-            )}
-            <h3 className="text-lg font-semibold">
-              {chat.users
-                .filter((user) => user.id !== session.user.id)
-                .map((user) => user.name)
-                .join(', ')}
-            </h3>
-            <button
-              onClick={handleClearChat}
-              className="ml-auto rounded-full border-2 border-red-900 bg-red-400 px-3 py-1 text-white hover:bg-red-600"
-            >
-              Clear
-            </button>
-          </div>
+        <section className="flex h-full flex-col">
+          <ChatHeader chatId={chat.id} chatUsers={chat.users} />
           <div ref={containerRef} className="relative h-[85%] overflow-y-auto">
             {contextMenu.isVisible && (
               <div ref={contextMenuRef} className={`fixed z-10 border border-black bg-white py-2`}>
