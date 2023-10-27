@@ -49,8 +49,28 @@ export function MessageContextMenu({ chatId, parentRef }: MessageContextMenuProp
 
       contextMenuRef.current.style.left = `${left}px`;
       contextMenuRef.current.style.top = `${top}px`;
+
+      if (coordinates.x > left) {
+        if (coordinates.y > top) {
+          contextMenuRef.current.style.borderBottomRightRadius = '0';
+        } else {
+          contextMenuRef.current.style.borderTopRightRadius = '0';
+        }
+      } else {
+        if (coordinates.y > top) {
+          contextMenuRef.current.style.borderBottomLeftRadius = '0';
+        } else {
+          contextMenuRef.current.style.borderTopLeftRadius = '0';
+        }
+      }
+
+      return () => {
+        if (contextMenuRef.current) {
+          contextMenuRef.current.style.borderRadius = '';
+        }
+      };
     }
-  });
+  }, [coordinates, parentRef]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -74,7 +94,10 @@ export function MessageContextMenu({ chatId, parentRef }: MessageContextMenuProp
   });
 
   return isOpen ? (
-    <div ref={contextMenuRef} className="fixed z-10 border border-black bg-stone-200 py-2">
+    <div
+      ref={contextMenuRef}
+      className="fixed z-10 rounded-xl border border-black bg-stone-200 py-2"
+    >
       <ul className="flex flex-col gap-1">
         <li className="cursor-pointer py-1 pl-2 pr-4 text-sm font-light hover:bg-stone-300">
           <button onClick={handleRemoveMessage}>Remove</button>
