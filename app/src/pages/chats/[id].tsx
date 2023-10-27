@@ -1,11 +1,10 @@
-import { API_ENDPOINTS, NO_MESSAGES_TEXT, ROUTES } from '@/constants';
-import { customKy } from '@/ky';
-import { logError } from '@/lib';
+import { NO_MESSAGES_TEXT, ROUTES } from '@/constants';
 import { useChatActionsSelector, useMessagesSelector, useSocketSelector } from '@/store';
-import { ChatRelevant, Nullable } from '@/types';
+import { Nullable } from '@/types';
+import { getChatById, logError } from '@/utils';
 import classNames from 'classnames';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
-import { Session, getServerSession } from 'next-auth';
+import { getServerSession } from 'next-auth';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import React, { ChangeEvent, useEffect, useLayoutEffect, useRef, useState } from 'react';
@@ -236,7 +235,7 @@ export default function ChatPage({
                     key={index}
                     onContextMenu={(e) => handleContextMenu({ e, messageId: message.id })}
                     className={classNames(
-                      'overflow-anywhere w-fit max-w-[45%] whitespace-pre-line rounded-md border-2 px-4 py-1.5',
+                      'w-fit max-w-[45%] whitespace-pre-line rounded-md border-2 px-4 py-1.5 overflow-anywhere',
                       {
                         'self-end border-black bg-white': message.senderId === session.user.id,
                         'border-cyan-900 bg-cyan-500 text-white':
@@ -291,24 +290,9 @@ export const getServerSideProps = (async (ctx) => {
     };
   }
 
-  const props: {
-    session: Session;
-    chat?: Nullable<ChatRelevant>;
-  } = {
-    session,
-    chat: null,
-  };
-  try {
-    const chat: ChatRelevant | undefined = await customKy
-      .get(API_ENDPOINTS.chat.getChat(ctx.params?.id as string))
-      .json();
+  const chat = await getChatById(ctx.params?.id as string);
 
-    props.chat = chat;
-  } catch (err) {
-    logError('ChatPage (getServerSideProps)', err);
-  }
-
-  if (props.chat && !props.chat.users.find((user) => user.id === props.session.user.id)) {
+  if (chat && !chat.users.find((user) => user.id === session.user.id)) {
     return {
       redirect: {
         permanent: false,
@@ -317,8 +301,10 @@ export const getServerSideProps = (async (ctx) => {
     };
   }
 
-  return { props };
-}) satisfies GetServerSideProps<{
-  session: Session;
-  chat?: Nullable<ChatRelevant>;
-}>;
+  return {
+    props: {
+      session,
+      chat,
+    },
+  };
+}) satisfies GetServerSideProps;
