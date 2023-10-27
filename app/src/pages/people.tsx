@@ -1,8 +1,8 @@
 import { UsersList } from '@/components/users-list';
 import { API_ENDPOINTS, ROUTES } from '@/constants';
 import { customKy } from '@/ky';
-import { logError } from '@/lib';
 import { Users } from '@/types';
+import { logError } from '@/utils';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { Session, getServerSession } from 'next-auth';
 import { useRouter } from 'next/router';

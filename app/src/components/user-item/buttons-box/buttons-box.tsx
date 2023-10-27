@@ -1,7 +1,7 @@
 import { API_ENDPOINTS } from '@/constants';
 import { customKy } from '@/ky';
-import { logError } from '@/lib';
 import { UsersListVariant } from '@/types';
+import { logError } from '@/utils';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 

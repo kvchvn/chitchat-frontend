@@ -1,9 +1,9 @@
 import { ChatsList } from '@/components/chats-list';
 import { API_ENDPOINTS, ROUTES } from '@/constants';
 import { customKy } from '@/ky';
-import { logError } from '@/lib';
 import { useChatActionsSelector, useChatsSelector } from '@/store';
 import { ChatsRecord, Nullable } from '@/types';
+import { logError } from '@/utils';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { Session, getServerSession } from 'next-auth';
 import { useEffect } from 'react';

@@ -1,6 +1,6 @@
-import { logError } from '@/lib';
 import { useChatActionsSelector } from '@/store';
 import { CustomSocket, Nullable, ServerToClientListenersArgs } from '@/types';
+import { logError } from '@/utils';
 import { Session } from 'next-auth';
 import { useCallback } from 'react';
 
