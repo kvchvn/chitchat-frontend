@@ -1,6 +1,6 @@
 import { UserCounts, UserRelevant, UsersListVariant } from '@/types';
 import Image from 'next/image';
-import ButtonsBox from './buttons-box';
+import { ButtonsBox } from './buttons-box';
 
 type UserItemProps = {
   listVariant: UsersListVariant;

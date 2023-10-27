@@ -11,11 +11,7 @@ type ButtonsBoxProps = {
   currentUserId: string;
 };
 
-export default function ButtonsBox({
-  listVariant,
-  isFriendOrRequested,
-  currentUserId,
-}: ButtonsBoxProps) {
+export function ButtonsBox({ listVariant, isFriendOrRequested, currentUserId }: ButtonsBoxProps) {
   const { data: session } = useSession();
   const router = useRouter();
 
