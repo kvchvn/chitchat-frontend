@@ -7,23 +7,22 @@ export type ImmerStateCreator<T> = StateCreator<T, [['zustand/immer', never], ne
 
 export type SocketSlice = {
   socket: Nullable<CustomSocket>;
+  socketActions: {
   setSocket: (socket: Socket) => void;
   resetSocket: () => void;
+  };
 };
 
 export type ChatSlice = {
   chats: Nullable<ChatsRecord>;
   messages: Nullable<Message[]>;
-  actions: {
+  chatActions: {
     setMessages: (messages: Nullable<Message[]>) => void;
     setChats: (chats: Nullable<ChatsRecord>) => void;
     removeMessagesFromChat: (chatId: string) => void;
     pushMessage: (message: Message) => void;
     removeMessage: (messageId: string) => void;
-    incrementUnseenMessagesCount: ({
-      chatId,
-      newLastMessage,
-    }: {
+    incrementUnseenMessagesCount: (args: {
       chatId: string;
       newLastMessage: Pick<Message, 'senderId' | 'content'>;
     }) => void;

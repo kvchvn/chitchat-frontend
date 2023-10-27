@@ -4,4 +4,4 @@ export const useMessagesSelector = () => useMergedStore((state) => state.message
 
 export const useChatsSelector = () => useMergedStore((state) => state.chats);
 
-export const useChatActionsSelector = () => useMergedStore((state) => state.actions);
+export const useChatActionsSelector = () => useMergedStore((state) => state.chatActions);
