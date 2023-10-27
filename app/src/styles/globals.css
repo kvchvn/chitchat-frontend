@@ -8,7 +8,7 @@ body {
 }
 
 #__next {
-  @apply h-full;
+  height: 100%;
 }
 
 * {
