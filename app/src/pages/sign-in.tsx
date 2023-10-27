@@ -1,10 +1,8 @@
 import { ROUTES } from '@/constants';
 import { useSocketDisconnection } from '@/hooks';
-import { Nullable } from '@/types';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { getServerSession } from 'next-auth';
-import { BuiltInProviderType } from 'next-auth/providers/index';
-import { ClientSafeProvider, LiteralUnion, getProviders, signIn } from 'next-auth/react';
+import { getProviders, signIn } from 'next-auth/react';
 import { authOptions } from './api/auth/[...nextauth]';
 
 export default function SignInPage({
@@ -49,6 +47,4 @@ export const getServerSideProps = (async (ctx) => {
   return {
     props: { providers },
   };
-}) satisfies GetServerSideProps<{
-  providers: Nullable<Record<LiteralUnion<BuiltInProviderType, string>, ClientSafeProvider>>;
-}>;
+}) satisfies GetServerSideProps;
