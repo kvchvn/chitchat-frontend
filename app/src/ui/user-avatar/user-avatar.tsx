@@ -1,3 +1,4 @@
+import { DEFAULT_USERNAME } from '@/constants';
 import { Nullable } from '@/types';
 import Image from 'next/image';
 import { Icon } from '../icon';
@@ -16,7 +17,7 @@ export function UserAvatar({ src, size, username, className = '' }: UserAvatarPr
       width={size}
       height={size}
       fill={!size}
-      alt={`Avatar of ${username ?? 'Anonymous'}`}
+      alt={`Avatar of ${username ?? DEFAULT_USERNAME}`}
       className={className}
     />
   ) : (

@@ -1,4 +1,4 @@
-import { NO_MESSAGES_TEXT, ROUTES } from '@/constants';
+import { DEFAULT_USERNAME, NO_MESSAGES_TEXT, ROUTES } from '@/constants';
 import { ChatsRecord } from '@/types';
 import { UserAvatar } from '@/ui/user-avatar';
 import { useSession } from 'next-auth/react';
@@ -38,7 +38,7 @@ export function ChatItem({
         />
       </div>
       <div className="flex h-full flex-col">
-        <p>{friend.name ?? 'Anonymous'}</p>
+        <p>{friend.name ?? DEFAULT_USERNAME}</p>
         <p className="text-sm text-gray-500">
           {lastMessage ? lastMessage.content : NO_MESSAGES_TEXT}
         </p>
