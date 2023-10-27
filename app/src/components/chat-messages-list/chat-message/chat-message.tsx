@@ -24,7 +24,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
     <li
       onContextMenu={handleContextMenu}
       className={classnames(
-        'w-fit max-w-[45%] cursor-default whitespace-pre-line border px-3 py-1 overflow-anywhere',
+        'w-fit max-w-[45%] cursor-default whitespace-pre-line border px-3 py-1 font-light overflow-anywhere',
         {
           'self-end rounded-t-xl rounded-bl-xl border-black bg-white':
             message.senderId === session.user.id,
