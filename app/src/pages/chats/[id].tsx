@@ -1,12 +1,13 @@
 import { ChatHeader } from '@/components/chat-header';
+import { ChatMessagesList } from '@/components/chat-messages-list';
+import { MessageContextMenu } from '@/components/message-context-menu';
 import { NO_MESSAGES_TEXT, ROUTES } from '@/constants';
 import { useChatActionsSelector, useMessagesSelector, useSocketSelector } from '@/store';
 import { Nullable } from '@/types';
 import { getChatById, logError } from '@/utils';
-import classNames from 'classnames';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { getServerSession } from 'next-auth';
-import React, { ChangeEvent, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { authOptions } from '../api/auth/[...nextauth]';
 
 export default function ChatPage({
@@ -14,25 +15,12 @@ export default function ChatPage({
   chat,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [messageContent, setMessageContent] = useState('');
-  const [contextMenu, setContextMenu] = useState<{
-    messageId: Nullable<string>;
-    isVisible: boolean;
-    yCoordinate: number;
-    xCoordinate: number;
-  }>({
-    messageId: null,
-    isVisible: false,
-    yCoordinate: 0,
-    xCoordinate: 0,
-  });
 
   const messages = useMessagesSelector();
   const { setMessages } = useChatActionsSelector();
   const socket = useSocketSelector();
 
-  const contextMenuRef = useRef<Nullable<HTMLDivElement>>(null);
   const containerRef = useRef<Nullable<HTMLDivElement>>(null);
-  const lowestElementRef = useRef<Nullable<HTMLLIElement>>(null);
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setMessageContent(e.target.value);
@@ -62,67 +50,6 @@ export default function ChatPage({
       setMessageContent('');
     }
   };
-
-  const handleContextMenu = ({ e, messageId }: { e: React.MouseEvent; messageId: string }) => {
-    e.preventDefault();
-    setContextMenu((prevState) => ({
-      ...prevState,
-      messageId,
-      isVisible: !prevState.isVisible,
-      yCoordinate: e.clientY,
-      xCoordinate: e.clientX,
-    }));
-  };
-
-  const handleRemoveMessage = () => {
-    if (socket && chat && contextMenu.messageId) {
-      socket.emit('message:remove', { chatId: chat.id, messageId: contextMenu.messageId });
-    }
-  };
-
-  useLayoutEffect(() => {
-    if (contextMenuRef.current && containerRef.current) {
-      const DELTA = 10;
-      const { width: contextMenuWidth, height: contextMenuHeight } =
-        contextMenuRef.current.getBoundingClientRect();
-      const {
-        width: parentWidth,
-        left: parentLeft,
-        top: parentTop,
-      } = containerRef.current.getBoundingClientRect();
-      const left =
-        parentLeft + parentWidth - contextMenu.xCoordinate > contextMenuWidth + DELTA
-          ? contextMenu.xCoordinate
-          : contextMenu.xCoordinate - contextMenuWidth;
-      const top =
-        contextMenu.yCoordinate - parentTop < contextMenuHeight + DELTA
-          ? contextMenu.yCoordinate
-          : contextMenu.yCoordinate - contextMenuHeight;
-      contextMenuRef.current.style.left = `${left}px`;
-      contextMenuRef.current.style.top = `${top}px`;
-    }
-  });
-
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-
-      if (
-        !contextMenuRef.current?.contains(target) ||
-        (contextMenuRef.current.contains(target) && target.tagName === 'BUTTON')
-      ) {
-        setContextMenu((prevState) => ({ ...prevState, isVisible: false, top: 0, left: 0 }));
-      }
-    };
-
-    if (contextMenu.isVisible) {
-      document.body.addEventListener('click', handleClickOutside);
-    }
-
-    return () => {
-      document.body.removeEventListener('click', handleClickOutside);
-    };
-  });
 
   useEffect(() => {
     if (socket && chat) {
@@ -158,13 +85,6 @@ export default function ChatPage({
     };
   }, [chat, setMessages]);
 
-  useEffect(() => {
-    if (lowestElementRef.current && messages) {
-      console.log('scroll down');
-      lowestElementRef.current.scrollIntoView();
-    }
-  }, [messages]);
-
   return (
     <>
       {!chat ? (
@@ -172,45 +92,16 @@ export default function ChatPage({
       ) : (
         <section className="flex h-full flex-col">
           <ChatHeader chatId={chat.id} chatUsers={chat.users} />
-          <div ref={containerRef} className="relative h-[85%] overflow-y-auto">
-            {contextMenu.isVisible && (
-              <div ref={contextMenuRef} className={`fixed z-10 border border-black bg-white py-2`}>
-                <ul className="flex flex-col gap-1">
-                  <li className="cursor-pointer px-4 py-1 hover:bg-gray-300">
-                    <button onClick={handleRemoveMessage}>Remove</button>
-                  </li>
-                  <li className="cursor-pointer px-4 py-1 hover:bg-gray-300">
-                    <button>Edit</button>
-                  </li>
-                </ul>
-              </div>
-            )}
+          <div
+            ref={containerRef}
+            className="relative h-[85%] overflow-y-auto border-t border-black bg-stone-100 px-2 pb-8 pt-1"
+          >
+            <MessageContextMenu chatId={chat.id} parentRef={containerRef} />
             {messages && messages.length ? (
-              <ul
-                id="messages-list"
-                className="flex w-full flex-col justify-end gap-2 border bg-cyan-100 p-1 pb-8"
-              >
-                {messages.map((message, index) => (
-                  <li
-                    key={index}
-                    onContextMenu={(e) => handleContextMenu({ e, messageId: message.id })}
-                    className={classNames(
-                      'w-fit max-w-[45%] whitespace-pre-line rounded-md border-2 px-4 py-1.5 overflow-anywhere',
-                      {
-                        'self-end border-black bg-white': message.senderId === session.user.id,
-                        'border-cyan-900 bg-cyan-500 text-white':
-                          message.senderId !== session.user.id,
-                      }
-                    )}
-                  >
-                    {message.content}
-                  </li>
-                ))}
-                <li ref={lowestElementRef} />
-              </ul>
+              <ChatMessagesList messages={messages} />
             ) : (
               <div className="flex h-full items-center justify-center">
-                <p className="font-light text-gray-500">{NO_MESSAGES_TEXT}</p>
+                <p className="font-light text-stone-500">{NO_MESSAGES_TEXT}</p>
               </div>
             )}
           </div>
