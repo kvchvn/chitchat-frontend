@@ -13,7 +13,11 @@ export function ChatMessage({ message }: ChatMessageProps) {
 
   const handleContextMenu = (e: React.MouseEvent) => {
     e.preventDefault();
-    openContextMenu({ messageId: message.id, coordinates: { x: e.clientX, y: e.clientY } });
+    openContextMenu({
+      messageId: message.id,
+      messageContent: message.content,
+      coordinates: { x: e.clientX, y: e.clientY },
+    });
   };
 
   if (!session) {

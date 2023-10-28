@@ -1,4 +1,8 @@
-import { useSocketSelector } from '@/store';
+import {
+  useMessageEditModeActionsSelector,
+  useMessageEditModeSelector,
+  useSocketSelector,
+} from '@/store';
 import { Nullable } from '@/types';
 import { Icon } from '@/ui/icon';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -12,23 +16,18 @@ export function MessageForm({ chatId, userId }: MessageFormProps) {
   const [messageContent, setMessageContent] = useState('');
 
   const socket = useSocketSelector();
+  const {
+    isOn: isOnEditMode,
+    messageId,
+    messageContent: editedMessageContent,
+  } = useMessageEditModeSelector();
+  const { turnOffEditMode } = useMessageEditModeActionsSelector();
+
   const textareaRef = useRef<Nullable<HTMLTextAreaElement>>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const target = e.target;
     setMessageContent(target.value);
-
-    console.log('change', {
-      scroll: target.scrollHeight,
-      client: target.clientHeight,
-    });
-
-    if (target.scrollHeight > target.clientHeight) {
-      target.style.height = `${target.scrollHeight}px`;
-    } else {
-      target.style.height = '0px';
-      target.style.height = `${target.scrollHeight}px`;
-    }
   };
 
   const handleSendMessage = useCallback(async () => {
@@ -37,18 +36,16 @@ export function MessageForm({ chatId, userId }: MessageFormProps) {
     const trimmedMessage = messageContent.trim();
 
     if (trimmedMessage) {
-      socket.emit('message:create', {
-        chatId,
-        senderId: userId,
-        content: trimmedMessage,
-      });
+      if (isOnEditMode && messageId) {
+        socket.emit('message:edit', { chatId, messageId, updatedContent: trimmedMessage });
+        turnOffEditMode();
+      } else {
+        socket.emit('message:create', { chatId, senderId: userId, content: trimmedMessage });
+      }
     }
 
     setMessageContent('');
-    if (textareaRef.current) {
-      textareaRef.current.style.height = '';
-    }
-  }, [chatId, messageContent, socket, userId]);
+  }, [chatId, messageContent, socket, userId, isOnEditMode, messageId, turnOffEditMode]);
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
@@ -63,9 +60,35 @@ export function MessageForm({ chatId, userId }: MessageFormProps) {
     }
 
     return () => {
-      document.removeEventListener('keypress', handleKeyPress);
+      if (messageContent) {
+        document.removeEventListener('keypress', handleKeyPress);
+      }
     };
   }, [handleSendMessage, messageContent]);
+
+  useEffect(() => {
+    if (isOnEditMode && editedMessageContent) {
+      setMessageContent(editedMessageContent);
+      if (textareaRef.current) {
+        textareaRef.current.focus();
+      }
+    } else {
+      setMessageContent('');
+    }
+  }, [isOnEditMode, editedMessageContent]);
+
+  useEffect(() => {
+    if (!textareaRef.current) return;
+
+    const textarea = textareaRef.current;
+
+    if (textarea.scrollHeight > textarea.clientHeight) {
+      textarea.style.height = `${textarea.scrollHeight}px`;
+    } else {
+      textarea.style.height = '0px';
+      textarea.style.height = `${textarea.scrollHeight}px`;
+    }
+  }, [messageContent]);
 
   return (
     <form className="flex gap-3 border-t border-black px-2 pt-1">
@@ -84,7 +107,7 @@ export function MessageForm({ chatId, userId }: MessageFormProps) {
         disabled={!messageContent}
         className="h-10 w-10 cursor-pointer self-end rounded-full border-2 border-black p-1 hover:bg-emerald-300 disabled:cursor-not-allowed disabled:bg-gray-200"
       >
-        <Icon id="paper-plane" />
+        <Icon id={isOnEditMode ? 'save' : 'paper-plane'} />
       </button>
     </form>
   );

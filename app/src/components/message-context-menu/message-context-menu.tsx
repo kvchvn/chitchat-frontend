@@ -1,6 +1,7 @@
 import {
   useMessageContextMenuActionsSelector,
   useMessageContextMenuSelector,
+  useMessageEditModeActionsSelector,
   useSocketSelector,
 } from '@/store';
 import { Nullable } from '@/types';
@@ -12,64 +13,25 @@ type MessageContextMenuProps = {
 };
 
 export function MessageContextMenu({ chatId, parentRef }: MessageContextMenuProps) {
-  const { isOpen, chosenMessageId, coordinates } = useMessageContextMenuSelector();
+  const { isOpen, messageId, coordinates } = useMessageContextMenuSelector();
   const { closeContextMenu } = useMessageContextMenuActionsSelector();
+  const { turnOnEditMode } = useMessageEditModeActionsSelector();
   const socket = useSocketSelector();
 
   const contextMenuRef = useRef<Nullable<HTMLDivElement>>(null);
 
   const handleRemoveMessage = () => {
-    if (socket && chosenMessageId) {
-      socket.emit('message:remove', { chatId, messageId: chosenMessageId });
+    if (socket && messageId) {
+      socket.emit('message:remove', { chatId, messageId });
+      closeContextMenu();
     }
   };
 
-  useEffect(() => {
-    if (contextMenuRef.current && parentRef.current && coordinates) {
-      const DELTA = 10;
-      const contextMenu = contextMenuRef.current;
-
-      const { width: contextMenuWidth, height: contextMenuHeight } =
-        contextMenu.getBoundingClientRect();
-
-      const {
-        width: parentWidth,
-        left: parentLeft,
-        top: parentTop,
-      } = parentRef.current.getBoundingClientRect();
-
-      const left =
-        parentLeft + parentWidth - coordinates.x > contextMenuWidth + DELTA
-          ? coordinates.x
-          : coordinates.x - contextMenuWidth;
-
-      const top =
-        coordinates.y - parentTop < contextMenuHeight + DELTA
-          ? coordinates.y
-          : coordinates.y - contextMenuHeight;
-
-      contextMenu.style.left = `${left}px`;
-      contextMenu.style.top = `${top}px`;
-
-      if (coordinates.x > left) {
-        if (coordinates.y > top) {
-          contextMenu.style.borderBottomRightRadius = '0';
-        } else {
-          contextMenu.style.borderTopRightRadius = '0';
-        }
-      } else {
-        if (coordinates.y > top) {
-          contextMenu.style.borderBottomLeftRadius = '0';
-        } else {
-          contextMenu.style.borderTopLeftRadius = '0';
-        }
-      }
-
-      return () => {
-        contextMenu.style.borderRadius = '';
-      };
+  const handleEditMessage = () => {
+    if (socket && messageId) {
+      turnOnEditMode();
     }
-  }, [coordinates, parentRef]);
+  };
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
