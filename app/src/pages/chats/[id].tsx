@@ -1,5 +1,6 @@
 import { ChatHeader } from '@/components/chat-header';
 import { ChatMessagesList } from '@/components/chat-messages-list';
+import { EditedMessagePreview } from '@/components/edited-message-preview';
 import { MessageContextMenu } from '@/components/message-context-menu';
 import { MessageForm } from '@/components/message-form';
 import { NO_MESSAGES_TEXT, ROUTES } from '@/constants';
@@ -32,6 +33,7 @@ export default function ChatPage({
 
   useEffect(() => {
     if (chat) {
+      // initial messages array filling
       setMessages(chat.messages);
     }
 
@@ -60,6 +62,7 @@ export default function ChatPage({
               </div>
             )}
           </div>
+          <EditedMessagePreview />
           <MessageForm chatId={chat.id} userId={session.user.id} />
         </section>
       )}
