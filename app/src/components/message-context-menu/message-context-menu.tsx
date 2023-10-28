@@ -5,6 +5,7 @@ import {
   useSocketSelector,
 } from '@/store';
 import { Nullable } from '@/types';
+import { disableScrolling, enableScrolling } from '@/utils';
 import { MutableRefObject, useEffect, useRef } from 'react';
 
 type MessageContextMenuProps = {
@@ -36,25 +37,22 @@ export function MessageContextMenu({ chatId, parentRef }: MessageContextMenuProp
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-
-      if (
-        !contextMenuRef.current?.contains(target) ||
-        (contextMenuRef.current.contains(target) && target.tagName === 'BUTTON')
-      ) {
+      if (!contextMenuRef.current?.contains(target)) {
         closeContextMenu();
       }
     };
 
+    const parent = parentRef.current;
+
     if (isOpen) {
-      if (parentRef.current) {
-        parentRef.current.style.overflow = 'hidden';
-      }
+      disableScrolling(parent);
       document.body.addEventListener('click', handleClickOutside);
     }
 
     return () => {
-      if (parentRef.current) {
-        parentRef.current.style.overflow = 'auto';
+      if (isOpen) {
+        enableScrolling(parent);
+        document.body.removeEventListener('click', handleClickOutside);
       }
       document.body.removeEventListener('click', handleClickOutside);
     };
@@ -63,14 +61,18 @@ export function MessageContextMenu({ chatId, parentRef }: MessageContextMenuProp
   return isOpen ? (
     <div
       ref={contextMenuRef}
-      className="fixed z-10 rounded-xl border border-black bg-stone-200 py-2 shadow-md shadow-gray-800"
+      className="fixed z-10 rounded-xl border border-black bg-stone-200 py-2"
     >
       <ul className="flex flex-col gap-1">
-        <li className="cursor-pointer py-1 pl-2 pr-4 text-sm hover:bg-stone-300">
-          <button onClick={handleRemoveMessage}>Remove</button>
+        <li className="cursor-pointer text-sm hover:bg-stone-300">
+          <button onClick={handleRemoveMessage} className="w-full py-1 pl-2 pr-4 text-start">
+            Remove
+          </button>
         </li>
-        <li className="cursor-pointer py-1 pl-2 pr-4 text-sm hover:bg-stone-300">
-          <button>Edit</button>
+        <li className="cursor-pointer text-sm hover:bg-stone-300">
+          <button onClick={handleEditMessage} className="w-full py-1 pl-2 pr-4 text-start">
+            Edit
+          </button>
         </li>
       </ul>
     </div>
