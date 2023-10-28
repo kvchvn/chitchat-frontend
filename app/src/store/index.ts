@@ -8,5 +8,7 @@ export {
 export {
   useMessageContextMenuActionsSelector,
   useMessageContextMenuSelector,
+  useMessageEditModeActionsSelector,
+  useMessageEditModeSelector,
 } from './selectors/message-selectors';
 export { useSocketActionsSelector, useSocketSelector } from './selectors/socket-selectors';

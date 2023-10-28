@@ -22,6 +22,7 @@ export type ChatSlice = {
     removeMessagesFromChat: (chatId: string) => void;
     pushMessage: (message: Message) => void;
     removeMessage: (messageId: string) => void;
+    editMessage: (args: { messageId: string; content: string }) => void;
     incrementUnseenMessagesCount: (args: {
       chatId: string;
       newLastMessage: Pick<Message, 'senderId' | 'content'>;
@@ -32,13 +33,27 @@ export type ChatSlice = {
 
 export type MessageSlice = {
   contextMenu: {
-    chosenMessageId: Nullable<string>;
     isOpen: boolean;
+    messageId: Nullable<string>;
+    messageContent: Nullable<string>;
     coordinates: Nullable<{ x: number; y: number }>;
   };
   contextMenuActions: {
-    openContextMenu: (args: { messageId: string; coordinates: { x: number; y: number } }) => void;
+    openContextMenu: (args: {
+      messageId: string;
+      messageContent: string;
+      coordinates: { x: number; y: number };
+    }) => void;
     closeContextMenu: () => void;
+  };
+  editMode: {
+    isOn: boolean;
+    messageId: Nullable<string>;
+    messageContent: Nullable<string>;
+  };
+  editModeActions: {
+    turnOnEditMode: () => void;
+    turnOffEditMode: () => void;
   };
 };
 

@@ -37,6 +37,15 @@ export const chatSlice: ImmerStateCreator<ChatSlice> = (set) => ({
           }
         }
       }),
+    editMessage: ({ messageId, content }) =>
+      set(({ messages }) => {
+        if (messages) {
+          const message = messages.find((message) => message.id === messageId);
+          if (message) {
+            message.content = content;
+          }
+        }
+      }),
     incrementUnseenMessagesCount: ({ chatId, newLastMessage }) =>
       set(({ chats }) => {
         if (chats && chatId in chats) {
