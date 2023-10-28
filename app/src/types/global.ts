@@ -9,7 +9,9 @@ export type IconId =
   | 'close-md'
   | 'return'
   | 'basket'
-  | 'paper-plane';
+  | 'paper-plane'
+  | 'pencil'
+  | 'save';
 
 export type Nullable<T> = T | null;
 
