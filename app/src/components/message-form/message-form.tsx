@@ -1,5 +1,7 @@
 import { useSocketSelector } from '@/store';
-import { useCallback, useEffect, useState } from 'react';
+import { Nullable } from '@/types';
+import { Icon } from '@/ui/icon';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 type MessageFormProps = {
   chatId: string;
@@ -10,9 +12,23 @@ export function MessageForm({ chatId, userId }: MessageFormProps) {
   const [messageContent, setMessageContent] = useState('');
 
   const socket = useSocketSelector();
+  const textareaRef = useRef<Nullable<HTMLTextAreaElement>>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setMessageContent(e.target.value);
+    const target = e.target;
+    setMessageContent(target.value);
+
+    console.log('change', {
+      scroll: target.scrollHeight,
+      client: target.clientHeight,
+    });
+
+    if (target.scrollHeight > target.clientHeight) {
+      target.style.height = `${target.scrollHeight}px`;
+    } else {
+      target.style.height = '0px';
+      target.style.height = `${target.scrollHeight}px`;
+    }
   };
 
   const handleSendMessage = useCallback(async () => {
@@ -29,6 +45,9 @@ export function MessageForm({ chatId, userId }: MessageFormProps) {
     }
 
     setMessageContent('');
+    if (textareaRef.current) {
+      textareaRef.current.style.height = '';
+    }
   }, [chatId, messageContent, socket, userId]);
 
   useEffect(() => {
@@ -49,22 +68,23 @@ export function MessageForm({ chatId, userId }: MessageFormProps) {
   }, [handleSendMessage, messageContent]);
 
   return (
-    <form className="flex h-[7%] border-t border-black p-1">
+    <form className="flex gap-3 border-t border-black px-2 pt-1">
       <textarea
+        ref={textareaRef}
         name="message"
         placeholder="Write your message here..."
         autoFocus
         value={messageContent}
         maxLength={150}
         onChange={handleChange}
-        className="h-full w-full resize-none outline-none"
+        className="h-6 max-h-32 w-full resize-none outline-none placeholder:font-thin"
       />
       <button
         onClick={handleSendMessage}
         disabled={!messageContent}
-        className="text-cyan h-10 self-end rounded-full border-2 border-cyan-900 bg-cyan-300 px-3 py-1 hover:bg-cyan-500 disabled:grayscale"
+        className="h-10 w-10 cursor-pointer self-end rounded-full border-2 border-black p-1 hover:bg-emerald-300 disabled:cursor-not-allowed disabled:bg-gray-200"
       >
-        Send
+        <Icon id="paper-plane" />
       </button>
     </form>
   );
