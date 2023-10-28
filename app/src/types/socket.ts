@@ -11,6 +11,7 @@ export type ServerToClientListenersArgs = {
   'message:read': { chatId: string };
   'chat:clear': { chatId: string };
   'message:remove': { messageId: string };
+  'message:edit': { messageId: string; content: Message['content'] };
 };
 
 export type ClientToServerListenersArgs = {
@@ -18,6 +19,7 @@ export type ClientToServerListenersArgs = {
   'message:read': { chatId: string };
   'chat:clear': { chatId: string };
   'message:remove': { chatId: string; messageId: string };
+  'message:edit': { chatId: string; messageId: string; updatedContent: Message['content'] };
 };
 
 export type ServerToClientEvents = SocketEvents<ServerToClientListenersArgs>;

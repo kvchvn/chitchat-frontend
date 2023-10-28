@@ -11,6 +11,7 @@ export const useChatListeners = ({ session }: { session?: Nullable<Session> }) =
     resetUnseenMessageCount,
     removeMessagesFromChat,
     removeMessage,
+    editMessage,
   } = useChatActionsSelector();
 
   const onMessageCreate = useCallback(
@@ -32,7 +33,6 @@ export const useChatListeners = ({ session }: { session?: Nullable<Session> }) =
 
   const onMessageRead = useCallback(
     ({ chatId }: ServerToClientListenersArgs['message:read']) => {
-      console.log('resetUnseenMessageCount');
       resetUnseenMessageCount(chatId);
     },
     [resetUnseenMessageCount]
@@ -40,7 +40,6 @@ export const useChatListeners = ({ session }: { session?: Nullable<Session> }) =
 
   const onChatClear = useCallback(
     ({ chatId }: ServerToClientListenersArgs['chat:clear']) => {
-      console.log('clearChat');
       removeMessagesFromChat(chatId);
     },
     [removeMessagesFromChat]
@@ -48,10 +47,16 @@ export const useChatListeners = ({ session }: { session?: Nullable<Session> }) =
 
   const onMessageRemove = useCallback(
     ({ messageId }: ServerToClientListenersArgs['message:remove']) => {
-      console.log('removeMessage');
       removeMessage(messageId);
     },
     [removeMessage]
+  );
+
+  const onMessageEdit = useCallback(
+    ({ messageId, content }: ServerToClientListenersArgs['message:edit']) => {
+      editMessage({ messageId, content });
+    },
+    [editMessage]
   );
 
   const registerChatListeners = useCallback(
@@ -60,8 +65,9 @@ export const useChatListeners = ({ session }: { session?: Nullable<Session> }) =
       socket.on('message:read', onMessageRead);
       socket.on('chat:clear', onChatClear);
       socket.on('message:remove', onMessageRemove);
+      socket.on('message:edit', onMessageEdit);
     },
-    [onMessageCreate, onMessageRead, onChatClear, onMessageRemove]
+    [onMessageCreate, onMessageRead, onChatClear, onMessageRemove, onMessageEdit]
   );
 
   return { registerChatListeners };
