@@ -4,7 +4,7 @@ import {
   useSocketSelector,
 } from '@/store';
 import { Nullable } from '@/types';
-import { MutableRefObject, useEffect, useLayoutEffect, useRef } from 'react';
+import { MutableRefObject, useEffect, useRef } from 'react';
 
 type MessageContextMenuProps = {
   chatId: string;
@@ -24,12 +24,13 @@ export function MessageContextMenu({ chatId, parentRef }: MessageContextMenuProp
     }
   };
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (contextMenuRef.current && parentRef.current && coordinates) {
       const DELTA = 10;
+      const contextMenu = contextMenuRef.current;
 
       const { width: contextMenuWidth, height: contextMenuHeight } =
-        contextMenuRef.current.getBoundingClientRect();
+        contextMenu.getBoundingClientRect();
 
       const {
         width: parentWidth,
@@ -47,27 +48,25 @@ export function MessageContextMenu({ chatId, parentRef }: MessageContextMenuProp
           ? coordinates.y
           : coordinates.y - contextMenuHeight;
 
-      contextMenuRef.current.style.left = `${left}px`;
-      contextMenuRef.current.style.top = `${top}px`;
+      contextMenu.style.left = `${left}px`;
+      contextMenu.style.top = `${top}px`;
 
       if (coordinates.x > left) {
         if (coordinates.y > top) {
-          contextMenuRef.current.style.borderBottomRightRadius = '0';
+          contextMenu.style.borderBottomRightRadius = '0';
         } else {
-          contextMenuRef.current.style.borderTopRightRadius = '0';
+          contextMenu.style.borderTopRightRadius = '0';
         }
       } else {
         if (coordinates.y > top) {
-          contextMenuRef.current.style.borderBottomLeftRadius = '0';
+          contextMenu.style.borderBottomLeftRadius = '0';
         } else {
-          contextMenuRef.current.style.borderTopLeftRadius = '0';
+          contextMenu.style.borderTopLeftRadius = '0';
         }
       }
 
       return () => {
-        if (contextMenuRef.current) {
-          contextMenuRef.current.style.borderRadius = '';
-        }
+        contextMenu.style.borderRadius = '';
       };
     }
   }, [coordinates, parentRef]);
@@ -85,10 +84,16 @@ export function MessageContextMenu({ chatId, parentRef }: MessageContextMenuProp
     };
 
     if (isOpen) {
+      if (parentRef.current) {
+        parentRef.current.style.overflow = 'hidden';
+      }
       document.body.addEventListener('click', handleClickOutside);
     }
 
     return () => {
+      if (parentRef.current) {
+        parentRef.current.style.overflow = 'auto';
+      }
       document.body.removeEventListener('click', handleClickOutside);
     };
   });
@@ -96,13 +101,13 @@ export function MessageContextMenu({ chatId, parentRef }: MessageContextMenuProp
   return isOpen ? (
     <div
       ref={contextMenuRef}
-      className="fixed z-10 rounded-xl border border-black bg-stone-200 py-2"
+      className="fixed z-10 rounded-xl border border-black bg-stone-200 py-2 shadow-md shadow-gray-800"
     >
       <ul className="flex flex-col gap-1">
-        <li className="cursor-pointer py-1 pl-2 pr-4 text-sm font-light hover:bg-stone-300">
+        <li className="cursor-pointer py-1 pl-2 pr-4 text-sm hover:bg-stone-300">
           <button onClick={handleRemoveMessage}>Remove</button>
         </li>
-        <li className="cursor-pointer py-1 pl-2 pr-4 text-sm font-light hover:bg-stone-300">
+        <li className="cursor-pointer py-1 pl-2 pr-4 text-sm hover:bg-stone-300">
           <button>Edit</button>
         </li>
       </ul>

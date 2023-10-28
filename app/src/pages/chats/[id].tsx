@@ -49,7 +49,7 @@ export default function ChatPage({
           <ChatHeader chatId={chat.id} chatUsers={chat.users} />
           <div
             ref={containerRef}
-            className="relative h-[85%] overflow-y-auto border-t border-black bg-stone-100 px-2 pb-8 pt-1"
+            className="relative h-full overflow-y-auto border-t border-black bg-stone-100 px-2 pb-8 pt-1"
           >
             <MessageContextMenu chatId={chat.id} parentRef={containerRef} />
             {messages && messages.length ? (
