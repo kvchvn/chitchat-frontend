@@ -1,3 +1,4 @@
+import { useAdjustContextMenuPosition } from '@/hooks';
 import {
   useMessageContextMenuActionsSelector,
   useMessageContextMenuSelector,
@@ -34,6 +35,8 @@ export function MessageContextMenu({ chatId, parentRef }: MessageContextMenuProp
     }
   };
 
+  useAdjustContextMenuPosition({ contextMenuRef, parentRef, initialCoordinates: coordinates });
+
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
@@ -54,7 +57,6 @@ export function MessageContextMenu({ chatId, parentRef }: MessageContextMenuProp
         enableScrolling(parent);
         document.body.removeEventListener('click', handleClickOutside);
       }
-      document.body.removeEventListener('click', handleClickOutside);
     };
   });
 
