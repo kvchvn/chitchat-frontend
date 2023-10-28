@@ -1,7 +1,15 @@
 import { User } from '@prisma/client';
 import { Session } from 'next-auth';
 
-export type IconId = 'chat' | 'users' | 'sign-out' | 'user' | 'close-md' | 'return' | 'basket';
+export type IconId =
+  | 'chat'
+  | 'users'
+  | 'sign-out'
+  | 'user'
+  | 'close-md'
+  | 'return'
+  | 'basket'
+  | 'paper-plane';
 
 export type Nullable<T> = T | null;
 
