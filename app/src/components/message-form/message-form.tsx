@@ -10,9 +10,10 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 type MessageFormProps = {
   chatId: string;
   userId: string;
+  lastMessageSenderId: string | undefined;
 };
 
-export function MessageForm({ chatId, userId }: MessageFormProps) {
+export function MessageForm({ chatId, userId, lastMessageSenderId }: MessageFormProps) {
   const [messageContent, setMessageContent] = useState('');
 
   const socket = useSocketSelector();
@@ -41,27 +42,40 @@ export function MessageForm({ chatId, userId }: MessageFormProps) {
         turnOffEditMode();
       } else {
         socket.emit('message:create', { chatId, senderId: userId, content: trimmedMessage });
+        // "read" last received messages
+        if (lastMessageSenderId !== userId) {
+          socket.emit('message:read', { chatId });
+        }
       }
     }
 
     setMessageContent('');
-  }, [chatId, messageContent, socket, userId, isOnEditMode, messageId, turnOffEditMode]);
+  }, [
+    chatId,
+    messageContent,
+    socket,
+    userId,
+    isOnEditMode,
+    messageId,
+    turnOffEditMode,
+    lastMessageSenderId,
+  ]);
 
   useEffect(() => {
     if (messageContent) {
       const onKeyPress = (e: KeyboardEvent) => {
-      if ((e.code === 'Enter' || e.key === 'Enter') && messageContent && !e.shiftKey) {
-        e.preventDefault();
-        handleSendMessage();
-      }
-    };
+        if ((e.code === 'Enter' || e.key === 'Enter') && messageContent && !e.shiftKey) {
+          e.preventDefault();
+          handleSendMessage();
+        }
+      };
 
       document.addEventListener('keypress', onKeyPress);
 
-    return () => {
+      return () => {
         document.removeEventListener('keypress', onKeyPress);
       };
-      }
+    }
   }, [handleSendMessage, messageContent]);
 
   useEffect(() => {
