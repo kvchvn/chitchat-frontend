@@ -4,6 +4,7 @@ export {
   useChatActionsSelector,
   useChatsSelector,
   useMessagesSelector,
+  useSelectedChatIdSelector,
 } from './selectors/chat-selectors';
 export {
   useMessageContextMenuActionsSelector,

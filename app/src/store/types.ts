@@ -15,6 +15,7 @@ export type SocketSlice = {
 
 export type ChatSlice = {
   chats: Nullable<ChatsRecord>;
+  selectedChatId: Nullable<string>;
   messages: Nullable<Message[]>;
   chatActions: {
     setSelectedChatId: (chatId: string) => void;
