@@ -3,20 +3,28 @@ import { ImmerStateCreator, MessageSlice } from '../types';
 export const messageSlice: ImmerStateCreator<MessageSlice> = (set) => ({
   contextMenu: {
     messageId: null,
+    messageSenderId: null,
     messageContent: null,
     isOpen: false,
     coordinates: null,
   },
   contextMenuActions: {
-    openContextMenu: ({ messageId, messageContent, coordinates }) =>
+    openContextMenu: ({ messageId, messageContent, messageSenderId, coordinates }) =>
       set((state) => {
-        state.contextMenu = { messageId, messageContent, isOpen: true, coordinates };
+        state.contextMenu = {
+          messageId,
+          messageContent,
+          messageSenderId,
+          isOpen: true,
+          coordinates,
+        };
       }),
     closeContextMenu: () =>
       set((state) => {
         state.contextMenu = {
           isOpen: false,
           messageId: null,
+          messageSenderId: null,
           messageContent: null,
           coordinates: null,
         };
@@ -36,6 +44,7 @@ export const messageSlice: ImmerStateCreator<MessageSlice> = (set) => ({
           isOpen: false,
           messageId: null,
           messageContent: null,
+          messageSenderId: null,
           coordinates: null,
         };
       }),
