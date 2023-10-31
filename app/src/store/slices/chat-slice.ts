@@ -8,11 +8,19 @@ export const chatSlice: ImmerStateCreator<ChatSlice> = (set) => ({
       set((state) => {
         state.messages = messages;
       }),
+    resetMessages: () =>
+      set((state) => {
+        state.messages = null;
+      }),
     setChats: (chats) =>
       set((state) => {
         state.chats = chats;
       }),
-    removeMessagesFromChat: (chatId) =>
+    resetChats: () =>
+      set((state) => {
+        state.chats = null;
+      }),
+    clearChat: (chatId) =>
       set(({ chats, messages }) => {
         if (chats && chatId in chats) {
           chats[chatId].lastMessage = undefined;

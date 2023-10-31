@@ -18,17 +18,17 @@ export default function ChatsPage({
   chats: chatsFromProps,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const chats = useChatsSelector();
-  const { setChats } = useChatActionsSelector();
-
+  const { setChats, resetChats } = useChatActionsSelector();
+  console.log('ChatsPage RENDER', chats);
   useEffect(() => {
     if (chatsFromProps) {
       setChats(chatsFromProps);
     }
 
     return () => {
-      setChats(null);
+      resetChats;
     };
-  }, [chatsFromProps, setChats]);
+  }, [chatsFromProps, setChats, resetChats]);
 
   return (
     <>

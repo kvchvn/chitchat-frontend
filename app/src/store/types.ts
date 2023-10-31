@@ -17,9 +17,13 @@ export type ChatSlice = {
   chats: Nullable<ChatsRecord>;
   messages: Nullable<Message[]>;
   chatActions: {
-    setMessages: (messages: Nullable<Message[]>) => void;
-    setChats: (chats: Nullable<ChatsRecord>) => void;
-    removeMessagesFromChat: (chatId: string) => void;
+    setSelectedChatId: (chatId: string) => void;
+    resetSelectedChatId: () => void;
+    setMessages: (messages: Message[]) => void;
+    resetMessages: () => void;
+    setChats: (chats: ChatsRecord) => void;
+    resetChats: () => void;
+    clearChat: (chatId: string) => void;
     pushMessage: (message: Message) => void;
     removeMessage: (messageId: string) => void;
     editMessage: (args: { messageId: string; content: string }) => void;
