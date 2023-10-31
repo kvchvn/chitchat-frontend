@@ -57,9 +57,10 @@ export const chatSlice: ImmerStateCreator<ChatSlice> = (set) => ({
     editMessage: ({ messageId, content }) =>
       set(({ messages }) => {
         if (messages) {
-          const message = messages.find((message) => message.id === messageId);
+          const message = messages.findLast((message) => message.id === messageId);
           if (message) {
             message.content = content;
+            message.isEdited = true;
           }
         }
       }),
@@ -71,9 +72,18 @@ export const chatSlice: ImmerStateCreator<ChatSlice> = (set) => ({
         }
       }),
     resetUnseenMessageCount: (chatId) =>
-      set(({ chats }) => {
+      set(({ chats, selectedChatId, messages }) => {
         if (chats && chatId in chats) {
           chats[chatId].unseenMessagesCount = 0;
+        }
+        if (messages && chatId === selectedChatId) {
+          for (let i = 1; i < messages.length; i++) {
+            const index = messages.length - 1 - i;
+            if (messages[index].isSeen) {
+              break;
+            }
+            messages[index].isSeen = true;
+          }
         }
       }),
   },
