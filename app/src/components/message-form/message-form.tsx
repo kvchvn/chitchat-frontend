@@ -48,30 +48,29 @@ export function MessageForm({ chatId, userId }: MessageFormProps) {
   }, [chatId, messageContent, socket, userId, isOnEditMode, messageId, turnOffEditMode]);
 
   useEffect(() => {
-    const handleKeyPress = (e: KeyboardEvent) => {
+    if (messageContent) {
+      const onKeyPress = (e: KeyboardEvent) => {
       if ((e.code === 'Enter' || e.key === 'Enter') && messageContent && !e.shiftKey) {
         e.preventDefault();
         handleSendMessage();
       }
     };
 
-    if (messageContent) {
-      document.addEventListener('keypress', handleKeyPress);
-    }
+      document.addEventListener('keypress', onKeyPress);
 
     return () => {
-      if (messageContent) {
-        document.removeEventListener('keypress', handleKeyPress);
+        document.removeEventListener('keypress', onKeyPress);
+      };
       }
-    };
   }, [handleSendMessage, messageContent]);
 
   useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.focus();
+    }
+
     if (isOnEditMode && editedMessageContent) {
       setMessageContent(editedMessageContent);
-      if (textareaRef.current) {
-        textareaRef.current.focus();
-      }
     } else {
       setMessageContent('');
     }
@@ -91,12 +90,11 @@ export function MessageForm({ chatId, userId }: MessageFormProps) {
   }, [messageContent]);
 
   return (
-    <form className="flex gap-3 border-t border-black px-2 pt-1">
+    <section className="flex gap-3 border-t border-black px-2 pt-1">
       <textarea
         ref={textareaRef}
         name="message"
         placeholder="Write your message here..."
-        autoFocus
         value={messageContent}
         maxLength={150}
         onChange={handleChange}
@@ -109,6 +107,6 @@ export function MessageForm({ chatId, userId }: MessageFormProps) {
       >
         <Icon id={isOnEditMode ? 'save' : 'paper-plane'} />
       </button>
-    </form>
+    </section>
   );
 }
