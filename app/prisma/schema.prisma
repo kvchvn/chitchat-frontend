@@ -38,15 +38,18 @@ model Message {
   chatId    String
   senderId  String
   content   String
+  createdAt DateTime @default(now())
+  isSeen    Boolean  @default(false)
+  isEdited  Boolean  @default(false)
+  isLiked   Boolean  @default(false)
   chat      Chat     @relation(fields: [chatId], references: [id])
   sender    User     @relation(fields: [senderId], references: [id])
-  createdAt DateTime @default(now())
 }
 
 model Chat {
   id       String    @id @default(cuid())
   messages Message[]
-  users    User[]
+  users    User[]    @relation("ChatToUser")
 }
 
 model User {
@@ -58,7 +61,7 @@ model User {
   accounts          Account[]
   messages          Message[]
   sessions          Session[]
-  chats             Chat[]
+  chats             Chat[]    @relation("ChatToUser")
   friends           User[]    @relation("friendship")
   friendOf          User[]    @relation("friendship")
   incomingRequests  User[]    @relation("friendship_request")
