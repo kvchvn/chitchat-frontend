@@ -17,30 +17,43 @@ export default function ChatPage({
   chat,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const messages = useMessagesSelector();
-  const { setMessages } = useChatActionsSelector();
+  const { setMessages, setSelectedChatId, resetMessages, resetSelectedChatId } =
+    useChatActionsSelector();
   const socket = useSocketSelector();
 
   const containerRef = useRef<Nullable<HTMLDivElement>>(null);
-
+  console.log('ChatPage RENDER', { chatId: chat?.id, socketId: socket?.id, messages });
   useEffect(() => {
     if (socket && chat) {
-      const lastMessage = chat.messages.at(-1);
-      if (lastMessage && lastMessage.senderId !== session.user.id) {
-        socket.emit('message:read', { chatId: chat.id });
-      }
-    }
-  }, [chat, socket, session.user.id]);
+      console.log('useEffect (lastMessage)');
 
-  useEffect(() => {
-    if (chat) {
       // initial messages array filling
       setMessages(chat.messages);
-    }
+      setSelectedChatId(chat.id);
 
-    return () => {
-      setMessages(null);
-    };
-  }, [chat, setMessages]);
+      const lastMessage = chat.messages.at(-1);
+
+      if (lastMessage && lastMessage.senderId !== session.user.id && !lastMessage.isSeen) {
+        // this request is handled to "read" all unseen messages in the chat
+        socket.emit('message:read', { chatId: chat.id });
+      }
+
+      return () => {
+        console.log('useEffect (lastMessage) return');
+        resetMessages();
+        resetSelectedChatId();
+        socket.emit('message:read', { chatId: chat.id });
+      };
+    }
+  }, [
+    chat,
+    socket,
+    session.user.id,
+    setMessages,
+    setSelectedChatId,
+    resetMessages,
+    resetSelectedChatId,
+  ]);
 
   return (
     <>
@@ -63,7 +76,11 @@ export default function ChatPage({
             )}
           </div>
           <EditedMessagePreview />
-          <MessageForm chatId={chat.id} userId={session.user.id} />
+          <MessageForm
+            chatId={chat.id}
+            userId={session.user.id}
+            lastMessageSenderId={messages?.at(-1)?.senderId}
+          />
         </section>
       )}
     </>
