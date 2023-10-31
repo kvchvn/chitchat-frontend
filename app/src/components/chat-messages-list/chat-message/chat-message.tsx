@@ -2,6 +2,7 @@ import { useMessageContextMenuActionsSelector } from '@/store';
 import { ChatRelevant } from '@/types';
 import classnames from 'classnames';
 import { useSession } from 'next-auth/react';
+import styles from './chat-message.module.css';
 
 type ChatMessageProps = {
   message: ChatRelevant['messages'][0];
@@ -15,6 +16,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
     e.preventDefault();
     openContextMenu({
       messageId: message.id,
+      messageSenderId: message.senderId,
       messageContent: message.content,
       coordinates: { x: e.clientX, y: e.clientY },
     });
@@ -28,13 +30,15 @@ export function ChatMessage({ message }: ChatMessageProps) {
     <li
       onContextMenu={handleContextMenu}
       className={classnames(
-        'w-fit max-w-[45%] cursor-default whitespace-pre-line border px-3 py-1 overflow-anywhere',
+          'relative w-fit max-w-[45%] cursor-default whitespace-pre-line border px-3 py-1 overflow-anywhere',
         {
           'self-end rounded-t-xl rounded-bl-xl border-black bg-white':
             message.senderId === session.user.id,
           'rounded-t-xl rounded-br-xl border-sky-700 bg-sky-400 text-white':
             message.senderId !== session.user.id,
-        }
+            [styles.seen]: message.senderId !== session.user.id && message.isSeen,
+            [styles['not-seen']]: message.senderId !== session.user.id && !message.isSeen,
+          }
       )}
     >
       {message.content}
