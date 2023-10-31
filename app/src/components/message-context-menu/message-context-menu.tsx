@@ -7,6 +7,7 @@ import {
 } from '@/store';
 import { Nullable } from '@/types';
 import { disableScrolling, enableScrolling } from '@/utils';
+import { useSession } from 'next-auth/react';
 import { MutableRefObject, useEffect, useRef } from 'react';
 
 type MessageContextMenuProps = {
@@ -15,10 +16,11 @@ type MessageContextMenuProps = {
 };
 
 export function MessageContextMenu({ chatId, parentRef }: MessageContextMenuProps) {
-  const { isOpen, messageId, coordinates } = useMessageContextMenuSelector();
+  const { isOpen, messageId, messageSenderId, coordinates } = useMessageContextMenuSelector();
   const { closeContextMenu } = useMessageContextMenuActionsSelector();
   const { turnOnEditMode } = useMessageEditModeActionsSelector();
   const socket = useSocketSelector();
+  const { data: session } = useSession();
 
   const contextMenuRef = useRef<Nullable<HTMLDivElement>>(null);
 
@@ -71,11 +73,13 @@ export function MessageContextMenu({ chatId, parentRef }: MessageContextMenuProp
             Remove
           </button>
         </li>
-        <li className="cursor-pointer text-sm hover:bg-stone-300">
-          <button onClick={handleEditMessage} className="w-full py-1 pl-2 pr-4 text-start">
-            Edit
-          </button>
-        </li>
+        {session && messageSenderId && session.user.id === messageSenderId ? (
+          <li className="cursor-pointer text-sm hover:bg-stone-300">
+            <button onClick={handleEditMessage} className="w-full py-1 pl-2 pr-4 text-start">
+              Edit
+            </button>
+          </li>
+        ) : null}
       </ul>
     </div>
   ) : null;
