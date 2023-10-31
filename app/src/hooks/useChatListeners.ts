@@ -1,24 +1,23 @@
 import { useChatActionsSelector } from '@/store';
-import { CustomSocket, Nullable, ServerToClientListenersArgs } from '@/types';
+import { CustomSocket, ServerToClientListenersArgs } from '@/types';
 import { logError } from '@/utils';
-import { Session } from 'next-auth';
 import { useCallback } from 'react';
 
-export const useChatListeners = ({ session }: { session?: Nullable<Session> }) => {
+export const useChatListeners = ({ userId }: { userId?: string }) => {
   const {
     pushMessage,
     incrementUnseenMessagesCount,
     resetUnseenMessageCount,
-    removeMessagesFromChat,
+    clearChat,
     removeMessage,
     editMessage,
   } = useChatActionsSelector();
 
   const onMessageCreate = useCallback(
     (message: ServerToClientListenersArgs['message:create']) => {
-      if (message && session) {
+      if (message && userId) {
         pushMessage(message);
-        if (message.senderId !== session.user.id) {
+        if (message.senderId !== userId) {
           incrementUnseenMessagesCount({
             chatId: message.chatId,
             newLastMessage: { content: message.content, senderId: message.senderId },
@@ -28,7 +27,7 @@ export const useChatListeners = ({ session }: { session?: Nullable<Session> }) =
         logError('Chat Listeners (message:create)', 'Message sending error occurred.');
       }
     },
-    [session, incrementUnseenMessagesCount, pushMessage]
+    [incrementUnseenMessagesCount, pushMessage, userId]
   );
 
   const onMessageRead = useCallback(
@@ -40,9 +39,9 @@ export const useChatListeners = ({ session }: { session?: Nullable<Session> }) =
 
   const onChatClear = useCallback(
     ({ chatId }: ServerToClientListenersArgs['chat:clear']) => {
-      removeMessagesFromChat(chatId);
+      clearChat(chatId);
     },
-    [removeMessagesFromChat]
+    [clearChat]
   );
 
   const onMessageRemove = useCallback(
