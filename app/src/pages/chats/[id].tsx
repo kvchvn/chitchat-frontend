@@ -3,7 +3,7 @@ import { ChatMessagesList } from '@/components/chat-messages-list';
 import { EditedMessagePreview } from '@/components/edited-message-preview';
 import { MessageContextMenu } from '@/components/message-context-menu';
 import { MessageForm } from '@/components/message-form';
-import { NO_MESSAGES_TEXT, ROUTES } from '@/constants';
+import { ROUTES } from '@/constants';
 import {
   useChatActionsSelector,
   useMessageActionsSelector,
@@ -72,13 +72,7 @@ export default function ChatPage({
             className="relative h-full overflow-y-auto border-t border-black bg-stone-100 px-2 pb-8 pt-1"
           >
             <MessageContextMenu chatId={chat.id} parentRef={containerRef} />
-            {messages && messages.length ? (
-              <ChatMessagesList messages={messages} />
-            ) : (
-              <div className="flex h-full items-center justify-center">
-                <p className="font-light text-stone-500">{NO_MESSAGES_TEXT}</p>
-              </div>
-            )}
+            {messages && <ChatMessagesList messages={messages} />}
           </div>
           <EditedMessagePreview />
           <MessageForm chatId={chat.id} userId={session.user.id} />
