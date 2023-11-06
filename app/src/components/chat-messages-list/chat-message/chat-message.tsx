@@ -1,6 +1,7 @@
 import { useMessageContextMenuActionsSelector, useSocketSelector } from '@/store';
 import { ChatRelevant } from '@/types';
 import { Icon } from '@/ui/icon';
+import { getTime } from '@/utils';
 import classnames from 'classnames';
 import { useSession } from 'next-auth/react';
 
@@ -66,7 +67,11 @@ export function ChatMessage({ message }: ChatMessageProps) {
           <Icon id="heart" />
         </span>
       )}
-      {message.content}
+
+      <p>{message.content}</p>
+      <p className="mt-1 text-right font-mono text-xs text-zinc-500">
+        {getTime(message.createdAt)}
+      </p>
     </li>
   );
 }
