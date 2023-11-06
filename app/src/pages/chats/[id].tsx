@@ -4,7 +4,12 @@ import { EditedMessagePreview } from '@/components/edited-message-preview';
 import { MessageContextMenu } from '@/components/message-context-menu';
 import { MessageForm } from '@/components/message-form';
 import { NO_MESSAGES_TEXT, ROUTES } from '@/constants';
-import { useChatActionsSelector, useMessagesSelector, useSocketSelector } from '@/store';
+import {
+  useChatActionsSelector,
+  useMessageActionsSelector,
+  useMessagesSelector,
+  useSocketSelector,
+} from '@/store';
 import { Nullable } from '@/types';
 import { getChatById } from '@/utils';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
@@ -17,8 +22,8 @@ export default function ChatPage({
   chat,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const messages = useMessagesSelector();
-  const { setMessages, setSelectedChatId, resetMessages, resetSelectedChatId } =
-    useChatActionsSelector();
+  const { setSelectedChatId, resetSelectedChatId } = useChatActionsSelector();
+  const { setMessages, resetMessages } = useMessageActionsSelector();
   const socket = useSocketSelector();
 
   const containerRef = useRef<Nullable<HTMLDivElement>>(null);
@@ -33,16 +38,16 @@ export default function ChatPage({
 
       const lastMessage = chat.messages.at(-1);
 
-      if (lastMessage && lastMessage.senderId !== session.user.id && !lastMessage.isSeen) {
-        // this request is handled to "read" all unseen messages in the chat
-        socket.emit('message:read', { chatId: chat.id });
+      if (lastMessage && lastMessage.senderId !== session.user.id && !lastMessage.isRead) {
+        // this request is handled to "read" all unread messages in the chat
+        socket.emit('chat:read', { chatId: chat.id });
       }
 
       return () => {
         console.log('useEffect (lastMessage) return');
         resetMessages();
         resetSelectedChatId();
-        socket.emit('message:read', { chatId: chat.id });
+        socket.emit('chat:read', { chatId: chat.id });
       };
     }
   }, [
@@ -76,11 +81,7 @@ export default function ChatPage({
             )}
           </div>
           <EditedMessagePreview />
-          <MessageForm
-            chatId={chat.id}
-            userId={session.user.id}
-            lastMessageSenderId={messages?.at(-1)?.senderId}
-          />
+          <MessageForm chatId={chat.id} userId={session.user.id} />
         </section>
       )}
     </>

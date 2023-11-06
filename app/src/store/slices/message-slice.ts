@@ -1,26 +1,41 @@
 import { ImmerStateCreator, MessageSlice } from '../types';
 
 export const messageSlice: ImmerStateCreator<MessageSlice> = (set) => ({
-  contextMenu: {
-    messageId: null,
-    messageSenderId: null,
-    messageContent: null,
-    isOpen: false,
-    coordinates: null,
-  },
-  contextMenuActions: {
-    openContextMenu: ({ messageId, messageContent, messageSenderId, coordinates }) =>
+  messages: null,
+  messageActions: {
+    setMessages: (messages) =>
       set((state) => {
-        state.contextMenu = {
-          messageId,
-          messageContent,
-          messageSenderId,
-          isOpen: true,
-          coordinates,
-        };
+        state.messages = messages;
       }),
-    closeContextMenu: () =>
+    resetMessages: () =>
       set((state) => {
+        state.messages = null;
+      }),
+    createMessage: (message) =>
+      set(({ messages }) => {
+        if (messages) {
+          console.log('createMessage - store');
+          messages.push(message);
+        }
+      }),
+    removeMessage: (messageId) =>
+      set(({ messages }) => {
+        if (messages) {
+          const messageIndex = messages.findIndex((message) => message.id === messageId);
+          if (messageIndex !== -1) {
+            messages.splice(messageIndex, 1);
+          }
+        }
+      }),
+    editMessage: ({ messageId, content }) =>
+      set(({ messages }) => {
+        if (messages) {
+          const message = messages.findLast((message) => message.id === messageId);
+          if (message) {
+            message.content = content;
+            message.isEdited = true;
+          }
+        }
         state.contextMenu = {
           isOpen: false,
           messageId: null,

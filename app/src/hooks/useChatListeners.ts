@@ -1,73 +1,33 @@
-import { useChatActionsSelector } from '@/store';
+import { useChatActionsSelector, useMessageActionsSelector } from '@/store';
 import { CustomSocket, ServerToClientListenersArgs } from '@/types';
-import { logError } from '@/utils';
 import { useCallback } from 'react';
 
-export const useChatListeners = ({ userId }: { userId?: string }) => {
-  const {
-    pushMessage,
-    incrementUnseenMessagesCount,
-    resetUnseenMessageCount,
-    clearChat,
-    removeMessage,
-    editMessage,
-  } = useChatActionsSelector();
+export const useChatListeners = () => {
+  const { resetUnreadMessageCount: resetUnreadMessageCount, clearChat } = useChatActionsSelector();
+  const { setMessages } = useMessageActionsSelector();
 
-  const onMessageCreate = useCallback(
-    (message: ServerToClientListenersArgs['message:create']) => {
-      if (message && userId) {
-        pushMessage(message);
-        if (message.senderId !== userId) {
-          incrementUnseenMessagesCount({
-            chatId: message.chatId,
-            newLastMessage: { content: message.content, senderId: message.senderId },
-          });
-        }
-      } else {
-        logError('Chat Listeners (message:create)', 'Message sending error occurred.');
-      }
+  const onReadChat = useCallback(
+    ({ chatId }: ServerToClientListenersArgs['chat:read']) => {
+      resetUnreadMessageCount(chatId);
     },
-    [incrementUnseenMessagesCount, pushMessage, userId]
+    [resetUnreadMessageCount]
   );
 
-  const onMessageRead = useCallback(
-    ({ chatId }: ServerToClientListenersArgs['message:read']) => {
-      resetUnseenMessageCount(chatId);
-    },
-    [resetUnseenMessageCount]
-  );
-
-  const onChatClear = useCallback(
+  const onClearChat = useCallback(
     ({ chatId }: ServerToClientListenersArgs['chat:clear']) => {
       clearChat(chatId);
+      setMessages([]);
     },
-    [clearChat]
+    [clearChat, setMessages]
   );
 
-  const onMessageRemove = useCallback(
-    ({ messageId }: ServerToClientListenersArgs['message:remove']) => {
-      removeMessage(messageId);
-    },
-    [removeMessage]
-  );
-
-  const onMessageEdit = useCallback(
-    ({ messageId, content }: ServerToClientListenersArgs['message:edit']) => {
-      editMessage({ messageId, content });
-    },
-    [editMessage]
-  );
-
-  const registerChatListeners = useCallback(
+  const registerListeners = useCallback(
     (socket: CustomSocket) => {
-      socket.on('message:create', onMessageCreate);
-      socket.on('message:read', onMessageRead);
-      socket.on('chat:clear', onChatClear);
-      socket.on('message:remove', onMessageRemove);
-      socket.on('message:edit', onMessageEdit);
+      socket.on('chat:read', onReadChat);
+      socket.on('chat:clear', onClearChat);
     },
-    [onMessageCreate, onMessageRead, onChatClear, onMessageRemove, onMessageEdit]
+    [onReadChat, onClearChat]
   );
 
-  return { registerChatListeners };
+  return { registerListeners };
 };

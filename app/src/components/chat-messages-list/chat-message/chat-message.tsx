@@ -1,9 +1,8 @@
-import { useMessageContextMenuActionsSelector } from '@/store';
+import { useMessageContextMenuActionsSelector, useSocketSelector } from '@/store';
 import { ChatRelevant } from '@/types';
 import { Icon } from '@/ui/icon';
 import classnames from 'classnames';
 import { useSession } from 'next-auth/react';
-import styles from './chat-message.module.css';
 
 type ChatMessageProps = {
   message: ChatRelevant['messages'][0];
@@ -12,6 +11,10 @@ type ChatMessageProps = {
 export function ChatMessage({ message }: ChatMessageProps) {
   const { data: session } = useSession();
   const { openContextMenu } = useMessageContextMenuActionsSelector();
+
+  if (!session) {
+    return null;
+  }
 
   const handleContextMenu = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -28,33 +31,29 @@ export function ChatMessage({ message }: ChatMessageProps) {
   }
 
   return (
-    <>
-      <li
-        onContextMenu={handleContextMenu}
-        className={classnames(
-          'relative w-fit max-w-[45%] cursor-default whitespace-pre-line border px-3 py-1 overflow-anywhere',
-          {
-            'self-end rounded-t-xl rounded-bl-xl border-black bg-white':
-              message.senderId === session.user.id,
-            'rounded-t-xl rounded-br-xl border-sky-700 bg-sky-400 text-white':
-              message.senderId !== session.user.id,
-            [styles.seen]: message.senderId !== session.user.id && message.isSeen,
-            [styles['not-seen']]: message.senderId !== session.user.id && !message.isSeen,
-          }
-        )}
-      >
-        {message.isEdited && (
-          <span
-            className={classnames('absolute bottom-0 block h-4 w-4 opacity-50', {
-              '-left-5': message.senderId === session.user.id,
-              '-right-5': message.senderId !== session.user.id,
-            })}
-          >
-            <Icon id="pencil" />
-          </span>
-        )}
-        {message.content}
-      </li>
-    </>
+    <li
+      onContextMenu={handleContextMenu}
+      className={classnames(
+        'relative w-fit max-w-[45%] cursor-pointer whitespace-pre-line border px-3 py-1 overflow-anywhere',
+        {
+          'self-end rounded-t-xl rounded-bl-xl border-black bg-white':
+            message.senderId === session.user.id,
+          'rounded-t-xl rounded-br-xl border-sky-700 bg-sky-400 text-white':
+            message.senderId !== session.user.id,
+        }
+      )}
+    >
+      {message.isEdited && (
+        <span
+          className={classnames('absolute bottom-0 block h-4 w-4 opacity-50', {
+            '-left-5': message.senderId === session.user.id,
+            '-right-5': message.senderId !== session.user.id,
+          })}
+        >
+          <Icon id="pencil" />
+        </span>
+      )}
+      {message.content}
+    </li>
   );
 }

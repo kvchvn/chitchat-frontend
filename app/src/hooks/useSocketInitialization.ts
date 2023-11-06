@@ -1,21 +1,25 @@
 import { useSocketActionsSelector } from '@/store';
-import { CustomSocket, Nullable } from '@/types';
-import { Session } from 'next-auth';
+import { CustomSocket } from '@/types';
 import { useEffect } from 'react';
 import { io } from 'socket.io-client';
 import { useChatListeners } from './useChatListeners';
+import { useMessageListeners } from './useMessageListeners';
 
-export const useSocketInitialization = ({ session }: { session?: Nullable<Session> }) => {
+export const useSocketInitialization = ({ userId }: { userId?: string }) => {
   const { setSocket, resetSocket } = useSocketActionsSelector();
-  const { registerChatListeners } = useChatListeners({ userId: session?.user.id });
+  const { registerListeners: registerChatListeners } = useChatListeners();
+  const { registerListeners: registerMessageListeners } = useMessageListeners({
+    userId,
+  });
 
   useEffect(() => {
-    if (session?.user.id) {
+    if (userId) {
       console.log('useSocketInitialization');
       const socketInstance: CustomSocket = io(process.env.NEXT_PUBLIC_SERVER_URL as string);
-      socketInstance.auth = { userId: session.user.id };
+      socketInstance.auth = { userId };
 
       socketInstance.on('connect', () => {
+        console.log('socket is connected');
         setSocket(socketInstance);
       });
 
@@ -24,6 +28,12 @@ export const useSocketInitialization = ({ session }: { session?: Nullable<Sessio
       });
 
       registerChatListeners(socketInstance);
+      registerMessageListeners(socketInstance);
+
+      return () => {
+        resetSocket();
+        socketInstance.disconnect();
+      };
     }
-  }, [setSocket, resetSocket, session?.user.id, registerChatListeners]);
+  }, [setSocket, resetSocket, userId, registerChatListeners, registerMessageListeners]);
 };

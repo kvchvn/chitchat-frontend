@@ -16,27 +16,32 @@ export type SocketSlice = {
 export type ChatSlice = {
   chats: Nullable<ChatsRecord>;
   selectedChatId: Nullable<string>;
-  messages: Nullable<Message[]>;
   chatActions: {
     setSelectedChatId: (chatId: string) => void;
     resetSelectedChatId: () => void;
-    setMessages: (messages: Message[]) => void;
-    resetMessages: () => void;
     setChats: (chats: ChatsRecord) => void;
     resetChats: () => void;
     clearChat: (chatId: string) => void;
-    pushMessage: (message: Message) => void;
-    removeMessage: (messageId: string) => void;
-    editMessage: (args: { messageId: string; content: string }) => void;
-    incrementUnseenMessagesCount: (args: {
+    incrementUnreadMessagesCount: (args: {
       chatId: string;
       newLastMessage: Pick<Message, 'senderId' | 'content'>;
     }) => void;
-    resetUnseenMessageCount: (chatId: string) => void;
+    resetUnreadMessageCount: (chatId: string) => void;
   };
 };
 
 export type MessageSlice = {
+  messages: Nullable<Message[]>;
+  messageActions: {
+    setMessages: (messages: Message[]) => void;
+    resetMessages: () => void;
+    createMessage: (message: Message) => void;
+    removeMessage: (messageId: string) => void;
+    editMessage: (args: { messageId: string; content: string }) => void;
+  };
+};
+
+export type MessageManagingSlice = {
   contextMenu: {
     isOpen: boolean;
     messageId: Nullable<string>;
@@ -64,4 +69,4 @@ export type MessageSlice = {
   };
 };
 
-export type Store = SocketSlice & ChatSlice & MessageSlice;
+export type Store = SocketSlice & ChatSlice & MessageSlice & MessageManagingSlice;

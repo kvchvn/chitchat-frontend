@@ -10,10 +10,9 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 type MessageFormProps = {
   chatId: string;
   userId: string;
-  lastMessageSenderId: string | undefined;
 };
 
-export function MessageForm({ chatId, userId, lastMessageSenderId }: MessageFormProps) {
+export function MessageForm({ chatId, userId }: MessageFormProps) {
   const [messageContent, setMessageContent] = useState('');
 
   const socket = useSocketSelector();
@@ -35,31 +34,18 @@ export function MessageForm({ chatId, userId, lastMessageSenderId }: MessageForm
     if (!socket) return;
 
     const trimmedMessage = messageContent.trim();
-
+    console.log('click send message');
     if (trimmedMessage) {
       if (isOnEditMode && messageId) {
         socket.emit('message:edit', { chatId, messageId, updatedContent: trimmedMessage });
         turnOffEditMode();
       } else {
         socket.emit('message:create', { chatId, senderId: userId, content: trimmedMessage });
-        // "read" last received messages
-        if (lastMessageSenderId !== userId) {
-          socket.emit('message:read', { chatId });
-        }
       }
     }
 
     setMessageContent('');
-  }, [
-    chatId,
-    messageContent,
-    socket,
-    userId,
-    isOnEditMode,
-    messageId,
-    turnOffEditMode,
-    lastMessageSenderId,
-  ]);
+  }, [chatId, messageContent, socket, userId, isOnEditMode, messageId, turnOffEditMode]);
 
   useEffect(() => {
     if (messageContent) {
