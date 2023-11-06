@@ -8,7 +8,7 @@ import {
 import { Nullable } from '@/types';
 import { disableScrolling, enableScrolling } from '@/utils';
 import { useSession } from 'next-auth/react';
-import { MutableRefObject, useEffect, useRef } from 'react';
+import { MutableRefObject, useEffect, useRef, useState } from 'react';
 
 type MessageContextMenuProps = {
   chatId: string;
@@ -16,6 +16,8 @@ type MessageContextMenuProps = {
 };
 
 export function MessageContextMenu({ chatId, parentRef }: MessageContextMenuProps) {
+  const [isCopiedText, setIsCopiedText] = useState(false);
+
   const { isOpen, message, coordinates } = useMessageContextMenuSelector();
   const { closeContextMenu } = useMessageContextMenuActionsSelector();
   const { turnOnEditMode } = useMessageEditModeActionsSelector();
@@ -23,19 +25,6 @@ export function MessageContextMenu({ chatId, parentRef }: MessageContextMenuProp
   const { data: session } = useSession();
 
   const contextMenuRef = useRef<Nullable<HTMLDivElement>>(null);
-
-  const handleRemoveMessage = () => {
-    if (socket && messageId) {
-      socket.emit('message:remove', { chatId, messageId });
-      closeContextMenu();
-    }
-  };
-
-  const handleEditMessage = () => {
-    if (socket && messageId) {
-      turnOnEditMode();
-    }
-  };
 
   useAdjustContextMenuPosition({ contextMenuRef, parentRef, initialCoordinates: coordinates });
 
@@ -50,6 +39,7 @@ export function MessageContextMenu({ chatId, parentRef }: MessageContextMenuProp
     const parent = parentRef.current;
 
     if (isOpen) {
+      setIsCopiedText(false);
       disableScrolling(parent);
       document.body.addEventListener('click', handleClickOutside);
     }
@@ -86,20 +76,25 @@ export function MessageContextMenu({ chatId, parentRef }: MessageContextMenuProp
     }
   };
 
+  const handleCopyMessageContent = async () => {
+    await navigator.clipboard.writeText(message.content);
+    setIsCopiedText(true);
+  };
+
   return isOpen ? (
     <div
       ref={contextMenuRef}
-      className="fixed z-10 rounded-xl border border-black bg-stone-200 py-2"
+      className="fixed z-10 rounded-xl border border-black bg-stone-200 py-3"
     >
-      <ul className="flex flex-col gap-1">
-        <li className="cursor-pointer text-sm hover:bg-stone-300">
-          <button onClick={handleRemoveMessage} className="w-full py-1 pl-2 pr-4 text-start">
+      <ul className="flex flex-col gap-2">
+        <li>
+          <button onClick={handleRemoveMessage} className="btn-context-menu">
             Remove
           </button>
         </li>
-        {session && messageSenderId && session.user.id === messageSenderId ? (
-          <li className="cursor-pointer text-sm hover:bg-stone-300">
-            <button onClick={handleEditMessage} className="w-full py-1 pl-2 pr-4 text-start">
+        {session.user.id === message.senderId ? (
+          <li>
+            <button onClick={handleEditMessage} className="btn-context-menu">
               Edit
             </button>
           </li>
@@ -111,6 +106,15 @@ export function MessageContextMenu({ chatId, parentRef }: MessageContextMenuProp
             </button>
           </li>
         ) : null}
+        <li>
+          <button
+            onClick={handleCopyMessageContent}
+            disabled={isCopiedText}
+            className="btn-context-menu"
+          >
+            {isCopiedText ? 'Copied' : 'Copy'}
+          </button>
+        </li>
       </ul>
     </div>
   ) : null;
