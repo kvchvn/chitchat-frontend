@@ -13,7 +13,7 @@ export function ChatItem({
   id,
   chat: {
     lastMessage,
-    unseenMessagesCount,
+    unreadMessagesCount,
     users: [friend],
   },
 }: ChatItemProps) {
@@ -43,9 +43,9 @@ export function ChatItem({
           {lastMessage ? lastMessage.content : NO_MESSAGES_TEXT}
         </p>
       </div>
-      {unseenMessagesCount && lastMessage && lastMessage.senderId !== session.user.id ? (
+      {unreadMessagesCount && lastMessage && lastMessage.senderId !== session.user.id ? (
         <span className="my-auto ml-auto h-9 w-9 rounded-full bg-blue-400 text-center leading-9 text-white">
-          {unseenMessagesCount <= 9 ? unseenMessagesCount : '9+'}
+          {unreadMessagesCount <= 9 ? unreadMessagesCount : '9+'}
         </span>
       ) : null}
     </li>
