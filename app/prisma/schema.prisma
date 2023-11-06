@@ -39,9 +39,9 @@ model Message {
   senderId  String
   content   String
   createdAt DateTime @default(now())
-  isSeen    Boolean  @default(false)
   isEdited  Boolean  @default(false)
   isLiked   Boolean  @default(false)
+  isRead    Boolean  @default(false)
   chat      Chat     @relation(fields: [chatId], references: [id])
   sender    User     @relation(fields: [senderId], references: [id])
 }
