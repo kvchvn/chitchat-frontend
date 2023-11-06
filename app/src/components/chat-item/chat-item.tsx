@@ -30,16 +30,16 @@ export function ChatItem({
 
   return (
     <li onClick={handleClick} className="h-22 flex gap-3 border-t p-2 hover:cursor-pointer">
-      <div className="relative h-12 w-12">
+      <div className="relative h-12 w-12 shrink-0">
         <UserAvatar
           username={friend.name}
           src={friend.image}
           className="rounded-full border-2 border-gray-600"
         />
       </div>
-      <div className="flex h-full flex-col">
+      <div className="flex h-full max-w-[70%] flex-col">
         <p>{friend.name ?? DEFAULT_USERNAME}</p>
-        <p className="text-sm text-gray-500">
+        <p className="truncate text-sm text-gray-500">
           {lastMessage ? lastMessage.content : NO_MESSAGES_TEXT}
         </p>
       </div>
