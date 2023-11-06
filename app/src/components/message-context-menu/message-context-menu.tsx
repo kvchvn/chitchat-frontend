@@ -16,7 +16,7 @@ type MessageContextMenuProps = {
 };
 
 export function MessageContextMenu({ chatId, parentRef }: MessageContextMenuProps) {
-  const { isOpen, messageId, messageSenderId, coordinates } = useMessageContextMenuSelector();
+  const { isOpen, message, coordinates } = useMessageContextMenuSelector();
   const { closeContextMenu } = useMessageContextMenuActionsSelector();
   const { turnOnEditMode } = useMessageEditModeActionsSelector();
   const socket = useSocketSelector();
@@ -60,7 +60,31 @@ export function MessageContextMenu({ chatId, parentRef }: MessageContextMenuProp
         document.body.removeEventListener('click', handleClickOutside);
       }
     };
-  });
+  }, [closeContextMenu, isOpen, parentRef]);
+
+  if (!session || !socket || !message) {
+    return null;
+  }
+
+  const handleRemoveMessage = () => {
+    socket.emit('message:remove', { chatId, messageId: message.id });
+    closeContextMenu();
+  };
+
+  const handleEditMessage = () => {
+    turnOnEditMode();
+  };
+
+  const handleReactToMessage = () => {
+    if (session.user.id !== message.senderId) {
+      socket.emit('message:react', {
+        chatId: message.chatId,
+        messageId: message.id,
+        reactions: { isLiked: !message.isLiked },
+      });
+      closeContextMenu();
+    }
+  };
 
   return isOpen ? (
     <div
@@ -77,6 +101,13 @@ export function MessageContextMenu({ chatId, parentRef }: MessageContextMenuProp
           <li className="cursor-pointer text-sm hover:bg-stone-300">
             <button onClick={handleEditMessage} className="w-full py-1 pl-2 pr-4 text-start">
               Edit
+            </button>
+          </li>
+        ) : null}
+        {session.user.id !== message.senderId ? (
+          <li>
+            <button onClick={handleReactToMessage} className="btn-context-menu">
+              {message.isLiked ? 'Unlike' : 'Like'}
             </button>
           </li>
         ) : null}

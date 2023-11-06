@@ -45,18 +45,11 @@ export type MessageSlice = {
 export type MessageManagingSlice = {
   contextMenu: {
     isOpen: boolean;
-    messageId: Nullable<string>;
-    messageSenderId: Nullable<string>;
-    messageContent: Nullable<string>;
+    message: Nullable<Message>;
     coordinates: Nullable<{ x: number; y: number }>;
   };
   contextMenuActions: {
-    openContextMenu: (args: {
-      messageId: string;
-      messageSenderId: string;
-      messageContent: string;
-      coordinates: { x: number; y: number };
-    }) => void;
+    openContextMenu: (args: { message: Message; coordinates: { x: number; y: number } }) => void;
     closeContextMenu: () => void;
   };
   editMode: {

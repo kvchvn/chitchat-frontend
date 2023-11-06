@@ -2,19 +2,15 @@ import { ImmerStateCreator, MessageManagingSlice } from '../types';
 
 export const messageManagingSlice: ImmerStateCreator<MessageManagingSlice> = (set) => ({
   contextMenu: {
-    messageId: null,
-    messageSenderId: null,
-    messageContent: null,
     isOpen: false,
+    message: null,
     coordinates: null,
   },
   contextMenuActions: {
-    openContextMenu: ({ messageId, messageContent, messageSenderId, coordinates }) =>
+    openContextMenu: ({ message, coordinates }) =>
       set((state) => {
         state.contextMenu = {
-          messageId,
-          messageContent,
-          messageSenderId,
+          message,
           isOpen: true,
           coordinates,
         };
@@ -23,9 +19,7 @@ export const messageManagingSlice: ImmerStateCreator<MessageManagingSlice> = (se
       set((state) => {
         state.contextMenu = {
           isOpen: false,
-          messageId: null,
-          messageSenderId: null,
-          messageContent: null,
+          message: null,
           coordinates: null,
         };
       }),
@@ -38,15 +32,15 @@ export const messageManagingSlice: ImmerStateCreator<MessageManagingSlice> = (se
   editModeActions: {
     turnOnEditMode: () =>
       set((state) => {
-        const { messageId, messageContent } = state.contextMenu;
-        state.editMode = { isOn: true, messageId, messageContent };
-        state.contextMenu = {
-          isOpen: false,
-          messageId: null,
-          messageContent: null,
-          messageSenderId: null,
-          coordinates: null,
-        };
+        const { message } = state.contextMenu;
+        if (message) {
+          state.editMode = { isOn: true, messageId: message.id, messageContent: message.content };
+          state.contextMenu = {
+            isOpen: false,
+            message: null,
+            coordinates: null,
+          };
+        }
       }),
     turnOffEditMode: () =>
       set((state) => {
