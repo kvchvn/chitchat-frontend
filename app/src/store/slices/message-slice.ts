@@ -36,36 +36,15 @@ export const messageSlice: ImmerStateCreator<MessageSlice> = (set) => ({
             message.isEdited = true;
           }
         }
-        state.contextMenu = {
-          isOpen: false,
-          messageId: null,
-          messageSenderId: null,
-          messageContent: null,
-          coordinates: null,
-        };
       }),
-  },
-  editMode: {
-    isOn: false,
-    messageId: null,
-    messageContent: null,
-  },
-  editModeActions: {
-    turnOnEditMode: () =>
-      set((state) => {
-        const { messageId, messageContent } = state.contextMenu;
-        state.editMode = { isOn: true, messageId, messageContent };
-        state.contextMenu = {
-          isOpen: false,
-          messageId: null,
-          messageContent: null,
-          messageSenderId: null,
-          coordinates: null,
-        };
-      }),
-    turnOffEditMode: () =>
-      set((state) => {
-        state.editMode = { isOn: false, messageId: null, messageContent: null };
+    reactToMessage: ({ messageId, reactions }) =>
+      set(({ messages }) => {
+        if (messages) {
+          const message = messages.findLast((message) => message.id === messageId);
+          if (message) {
+            Object.assign(message, reactions);
+          }
+        }
       }),
   },
 });

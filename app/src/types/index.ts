@@ -5,6 +5,7 @@ export type {
   ClientToServerEvents,
   ClientToServerListenersArgs,
   CustomSocket,
+  Reactions,
   ServerToClientEvents,
   ServerToClientListenersArgs,
 } from './socket';

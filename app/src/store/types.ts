@@ -1,4 +1,4 @@
-import { ChatsRecord, CustomSocket, Nullable } from '@/types';
+import { ChatsRecord, CustomSocket, Nullable, Reactions } from '@/types';
 import { Message } from '@prisma/client';
 import { Socket } from 'socket.io-client';
 import { StateCreator } from 'zustand';
@@ -38,6 +38,7 @@ export type MessageSlice = {
     createMessage: (message: Message) => void;
     removeMessage: (messageId: string) => void;
     editMessage: (args: { messageId: string; content: string }) => void;
+    reactToMessage: (args: { messageId: string; reactions: Reactions }) => void;
   };
 };
 

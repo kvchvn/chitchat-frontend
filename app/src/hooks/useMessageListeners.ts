@@ -38,12 +38,19 @@ export const useMessageListeners = ({ userId }: { userId?: string }) => {
     [editMessage]
   );
 
+  const onReactToMessage = useCallback(
+    ({ messageId, reactions }: ServerToClientListenersArgs['message:react']) => {
+      reactToMessage({ messageId, reactions });
+    },
+    [reactToMessage]
+  );
 
   const registerListeners = useCallback(
     (socket: CustomSocket) => {
       socket.on('message:create', onCreateMessage);
       socket.on('message:edit', onEditMessage);
       socket.on('message:remove', onRemoveMessage);
+      socket.on('message:react', onReactToMessage);
     },
     [onCreateMessage, onEditMessage, onRemoveMessage, onReactToMessage]
   );

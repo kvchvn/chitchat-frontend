@@ -11,6 +11,7 @@ type ChatMessageProps = {
 export function ChatMessage({ message }: ChatMessageProps) {
   const { data: session } = useSession();
   const { openContextMenu } = useMessageContextMenuActionsSelector();
+  const socket = useSocketSelector();
 
   if (!session) {
     return null;
@@ -26,13 +27,20 @@ export function ChatMessage({ message }: ChatMessageProps) {
     });
   };
 
-  if (!session) {
-    return null;
-  }
+  const handleDoubleClick = () => {
+    if (socket && session.user.id !== message.senderId) {
+      socket.emit('message:react', {
+        chatId: message.chatId,
+        messageId: message.id,
+        reactions: { isLiked: !message.isLiked },
+      });
+    }
+  };
 
   return (
     <li
       onContextMenu={handleContextMenu}
+      onDoubleClick={handleDoubleClick}
       className={classnames(
         'relative w-fit max-w-[45%] cursor-pointer whitespace-pre-line border px-3 py-1 overflow-anywhere',
         {
@@ -51,6 +59,16 @@ export function ChatMessage({ message }: ChatMessageProps) {
           })}
         >
           <Icon id="pencil" />
+        </span>
+      )}
+      {message.isLiked && (
+        <span
+          className={classnames('absolute -bottom-2 block h-5 w-5', {
+            '-left-2': message.senderId === session.user.id,
+            '-right-2': message.senderId !== session.user.id,
+          })}
+        >
+          <Icon id="heart" />
         </span>
       )}
       {message.content}
