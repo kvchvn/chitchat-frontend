@@ -102,7 +102,7 @@ export function MessageForm({ chatId, userId }: MessageFormProps) {
       />
       <button
         onClick={handleSendMessage}
-        disabled={!messageContent}
+        disabled={!messageContent || (isOnEditMode && messageContent == editedMessageContent)}
         className="h-10 w-10 cursor-pointer self-end rounded-full border-2 border-black p-1 hover:bg-emerald-300 disabled:cursor-not-allowed disabled:bg-gray-200"
       >
         <Icon id={isOnEditMode ? 'save' : 'paper-plane'} />
