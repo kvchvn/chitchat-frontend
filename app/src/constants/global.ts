@@ -31,3 +31,18 @@ export const API_ENDPOINTS = {
       `${API_ENDPOINTS_BASES.chat}/${chatId}?senderId=${senderId}`,
   },
 } as const;
+
+export const MONTHS = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+];
