@@ -9,11 +9,11 @@ import { SidebarItem } from './sidebar-item';
 import { UserInfo } from './user-info';
 
 type SidebarProps = {
+  socket: Nullable<CustomSocket>;
   session?: Nullable<Session>;
 };
 
-export function Sidebar({ session }: SidebarProps) {
-  //const socket = useSocketSelector();
+export function Sidebar({ session, socket }: SidebarProps) {
   const [isShowUserInfo, setIsShowUserInfo] = useState(false);
   const pathname = usePathname();
 

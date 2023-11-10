@@ -3,11 +3,12 @@ import { Session } from 'next-auth';
 import { signOut } from 'next-auth/react';
 
 type UserInfoProps = {
-  closeModal: () => void;
   session: Session;
+  socket: Nullable<CustomSocket>;
+  closeModal: () => void;
 };
 
-export function UserInfo({ session, closeModal }: UserInfoProps) {
+export function UserInfo({ session, socket, closeModal }: UserInfoProps) {
   const handleClick = () => {
     signOut();
   };

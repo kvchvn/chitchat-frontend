@@ -1,17 +1,18 @@
-import { Nullable } from '@/types';
+import { CustomSocket, Nullable } from '@/types';
 import { Session } from 'next-auth';
+import { PropsWithChildren } from 'react';
 import { Sidebar } from './sidebar';
 
-type RootLayoutProps = {
-  children: React.ReactNode;
+type RootLayoutProps = PropsWithChildren & {
+  socket: Nullable<CustomSocket>;
   session?: Nullable<Session>;
 };
 
-export function RootLayout({ children, session }: RootLayoutProps) {
+export function RootLayout({ children, session, socket }: RootLayoutProps) {
   return (
     <>
       <main className="flex h-full">
-        <Sidebar session={session} />
+        <Sidebar socket={socket} session={session} />
         <div className="w-full px-10 py-5">{children}</div>
       </main>
     </>
