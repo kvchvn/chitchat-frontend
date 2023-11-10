@@ -1,7 +1,8 @@
 import { ROUTES } from '@/constants';
-import { Nullable } from '@/types';
+import { CustomSocket, Nullable } from '@/types';
 import { Icon } from '@/ui/icon';
 import { UserAvatar } from '@/ui/user-avatar';
+import classNames from 'classnames';
 import { Session } from 'next-auth';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
@@ -45,7 +46,18 @@ export function Sidebar({ session, socket }: SidebarProps) {
               username={session.user.name}
               className="cursor-pointer rounded-full border-2 border-black"
             />
-            {isShowUserInfo && <UserInfo closeModal={closeModal} session={session} />}
+            <span
+              className={classNames(
+                'absolute bottom-0 right-0 block h-3 w-3 rounded-full border-2 border-black',
+                {
+                  'bg-green-600': socket,
+                  'bg-red-700': !socket,
+                }
+              )}
+            />
+            {isShowUserInfo && (
+              <UserInfo closeModal={closeModal} session={session} socket={socket} />
+            )}
           </div>
         </SidebarItem>
       </ul>
