@@ -36,7 +36,7 @@ export default function ChatPage({
       setMessages(chat.messages);
       setSelectedChatId(chat.id);
 
-      const lastMessage = chat.messages.at(-1);
+      const lastMessage = Object.values(chat.messages).at(-1)?.at(-1);
 
       if (lastMessage && lastMessage.senderId !== session.user.id && !lastMessage.isRead) {
         // this request is handled to "read" all unread messages in the chat
@@ -69,7 +69,7 @@ export default function ChatPage({
           <ChatHeader chatId={chat.id} chatUsers={chat.users} />
           <div
             ref={containerRef}
-            className="relative h-full overflow-y-auto border-t border-black bg-stone-100 px-2 pb-8 pt-1"
+            className="relative flex h-full flex-col gap-2 overflow-y-auto border-t border-black bg-stone-100 px-2 pb-8 pt-1"
           >
             <MessageContextMenu chatId={chat.id} parentRef={containerRef} />
             {messages && <ChatMessagesList messages={messages} />}

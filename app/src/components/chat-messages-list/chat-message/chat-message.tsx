@@ -1,12 +1,12 @@
 import { useMessageContextMenuActionsSelector, useSocketSelector } from '@/store';
-import { ChatRelevant } from '@/types';
 import { Icon } from '@/ui/icon';
 import { getTime } from '@/utils';
+import { Message } from '@prisma/client';
 import classnames from 'classnames';
 import { useSession } from 'next-auth/react';
 
 type ChatMessageProps = {
-  message: ChatRelevant['messages'][0];
+  message: Message;
 };
 
 export function ChatMessage({ message }: ChatMessageProps) {
