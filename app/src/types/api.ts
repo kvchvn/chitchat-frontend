@@ -15,7 +15,9 @@ export type Users = {
   outcomingRequests: Nullable<UserRelevant[]>;
 };
 
-export type ChatRelevant = Chat & { messages: Message[] } & { users: UserRelevant[] };
+export type ChatRelevant = Chat & { messages: Record<string, Message[]> } & {
+  users: UserRelevant[];
+};
 
 export type ChatsRecord = Record<
   string,
