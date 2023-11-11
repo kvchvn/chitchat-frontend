@@ -2,6 +2,6 @@ import { useMergedStore } from '..';
 
 export const useChatsSelector = () => useMergedStore((state) => state.chats);
 
-export const useSelectedChatIdSelector = () => useMergedStore((state) => state.selectedChatId);
+export const useSelectedChatSelector = () => useMergedStore((state) => state.selectedChat);
 
 export const useChatActionsSelector = () => useMergedStore((state) => state.chatActions);

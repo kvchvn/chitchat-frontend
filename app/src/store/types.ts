@@ -15,16 +15,16 @@ export type SocketSlice = {
 
 export type ChatSlice = {
   chats: Nullable<ChatsRecord>;
-  selectedChatId: Nullable<string>;
+  selectedChat: Nullable<{ chatId: string; isDisabled: boolean }>;
   chatActions: {
-    setSelectedChatId: (chatId: string) => void;
-    resetSelectedChatId: () => void;
+    setSelectedChat: (args: { chatId: string; isDisabled: boolean }) => void;
+    resetSelectedChat: () => void;
     setChats: (chats: ChatsRecord) => void;
     resetChats: () => void;
     clearChat: (chatId: string) => void;
     incrementUnreadMessagesCount: (args: {
       chatId: string;
-      newLastMessage: Pick<Message, 'senderId' | 'content'>;
+      newLastMessage: Pick<Message, 'senderId' | 'content' | 'createdAt'>;
     }) => void;
     resetUnreadMessageCount: (chatId: string) => void;
   };

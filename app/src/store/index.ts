@@ -3,7 +3,7 @@ export { useMergedStore } from './store';
 export {
   useChatActionsSelector,
   useChatsSelector,
-  useSelectedChatIdSelector,
+  useSelectedChatSelector,
 } from './selectors/chat-selectors';
 export {
   useMessageContextMenuActionsSelector,

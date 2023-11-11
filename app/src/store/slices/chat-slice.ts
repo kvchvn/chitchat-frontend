@@ -3,15 +3,15 @@ import { ChatSlice, ImmerStateCreator } from '../types';
 export const chatSlice: ImmerStateCreator<ChatSlice> = (set) => ({
   messages: null,
   chats: null,
-  selectedChatId: null,
+  selectedChat: null,
   chatActions: {
-    setSelectedChatId: (chatId) =>
+    setSelectedChat: ({ chatId, isDisabled }) =>
       set((state) => {
-        state.selectedChatId = chatId;
+        state.selectedChat = { chatId, isDisabled };
       }),
-    resetSelectedChatId: () =>
+    resetSelectedChat: () =>
       set((state) => {
-        state.selectedChatId = null;
+        state.selectedChat = null;
       }),
     setChats: (chats) =>
       set((state) => {
