@@ -28,7 +28,7 @@ export function ChatMessagesList({ messages }: ChatMessagesListProps) {
     <>
       {Object.entries(messages).map(([date, messagesOfDate]) =>
         messagesOfDate.length ? (
-          <div key={date} className="flex flex-col gap-2">
+          <div key={date} className="mt-auto flex flex-col gap-2">
             <p className="mx-auto w-fit rounded-xl bg-indigo-100 px-3 py-1 font-mono text-xs text-gray-600">
               {getDateWithMonthName(date)}
             </p>
