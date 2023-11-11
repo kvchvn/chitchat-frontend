@@ -8,9 +8,11 @@ import {
   useChatActionsSelector,
   useMessageActionsSelector,
   useMessagesSelector,
+  useSelectedChatSelector,
   useSocketSelector,
 } from '@/store';
 import { Nullable } from '@/types';
+import { Icon } from '@/ui/icon';
 import { getChatById } from '@/utils';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { getServerSession } from 'next-auth';
@@ -22,8 +24,9 @@ export default function ChatPage({
   chat,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const messages = useMessagesSelector();
-  const { setSelectedChatId, resetSelectedChatId } = useChatActionsSelector();
+  const { setSelectedChat, resetSelectedChat } = useChatActionsSelector();
   const { setMessages, resetMessages } = useMessageActionsSelector();
+  const selectedChat = useSelectedChatSelector();
   const socket = useSocketSelector();
 
   const containerRef = useRef<Nullable<HTMLDivElement>>(null);
@@ -34,7 +37,7 @@ export default function ChatPage({
 
       // initial messages array filling
       setMessages(chat.messages);
-      setSelectedChatId(chat.id);
+      setSelectedChat({ chatId: chat.id, isDisabled: chat.isDisabled });
 
       const lastMessage = Object.values(chat.messages).at(-1)?.at(-1);
 
@@ -46,7 +49,7 @@ export default function ChatPage({
       return () => {
         console.log('useEffect (lastMessage) return');
         resetMessages();
-        resetSelectedChatId();
+        resetSelectedChat();
         socket.emit('chat:read', { chatId: chat.id });
       };
     }
@@ -55,9 +58,9 @@ export default function ChatPage({
     socket,
     session.user.id,
     setMessages,
-    setSelectedChatId,
+    setSelectedChat,
     resetMessages,
-    resetSelectedChatId,
+    resetSelectedChat,
   ]);
 
   return (
@@ -75,7 +78,18 @@ export default function ChatPage({
             {messages && <ChatMessagesList messages={messages} />}
           </div>
           <EditedMessagePreview />
-          <MessageForm chatId={chat.id} userId={session.user.id} />
+          {selectedChat?.isDisabled ? (
+            <div className="flex items-center gap-2 bg-rose-100 p-1">
+              <span className="h-6 w-6">
+                <Icon id="warning" />
+              </span>
+              <p className="text-sm text-rose-800">
+                You should add to friends the user to send messages.
+              </p>
+            </div>
+          ) : (
+            <MessageForm chatId={chat.id} userId={session.user.id} />
+          )}
         </section>
       )}
     </>
