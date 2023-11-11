@@ -3,8 +3,8 @@ import { Message } from '@prisma/client';
 
 export const getTime = (date: Message['createdAt'] | string) => {
   const dateObj = new Date(date);
-  const hours = dateObj.getHours();
-  const minutes = dateObj.getMinutes();
+  const hours = String(dateObj.getHours()).padStart(2, '0');
+  const minutes = String(dateObj.getMinutes()).padStart(2, '0');
 
   return `${hours}:${minutes}`;
 };
