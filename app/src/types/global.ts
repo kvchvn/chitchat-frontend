@@ -12,7 +12,8 @@ export type IconId =
   | 'paper-plane'
   | 'pencil'
   | 'save'
-  | 'heart';
+  | 'heart'
+  | 'warning';
 
 export type Nullable<T> = T | null;
 
