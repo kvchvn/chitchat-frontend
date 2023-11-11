@@ -42,7 +42,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
         {
           'ml-auto self-end rounded-t-xl rounded-bl-xl border-black bg-white':
             message.senderId === session.user.id,
-          'rounded-t-xl rounded-br-xl border-sky-700 bg-sky-300 text-white':
+          'rounded-t-xl rounded-br-xl border-cyan-800 bg-cyan-500 text-white':
             message.senderId !== session.user.id,
         }
       )}
