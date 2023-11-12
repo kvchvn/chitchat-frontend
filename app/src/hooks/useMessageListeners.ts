@@ -14,7 +14,11 @@ export const useMessageListeners = ({ userId }: { userId?: string }) => {
         if (message.senderId !== userId) {
           incrementUnreadMessagesCount({
             chatId: message.chatId,
-            newLastMessage: { content: message.content, senderId: message.senderId },
+            newLastMessage: {
+              content: message.content,
+              senderId: message.senderId,
+              createdAt: message.createdAt,
+            },
           });
         }
       } else {
