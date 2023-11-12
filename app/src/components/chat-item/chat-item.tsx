@@ -20,21 +20,21 @@ export function ChatItem({
     users: [friend],
   },
 }: ChatItemProps) {
-  const router = useRouter();
   const { data: session } = useSession();
-
-  const handleClick = () => {
-    router.push(ROUTES.chat(id));
-  };
+  const router = useRouter();
 
   if (!session) {
     return null;
   }
 
+  const handleClick = () => {
+    router.push(ROUTES.chat(id));
+  };
+
   return (
     <li
       onClick={handleClick}
-      className="h-22 flex gap-3 border-t p-2 last-of-type:border-b hover:cursor-pointer hover:bg-stone-100"
+      className="flex h-16 items-center gap-3 border-t last-of-type:border-b hover:cursor-pointer hover:bg-stone-100"
     >
       <div className="relative h-12 w-12 shrink-0">
         <UserAvatar
@@ -45,7 +45,7 @@ export function ChatItem({
           })}
         />
       </div>
-      <div className="flex h-full max-w-[70%] flex-col">
+      <div className="flex max-w-[70%] flex-col">
         <p>{friend.name ?? DEFAULT_USERNAME}</p>
         <p className="truncate text-sm text-gray-600">
           {lastMessage ? (
