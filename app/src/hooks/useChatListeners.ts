@@ -16,7 +16,7 @@ export const useChatListeners = () => {
   const onClearChat = useCallback(
     ({ chatId }: ServerToClientListenersArgs['chat:clear']) => {
       clearChat(chatId);
-      setMessages([]);
+      setMessages({});
     },
     [clearChat, setMessages]
   );
