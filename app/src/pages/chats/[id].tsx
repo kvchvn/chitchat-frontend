@@ -33,35 +33,26 @@ export default function ChatPage({
   console.log('ChatPage RENDER', { chatId: chat?.id, socketId: socket?.id, messages });
   useEffect(() => {
     if (socket && chat) {
-      console.log('useEffect (lastMessage)');
-
       // initial messages array filling
       setMessages(chat.messages);
       setSelectedChat({ chatId: chat.id, isDisabled: chat.isDisabled });
 
-      const lastMessage = Object.values(chat.messages).at(-1)?.at(-1);
-
-      if (lastMessage && lastMessage.senderId !== session.user.id && !lastMessage.isRead) {
-        // this request is handled to "read" all unread messages in the chat
-        socket.emit('chat:read', { chatId: chat.id });
-      }
-
       return () => {
-        console.log('useEffect (lastMessage) return');
         resetMessages();
         resetSelectedChat();
-        socket.emit('chat:read', { chatId: chat.id });
       };
     }
-  }, [
-    chat,
-    socket,
-    session.user.id,
-    setMessages,
-    setSelectedChat,
-    resetMessages,
-    resetSelectedChat,
-  ]);
+  }, [chat, socket, setMessages, setSelectedChat, resetMessages, resetSelectedChat]);
+
+  useEffect(() => {
+    if (messages && socket && chat) {
+      const lastMessage = Object.values(messages).at(-1)?.at(-1);
+
+      if (lastMessage && lastMessage.senderId !== session.user.id && !lastMessage.isRead) {
+        socket.emit('chat:read', { chatId: chat.id });
+      }
+    }
+  }, [socket, chat, messages, session.user.id]);
 
   return (
     <>
@@ -79,11 +70,11 @@ export default function ChatPage({
           </div>
           <EditedMessagePreview />
           {selectedChat?.isDisabled ? (
-            <div className="flex items-center gap-2 bg-rose-100 p-1">
+            <div className="flex items-center gap-2 bg-red-100 p-1">
               <span className="h-6 w-6">
                 <Icon id="warning" />
               </span>
-              <p className="text-sm text-rose-800">
+              <p className="text-sm text-red-900">
                 You should add to friends the user to send messages.
               </p>
             </div>
