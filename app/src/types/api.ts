@@ -1,5 +1,5 @@
 import { Chat, Message } from '@prisma/client';
-import { Nullable, UserCounts, UserRelevant } from '.';
+import { Nullable, UserRelevant } from '.';
 
 export type ErrorResponse = {
   ok: false;
@@ -8,11 +8,10 @@ export type ErrorResponse = {
   issues?: string[];
 };
 
+type UserKeys = 'allUsers' | 'friends' | 'incomingRequests' | 'outcomingRequests';
+
 export type Users = {
-  allUsersExceptOneself: Nullable<(UserRelevant & { _count: UserCounts })[]>;
-  friends: Nullable<UserRelevant[]>;
-  incomingRequests: Nullable<UserRelevant[]>;
-  outcomingRequests: Nullable<UserRelevant[]>;
+  [Property in UserKeys]: Nullable<UserRelevant[]>;
 };
 
 export type ChatRelevant = Chat & { messages: Record<string, Message[]> } & {
