@@ -1,14 +1,14 @@
-import UsersList from '@/components/users-list';
+import { UsersList } from '@/components/users-list';
 import { API_ENDPOINTS, ROUTES } from '@/constants';
 import { customKy } from '@/ky';
-import { GetUsersResponse } from '@/types';
+import { Users } from '@/types';
 import { logError } from '@/utils';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { Session, getServerSession } from 'next-auth';
 import { useRouter } from 'next/router';
 import { authOptions } from './api/auth/[...nextauth]';
 
-export default function SearchPage({
+export default function PeoplePage({
   allUsersExceptOneself,
   friends,
   incomingRequests,
@@ -22,7 +22,7 @@ export default function SearchPage({
 
   return (
     <>
-      <h2 className="text-2xl font-semibold">Search</h2>
+      <h2 className="text-2xl font-semibold">People</h2>
       <button
         onClick={refreshPage}
         className="mt-2 rounded-2xl border-2 border-black bg-gray-400 px-4 py-1 font-semibold hover:bg-gray-700 hover:text-white"
@@ -66,7 +66,7 @@ export const getServerSideProps = (async (ctx) => {
 
   const props: {
     session: Session;
-  } & GetUsersResponse = {
+  } & Users = {
     session,
     allUsersExceptOneself: null,
     friends: null,
@@ -75,16 +75,11 @@ export const getServerSideProps = (async (ctx) => {
   };
 
   try {
-    const users: GetUsersResponse = await customKy
-      .get(`${API_ENDPOINTS.users.base}/${session.user.id}`)
-      .json();
+    const users: Users = await customKy.get(API_ENDPOINTS.user.getAll(session.user.id)).json();
 
-    props.allUsersExceptOneself = users.allUsersExceptOneself;
-    props.friends = users.friends;
-    props.incomingRequests = users.incomingRequests;
-    props.outcomingRequests = users.outcomingRequests;
+    Object.assign(props, users);
   } catch (err) {
-    logError('Search Page (getServerSideProps)', err);
+    logError('People Page (getServerSideProps)', err);
   }
   return { props };
-}) satisfies GetServerSideProps<{ session: Session } & GetUsersResponse>;
+}) satisfies GetServerSideProps;

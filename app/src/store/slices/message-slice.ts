@@ -1,0 +1,69 @@
+import { getDateAsKey } from '@/utils';
+import { ImmerStateCreator, MessageSlice } from '../types';
+
+export const messageSlice: ImmerStateCreator<MessageSlice> = (set) => ({
+  messages: null,
+  messageActions: {
+    setMessages: (messages) =>
+      set((state) => {
+        state.messages = messages;
+      }),
+    resetMessages: () =>
+      set((state) => {
+        state.messages = null;
+      }),
+    createMessage: (message) =>
+      set(({ messages }) => {
+        if (messages) {
+          const key = getDateAsKey(message.createdAt);
+          if (key in messages) {
+            messages[key].push(message);
+          } else {
+            messages[key] = [message];
+          }
+        }
+      }),
+    removeMessage: (messageId) =>
+      set(({ messages }) => {
+        if (messages) {
+          for (const [key, nestedMessages] of Object.entries(messages).toReversed()) {
+            const messageIndex = nestedMessages.findLastIndex(
+              (message) => message.id === messageId
+            );
+
+            if (messageIndex !== -1) {
+              messages[key].splice(messageIndex, 1);
+              break;
+            }
+          }
+        }
+      }),
+    editMessage: ({ messageId, content }) =>
+      set(({ messages }) => {
+        if (messages) {
+          for (const nestedMessages of Object.values(messages).toReversed()) {
+            const message = nestedMessages.findLast((message) => message.id === messageId);
+
+            if (message) {
+              message.content = content;
+              message.isEdited = true;
+              break;
+            }
+          }
+        }
+      }),
+    reactToMessage: ({ messageId, reactions }) =>
+      set(({ messages }) => {
+        if (messages) {
+          for (const nestedMessages of Object.values(messages).toReversed()) {
+            const message = nestedMessages.findLast((message) => message.id === messageId);
+
+            if (message) {
+              Object.assign(message, reactions);
+              break;
+            }
+          }
+        }
+      }),
+  },
+});

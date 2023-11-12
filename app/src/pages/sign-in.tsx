@@ -1,15 +1,15 @@
 import { ROUTES } from '@/constants';
-import { GetServerSideProps } from 'next';
+import { useSocketDisconnection } from '@/hooks';
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { getServerSession } from 'next-auth';
-import { BuiltInProviderType } from 'next-auth/providers/index';
-import { ClientSafeProvider, LiteralUnion, getProviders, signIn } from 'next-auth/react';
+import { getProviders, signIn } from 'next-auth/react';
 import { authOptions } from './api/auth/[...nextauth]';
 
-type ProfilePageProps = {
-  providers: Record<LiteralUnion<BuiltInProviderType, string>, ClientSafeProvider> | null;
-};
+export default function SignInPage({
+  providers,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  useSocketDisconnection();
 
-export default function SignInPage({ providers }: ProfilePageProps) {
   return (
     <>
       <h2 className="text-2xl font-semibold">Please, Sign In to use our app!</h2>
@@ -30,7 +30,7 @@ export default function SignInPage({ providers }: ProfilePageProps) {
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
+export const getServerSideProps = (async (ctx) => {
   const session = await getServerSession(ctx.req, ctx.res, authOptions);
 
   if (session) {
@@ -45,8 +45,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const providers = await getProviders();
 
   return {
-    props: {
-      providers,
-    },
+    props: { providers },
   };
-};
+}) satisfies GetServerSideProps;

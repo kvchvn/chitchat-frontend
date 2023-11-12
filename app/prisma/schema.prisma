@@ -13,15 +13,14 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -34,14 +33,40 @@ model Session {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+model Message {
+  id        String   @id @default(cuid())
+  chatId    String
+  senderId  String
+  content   String
+  createdAt DateTime @default(now())
+  isEdited  Boolean  @default(false)
+  isLiked   Boolean  @default(false)
+  isRead    Boolean  @default(false)
+  chat      Chat     @relation(fields: [chatId], references: [id])
+  sender    User     @relation(fields: [senderId], references: [id])
+}
+
+model Chat {
+  id         String    @id @default(cuid())
+  isDisabled Boolean   @default(false)
+  messages   Message[]
+  users      User[]    @relation("ChatToUser")
+}
+
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
+  id                String    @id @default(cuid())
+  name              String?
+  email             String?   @unique
+  emailVerified     DateTime?
+  image             String?
+  accounts          Account[]
+  messages          Message[]
+  sessions          Session[]
+  chats             Chat[]    @relation("ChatToUser")
+  friends           User[]    @relation("friendship")
+  friendOf          User[]    @relation("friendship")
+  incomingRequests  User[]    @relation("friendship_request")
+  outcomingRequests User[]    @relation("friendship_request")
 }
 
 model VerificationToken {

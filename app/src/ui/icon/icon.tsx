@@ -7,7 +7,7 @@ type IconProps = {
   className?: string;
 };
 
-export default function Icon({ id, color, size, className }: IconProps) {
+export function Icon({ id, color, size, className = '' }: IconProps) {
   return (
     <svg
       width={size ?? '100%'}

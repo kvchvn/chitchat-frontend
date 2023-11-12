@@ -12,8 +12,8 @@ export const authOptions: AuthOptions = {
   adapter: PrismaAdapter(prisma),
   session: {
     strategy: 'database',
-    maxAge: 30 * 24 * 60 * 60, // 30 days
-    updateAge: 24 * 60 * 60, // 24 hours
+    maxAge: 2 * 60 * 60, // 2 hours
+    updateAge: 0,
   },
   providers: [
     GitHubProvider({

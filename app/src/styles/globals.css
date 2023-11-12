@@ -4,8 +4,33 @@
 
 body {
   height: 100vh;
+  overflow: hidden;
 }
 
 #__next {
-  @apply h-full;
+  height: 100%;
+}
+
+* {
+  box-sizing: border-box;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: lightgray;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: grey;
+}
+
+@layer components {
+  .btn-context-menu {
+    @apply w-full py-2 pl-3 pr-5 text-start text-sm hover:bg-stone-300 disabled:bg-transparent disabled:text-gray-400 disabled:hover:bg-transparent;
+  }
 }
