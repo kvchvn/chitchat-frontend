@@ -8,7 +8,7 @@ export type ErrorResponse = {
   issues?: string[];
 };
 
-type UserKeys = 'allUsers' | 'friends' | 'incomingRequests' | 'outcomingRequests';
+export type UserKeys = 'allUsers' | 'friends' | 'incomingRequests' | 'outcomingRequests';
 
 export type Users = {
   [Property in UserKeys]: Nullable<UserRelevant[]>;
