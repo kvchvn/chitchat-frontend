@@ -1,4 +1,5 @@
 import { UsersList } from '@/components/users-list';
+import { UsersSection } from '@/components/users-section';
 import { API_ENDPOINTS, ROUTES } from '@/constants';
 import { customKy } from '@/ky';
 import { Users } from '@/types';
@@ -26,6 +27,9 @@ export default function PeoplePage({
       >
         Update
       </button>
+      <UsersSection users={users} />
+      <div className="my-2 h-2 bg-black" />
+      <div className="my-2 h-2 bg-black" />
       <UsersList variant="all" users={users.allUsers} listName="All users" />
       <UsersList
         variant="friends"
