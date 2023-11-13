@@ -9,12 +9,12 @@ type TabsProps = {
 
 export function Tabs({ selectedTab, toggleTabs }: TabsProps) {
   return (
-    <ul className="flex justify-between border-b-2 border-stone-600">
+    <ul className="flex justify-between border-b-2 border-stone-400">
       {Object.entries(TYPES_OF_USERS).map(([typeKey, typeValue]) => (
         <li
-          className={classNames('w-full whitespace-nowrap border border-b-0 text-center', {
-            'border-2 border-stone-600 bg-stone-200 font-semibold': selectedTab === typeKey,
-            'border-stone-400 hover:bg-stone-100': selectedTab !== typeKey,
+          className={classNames('w-full whitespace-nowrap text-center text-sm', {
+            'bg-stone-400': selectedTab === typeKey,
+            'hover:bg-stone-200': selectedTab !== typeKey,
           })}
           key={typeKey}
         >
