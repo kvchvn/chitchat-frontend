@@ -13,12 +13,10 @@ export function SidebarItem({ href, isActive, children }: SidebarItemProps) {
       {href ? (
         <Link
           href={href}
-          className={classNames(
-            'block h-full w-full border-r-2 border-transparent py-1 hover:bg-stone-200',
-            {
-              'active-link': isActive,
-            }
-          )}
+          className={classNames('block h-full w-full border-r-[3px] py-1', {
+            'border-stone-600': isActive,
+            'border-stone-300 hover:border-stone-400': !isActive,
+          })}
         >
           {children}
         </Link>

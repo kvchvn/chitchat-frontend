@@ -12,9 +12,6 @@ const config: Config = {
   plugins: [
     plugin(function ({ addUtilities }) {
       addUtilities({
-        '.active-link': {
-          borderRight: '2px solid black',
-        },
         '.overflow-anywhere': {
           overflowWrap: 'anywhere',
         },
