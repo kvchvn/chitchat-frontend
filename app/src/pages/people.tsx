@@ -30,7 +30,7 @@ export default function PeoplePage({
       <UsersSection users={users} />
       <div className="my-2 h-2 bg-black" />
       <div className="my-2 h-2 bg-black" />
-      <UsersList variant="all" users={users.allUsers} listName="All users" />
+      <UsersList variant="all" users={users.all} listName="All users" />
       <UsersList
         variant="friends"
         users={users.friends}
@@ -70,7 +70,7 @@ export const getServerSideProps = (async (ctx) => {
   } & { users: Users } = {
     session,
     users: {
-      allUsers: null,
+      all: null,
       friends: null,
       incomingRequests: null,
       outcomingRequests: null,
