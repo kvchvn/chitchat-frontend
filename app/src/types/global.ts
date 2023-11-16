@@ -13,7 +13,13 @@ export type IconId =
   | 'pencil'
   | 'save'
   | 'heart'
-  | 'warning';
+  | 'warning'
+  | 'user-add'
+  | 'user-remove'
+  | 'user-outcoming-request'
+  | 'user-incoming-request'
+  | 'friend'
+  | 'check';
 
 export type Nullable<T> = T | null;
 
@@ -23,7 +29,7 @@ export type UserCounts = {
   outcomingRequests: number;
 };
 
-export type UserRelevant = Omit<User, 'emailVerified'>;
+export type UserRelevant = Omit<User, 'emailVerified'> & { _count?: UserCounts };
 
 export type PageProps = {
   session: Nullable<Session>;
