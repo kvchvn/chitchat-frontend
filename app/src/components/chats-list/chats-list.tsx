@@ -1,4 +1,4 @@
-import { ChatsRecord } from '@/types';
+import { ChatsRecord } from '@/types/chats';
 import { ChatItem } from '../chat-item';
 
 type ChatsListProps = {

@@ -1,9 +1,9 @@
 import {
   useMessageEditModeActionsSelector,
   useMessageEditModeSelector,
-  useSocketSelector,
-} from '@/store';
-import { Nullable } from '@/types';
+} from '@/store/selectors/message-managing-selectors';
+import { useSocketSelector } from '@/store/selectors/socket-selectors';
+import { Nullable } from '@/types/global';
 import { Icon } from '@/ui/icon';
 import { useCallback, useEffect, useRef, useState } from 'react';
 

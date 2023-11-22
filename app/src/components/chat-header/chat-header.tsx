@@ -1,6 +1,6 @@
-import { DEFAULT_USERNAME } from '@/constants';
-import { useSocketSelector } from '@/store';
-import { UserRelevant } from '@/types';
+import { DEFAULT_USERNAME } from '@/constants/chats';
+import { useSocketSelector } from '@/store/selectors/socket-selectors';
+import { UserRelevant } from '@/types/users';
 import { Icon } from '@/ui/icon';
 import { UserAvatar } from '@/ui/user-avatar';
 import { useSession } from 'next-auth/react';
@@ -9,7 +9,7 @@ import { useState } from 'react';
 
 type ChatHeaderProps = {
   chatId: string;
-  chatUsers: UserRelevant[];
+  chatUsers: Omit<UserRelevant, 'email'>[];
 };
 
 export function ChatHeader({ chatId, chatUsers }: ChatHeaderProps) {

@@ -1,4 +1,4 @@
-import { useSocketSelector } from '@/store';
+import { useSocketSelector } from '@/store/selectors/socket-selectors';
 import { useEffect } from 'react';
 
 export const useSocketDisconnection = () => {

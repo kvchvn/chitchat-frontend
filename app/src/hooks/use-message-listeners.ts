@@ -1,6 +1,7 @@
-import { useChatActionsSelector, useMessageActionsSelector } from '@/store';
-import { CustomSocket, ServerToClientListenersArgs } from '@/types';
-import { logError } from '@/utils';
+import { useChatActionsSelector } from '@/store/selectors/chat-selectors';
+import { useMessageActionsSelector } from '@/store/selectors/message-selectors';
+import { CustomSocket, ServerToClientListenersArgs } from '@/types/socket';
+import { logError } from '@/utils/log-error';
 import { useCallback } from 'react';
 
 export const useMessageListeners = ({ userId }: { userId?: string }) => {

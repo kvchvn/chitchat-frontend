@@ -1,14 +1,15 @@
-import { useAdjustContextMenuPosition } from '@/hooks';
+import { useAdjustContextMenuPosition } from '@/hooks/use-adjust-context-menu-position';
 import {
   useMessageContextMenuActionsSelector,
   useMessageContextMenuSelector,
   useMessageEditModeActionsSelector,
-  useSocketSelector,
-} from '@/store';
-import { Nullable } from '@/types';
-import { disableScrolling, enableScrolling } from '@/utils';
+} from '@/store/selectors/message-managing-selectors';
+import { useSocketSelector } from '@/store/selectors/socket-selectors';
+import { Nullable } from '@/types/global';
+import { disableScrolling, enableScrolling } from '@/utils/styles-managing';
 import { useSession } from 'next-auth/react';
 import { MutableRefObject, useEffect, useRef, useState } from 'react';
+export { useSocketSelector } from '@/store/selectors/socket-selectors';
 
 type MessageContextMenuProps = {
   chatId: string;

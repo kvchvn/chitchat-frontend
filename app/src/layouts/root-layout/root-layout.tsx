@@ -1,4 +1,5 @@
-import { CustomSocket, Nullable } from '@/types';
+import { Nullable } from '@/types/global';
+import { CustomSocket } from '@/types/socket';
 import { Session } from 'next-auth';
 import { PropsWithChildren } from 'react';
 import { Sidebar } from './sidebar';

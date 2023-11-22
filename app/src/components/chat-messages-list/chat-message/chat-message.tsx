@@ -1,6 +1,7 @@
-import { useMessageContextMenuActionsSelector, useSocketSelector } from '@/store';
+import { useMessageContextMenuActionsSelector } from '@/store/selectors/message-managing-selectors';
+import { useSocketSelector } from '@/store/selectors/socket-selectors';
 import { Icon } from '@/ui/icon';
-import { getTime } from '@/utils';
+import { getTime } from '@/utils/date';
 import { Message } from '@prisma/client';
 import classnames from 'classnames';
 import { useSession } from 'next-auth/react';

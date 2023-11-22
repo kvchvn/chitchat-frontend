@@ -1,4 +1,4 @@
-import { Nullable } from '@/types';
+import { Nullable } from '@/types/global';
 
 export const disableScrolling = <T extends Nullable<HTMLElement>>(element: T) => {
   element && (element.style.overflow = 'hidden');

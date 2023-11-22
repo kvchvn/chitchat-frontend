@@ -1,4 +1,7 @@
-import { useMessageEditModeActionsSelector, useMessageEditModeSelector } from '@/store';
+import {
+  useMessageEditModeActionsSelector,
+  useMessageEditModeSelector,
+} from '@/store/selectors/message-managing-selectors';
 import { Icon } from '@/ui/icon';
 
 export function EditedMessagePreview() {

@@ -1,4 +1,6 @@
-import { ChatsRecord, CustomSocket, Nullable, Reactions } from '@/types';
+import { ChatsRecord } from '@/types/chats';
+import { Nullable } from '@/types/global';
+import { CustomSocket, Reactions } from '@/types/socket';
 import { Message } from '@prisma/client';
 import { Socket } from 'socket.io-client';
 import { StateCreator } from 'zustand';

@@ -1,5 +1,6 @@
-import { ROUTES } from '@/constants';
-import { CustomSocket, Nullable } from '@/types';
+import { ROUTES } from '@/constants/global';
+import { Nullable } from '@/types/global';
+import { CustomSocket } from '@/types/socket';
 import { Icon } from '@/ui/icon';
 import { UserAvatar } from '@/ui/user-avatar';
 import classNames from 'classnames';
@@ -33,7 +34,10 @@ export function Sidebar({ session, socket }: SidebarProps) {
   return (
     <aside className="h-full bg-stone-100">
       <ul className="flex h-full w-20 flex-col items-center justify-center">
-        <SidebarItem href={ROUTES.people} isActive={pathname === ROUTES.people}>
+        <SidebarItem
+          href={ROUTES.community.all}
+          isActive={pathname.startsWith(ROUTES.community.base)}
+        >
           <Icon id="users" />
         </SidebarItem>
         <SidebarItem href={ROUTES.home} isActive={pathname.startsWith(ROUTES.chats)}>

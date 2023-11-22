@@ -1,4 +1,5 @@
-import { CustomSocket, Nullable } from '@/types';
+import { Nullable } from '@/types/global';
+import { CustomSocket } from '@/types/socket';
 import { Icon } from '@/ui/icon';
 import classNames from 'classnames';
 import { Session } from 'next-auth';

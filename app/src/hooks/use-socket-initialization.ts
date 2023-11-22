@@ -1,9 +1,9 @@
-import { useSocketActionsSelector } from '@/store';
-import { CustomSocket } from '@/types';
+import { useSocketActionsSelector } from '@/store/selectors/socket-selectors';
+import { CustomSocket } from '@/types/socket';
 import { useEffect } from 'react';
 import { io } from 'socket.io-client';
-import { useChatListeners } from './useChatListeners';
-import { useMessageListeners } from './useMessageListeners';
+import { useChatListeners } from './use-chat-listeners';
+import { useMessageListeners } from './use-message-listeners';
 
 export const useSocketInitialization = ({ userId }: { userId?: string }) => {
   const { setSocket, resetSocket } = useSocketActionsSelector();

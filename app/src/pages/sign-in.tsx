@@ -1,5 +1,5 @@
-import { ROUTES } from '@/constants';
-import { useSocketDisconnection } from '@/hooks';
+import { ROUTES } from '@/constants/global';
+import { useSocketDisconnection } from '@/hooks/use-socket-disconnection';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { getServerSession } from 'next-auth';
 import { getProviders, signIn } from 'next-auth/react';

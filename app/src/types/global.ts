@@ -1,4 +1,3 @@
-import { User } from '@prisma/client';
 import { Session } from 'next-auth';
 
 export type IconId =
@@ -22,14 +21,6 @@ export type IconId =
   | 'check';
 
 export type Nullable<T> = T | null;
-
-export type UserCounts = {
-  friends: number;
-  incomingRequests: number;
-  outcomingRequests: number;
-};
-
-export type UserRelevant = Omit<User, 'emailVerified'> & { _count?: UserCounts };
 
 export type PageProps = {
   session: Nullable<Session>;

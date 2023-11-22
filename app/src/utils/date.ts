@@ -1,4 +1,4 @@
-import { MONTHS } from '@/constants';
+import { MONTHS } from '@/constants/chats';
 import { Message } from '@prisma/client';
 
 export const getTime = (date: Message['createdAt'] | string) => {

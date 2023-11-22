@@ -1,9 +1,9 @@
 import { ChatsList } from '@/components/chats-list';
-import { API_ENDPOINTS, ROUTES } from '@/constants';
+import { ROUTES } from '@/constants/global';
 import { customKy } from '@/ky';
-import { useChatActionsSelector, useChatsSelector } from '@/store';
-import { ChatsRecord, Nullable } from '@/types';
-import { logError } from '@/utils';
+import { useChatActionsSelector, useChatsSelector } from '@/store/selectors/chat-selectors';
+import { UserChatsResponse } from '@/types/api';
+import { logError } from '@/utils/log-error';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { Session, getServerSession } from 'next-auth';
 import { useEffect } from 'react';
@@ -11,7 +11,7 @@ import { authOptions } from '../api/auth/[...nextauth]';
 
 type ServerSidePropsType = {
   session: Session;
-  chats: Nullable<ChatsRecord>;
+  chats: UserChatsResponse['data'];
 };
 
 export default function ChatsPage({
@@ -56,11 +56,9 @@ export const getServerSideProps = (async (ctx) => {
   };
 
   try {
-    const chats: ChatsRecord = await customKy
-      .get(API_ENDPOINTS.user.getChatsOf(session.user.id))
-      .json();
+    const chats = await customKy.get(`users/${session.user.id}/chats`).json<UserChatsResponse>();
 
-    props.chats = chats;
+    props.chats = chats.data;
   } catch (err) {
     logError('HomePage (getServerSideProps)', err);
   }

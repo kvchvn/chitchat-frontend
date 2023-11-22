@@ -3,21 +3,26 @@ import { ChatMessagesList } from '@/components/chat-messages-list';
 import { EditedMessagePreview } from '@/components/edited-message-preview';
 import { MessageContextMenu } from '@/components/message-context-menu';
 import { MessageForm } from '@/components/message-form';
-import { ROUTES } from '@/constants';
+import { ROUTES } from '@/constants/global';
+import { customKy } from '@/ky';
+import { useChatActionsSelector, useSelectedChatSelector } from '@/store/selectors/chat-selectors';
 import {
-  useChatActionsSelector,
   useMessageActionsSelector,
   useMessagesSelector,
-  useSelectedChatSelector,
-  useSocketSelector,
-} from '@/store';
-import { Nullable } from '@/types';
+} from '@/store/selectors/message-selectors';
+import { useSocketSelector } from '@/store/selectors/socket-selectors';
+import { ChatResponse } from '@/types/api';
+import { Nullable } from '@/types/global';
 import { Icon } from '@/ui/icon';
-import { getChatById } from '@/utils';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
-import { getServerSession } from 'next-auth';
+import { Session, getServerSession } from 'next-auth';
 import { useEffect, useRef } from 'react';
 import { authOptions } from '../api/auth/[...nextauth]';
+
+type ServerSidePropsType = {
+  session: Session;
+  chat: ChatResponse['data'];
+};
 
 export default function ChatPage({
   session,
@@ -99,9 +104,27 @@ export const getServerSideProps = (async (ctx) => {
     };
   }
 
-  const chat = await getChatById(ctx.params?.id as string);
+  const props: ServerSidePropsType = {
+    session,
+    chat: null,
+  };
 
-  if (chat && !chat.users.find((user) => user.id === session.user.id)) {
+  const chatId = ctx.params?.id;
+
+  if (typeof chatId === 'string') {
+    const chatResponse = await customKy.get(`chats/${chatId}`).json<ChatResponse>();
+
+    props.chat = chatResponse.data;
+
+    if (chatResponse.data && !chatResponse.data.users.find((user) => user.id === session.user.id)) {
+      return {
+        redirect: {
+          permanent: false,
+          destination: ROUTES.chats,
+        },
+      };
+    }
+  } else {
     return {
       redirect: {
         permanent: false,
@@ -110,10 +133,5 @@ export const getServerSideProps = (async (ctx) => {
     };
   }
 
-  return {
-    props: {
-      session,
-      chat,
-    },
-  };
+  return { props };
 }) satisfies GetServerSideProps;
