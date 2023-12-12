@@ -2,6 +2,8 @@ import { useSocketActionsSelector } from '@/store/selectors/socket-selectors';
 import { CustomSocket } from '@/types/socket';
 import { useEffect } from 'react';
 import { io } from 'socket.io-client';
+import { useSocketActionsSelector } from '~/store/selectors/socket-selectors';
+import { CustomSocket } from '~/types/socket';
 import { useChatListeners } from './use-chat-listeners';
 import { useMessageListeners } from './use-message-listeners';
 

@@ -1,7 +1,7 @@
-import { useChatActionsSelector } from '@/store/selectors/chat-selectors';
-import { useMessageActionsSelector } from '@/store/selectors/message-selectors';
-import { CustomSocket, ServerToClientListenersArgs } from '@/types/socket';
 import { useCallback } from 'react';
+import { useChatActionsSelector } from '~/store/selectors/chat-selectors';
+import { useMessageActionsSelector } from '~/store/selectors/message-selectors';
+import { CustomSocket, ServerToClientListenersArgs } from '~/types/socket';
 
 export const useChatListeners = () => {
   const { resetUnreadMessageCount: resetUnreadMessageCount, clearChat } = useChatActionsSelector();

@@ -1,4 +1,4 @@
-import { getDateAsKey } from '@/utils/date';
+import { getDateAsKey } from '~/utils/date';
 import { ImmerStateCreator, MessageSlice } from '../types';
 
 export const messageSlice: ImmerStateCreator<MessageSlice> = (set) => ({
