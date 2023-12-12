@@ -1,8 +1,4 @@
-import { ChatsRecord } from '@/types/chats';
-import { Nullable } from '@/types/global';
-import { CustomSocket, Reactions } from '@/types/socket';
 import { Message } from '@prisma/client';
-import { Socket } from 'socket.io-client';
 import { StateCreator } from 'zustand';
 import { ChatsRecord } from '~/types/chats';
 import { Nullable } from '~/types/global';
@@ -20,7 +16,7 @@ export type ImmerStateCreator<T> = StateCreator<T, [['zustand/immer', never], ne
 export type SocketSlice = {
   socket: Nullable<CustomSocket>;
   socketActions: {
-    setSocket: (socket: Socket) => void;
+    setSocket: (socket: CustomSocket) => void;
     resetSocket: () => void;
   };
 };
@@ -75,4 +71,22 @@ export type MessageManagingSlice = {
   };
 };
 
-export type Store = SocketSlice & ChatSlice & MessageSlice & MessageManagingSlice;
+export type CommunitySlice = {
+  usersList: Nullable<UserRelevant[] | UserRelevantWithStatus[]>;
+  currentCategory: Nullable<UsersCategories>;
+  categoriesCount: Nullable<UsersCategoriesCount>;
+  communityActions: {
+    setUsersList: (users: UserRelevant[] | UserRelevantWithStatus[]) => void;
+    resetUsersList: () => void;
+    setCurrentCategory: (category: UsersCategories) => void;
+    resetCurrentCategory: () => void;
+    setCategoriesCount: (categoriesCount: UsersCategoriesCount) => void;
+    resetCategoriesCount: () => void;
+    removeUserFromList: (userId: string) => void;
+    updateUserStatus: (args: { userId: string; newStatus: UserStatus }) => void;
+    increaseCategoryCount: (category: keyof UsersCategoriesCount) => void;
+    decreaseCategoryCount: (category: keyof UsersCategoriesCount) => void;
+  };
+};
+
+export type Store = SocketSlice & ChatSlice & MessageSlice & MessageManagingSlice & CommunitySlice;

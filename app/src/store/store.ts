@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 import { chatSlice } from './slices/chat-slice';
+import { communitySlice } from './slices/community-slice';
 import { messageManagingSlice } from './slices/message-managing-slice';
 import { messageSlice } from './slices/message-slice';
 import { socketSlice } from './slices/socket-slice';
@@ -14,6 +15,7 @@ export const useMergedStore = create<Store>()(
       ...chatSlice(...args),
       ...messageSlice(...args),
       ...messageManagingSlice(...args),
+      ...communitySlice(...args),
     }))
   )
 );
