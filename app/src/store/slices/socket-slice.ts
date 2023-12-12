@@ -1,10 +1,16 @@
-import { Socket } from 'socket.io-client';
 import { ImmerStateCreator, SocketSlice } from '../types';
 
 export const socketSlice: ImmerStateCreator<SocketSlice> = (set) => ({
   socket: null,
   socketActions: {
-    setSocket: (socket: Socket) => set(() => ({ socket })),
-    resetSocket: () => set(() => ({ socket: null })),
+    setSocket: (socket) =>
+      set((state) => {
+        // @ts-ignore: Type '(readonly any[])[]' is not assignable to type 'any[][]'.
+        state.socket = socket;
+      }),
+    resetSocket: () =>
+      set((state) => {
+        state.socket = null;
+      }),
   },
 });
