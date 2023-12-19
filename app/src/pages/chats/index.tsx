@@ -1,17 +1,18 @@
-import { ChatsList } from '@/components/chats-list';
-import { ROUTES } from '@/constants/global';
-import { customKy } from '@/ky';
-import { useChatActionsSelector, useChatsSelector } from '@/store/selectors/chat-selectors';
-import { UserChatsResponse } from '@/types/api';
-import { logError } from '@/utils/log-error';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
-import { Session, getServerSession } from 'next-auth';
+import { Session } from 'next-auth';
 import { useEffect } from 'react';
-import { authOptions } from '../api/auth/[...nextauth]';
+import { useChatActionsSelector, useChatsSelector } from '~/store/selectors/chat-selectors';
+import { ChatsRecord } from '~/types/chats';
+import { Nullable } from '~/types/global';
+import { getUserChats } from '~/utils/api';
+import { getSessionData } from '~/utils/get-session-data';
+import { gsspRedirectToSignIn } from '~/utils/gssp-redirect';
+import { logError } from '~/utils/log-error';
+import { ChatsList } from '../../components/chats-page/chats-list';
 
-type ServerSidePropsType = {
+type ServerSideProps = {
   session: Session;
-  chats: UserChatsResponse['data'];
+  chats: Nullable<ChatsRecord>;
 };
 
 export default function ChatsPage({
@@ -19,7 +20,9 @@ export default function ChatsPage({
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const chats = useChatsSelector();
   const { setChats, resetChats } = useChatActionsSelector();
+
   console.log('ChatsPage RENDER', chats);
+
   useEffect(() => {
     if (chatsFromProps) {
       setChats(chatsFromProps);
@@ -33,32 +36,27 @@ export default function ChatsPage({
   return (
     <>
       <h2 className="text-2xl font-semibold">Chats</h2>
-      {chatsFromProps ? chats ? <ChatsList chats={chats} /> : <p>Loading...</p> : <p>Error</p>}
+      {chatsFromProps ? <ChatsList chats={chats ?? chatsFromProps} /> : <p>Error</p>}
     </>
   );
 }
 
-export const getServerSideProps = (async (ctx) => {
-  const session = await getServerSession(ctx.req, ctx.res, authOptions);
+export const getServerSideProps = (async ({ req, res }) => {
+  const session = await getSessionData(req, res);
 
   if (!session) {
-    return {
-      redirect: {
-        permanent: false,
-        destination: ROUTES.signIn,
-      },
-    };
+    return gsspRedirectToSignIn();
   }
 
-  const props: ServerSidePropsType = {
+  const props: ServerSideProps = {
     session,
     chats: null,
   };
 
   try {
-    const chats = await customKy.get(`users/${session.user.id}/chats`).json<UserChatsResponse>();
+    const chats = await getUserChats(session.user.id);
 
-    props.chats = chats.data;
+    props.chats = chats;
   } catch (err) {
     logError('HomePage (getServerSideProps)', err);
   }
