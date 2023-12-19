@@ -1,8 +1,8 @@
-import { useChatActionsSelector } from '@/store/selectors/chat-selectors';
-import { useMessageActionsSelector } from '@/store/selectors/message-selectors';
-import { CustomSocket, ServerToClientListenersArgs } from '@/types/socket';
-import { logError } from '@/utils/log-error';
 import { useCallback } from 'react';
+import { useChatActionsSelector } from '~/store/selectors/chat-selectors';
+import { useMessageActionsSelector } from '~/store/selectors/message-selectors';
+import { CustomSocket, ServerToClientListenersArgs } from '~/types/socket';
+import { logError } from '~/utils/log-error';
 
 export const useMessageListeners = ({ userId }: { userId?: string }) => {
   const { incrementUnreadMessagesCount: incrementUnreadMessagesCount } = useChatActionsSelector();
