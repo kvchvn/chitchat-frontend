@@ -1,54 +1,99 @@
-import { ROUTES } from '@/constants/global';
-import { customKy } from '@/ky';
-import { CommunityLayout } from '@/layouts/community-layout';
-import { AllUsersResponse } from '@/types/api';
-import { logError } from '@/utils/log-error';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
-import { Session, getServerSession } from 'next-auth';
-import { authOptions } from '../api/auth/[...nextauth]';
+import { Session } from 'next-auth';
+import { useEffect } from 'react';
+import { UsersList } from '~/components/community-page/users-list';
+import { CommunityLayout } from '~/layouts/community-layout';
+import {
+  useCommunityActionsSelector,
+  useUsersListSelector,
+} from '~/store/selectors/community-selectors';
+import { Nullable } from '~/types/global';
+import { UserRelevantWithStatus, UsersCategoriesCount, UsersCategoriesName } from '~/types/users';
+import { getAllUsers, getUserCategoriesCount } from '~/utils/api';
+import { getSessionData } from '~/utils/get-session-data';
+import { gsspRedirectToSignIn } from '~/utils/gssp-redirect';
+import { logError } from '~/utils/log-error';
+import { NextPageWithLayout } from '../_app';
 
-type ServerSidePropsType = {
+type ServerSideProps = {
   session: Session;
-  allUsers: AllUsersResponse['data'];
+  allUsers: Nullable<UserRelevantWithStatus[]>;
+  categoriesCount: Nullable<UsersCategoriesCount>;
 };
 
-export default function AllCommunityPage({
-  allUsers,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  return (
-    <CommunityLayout>
-      <h2>Community/all</h2>
-      {allUsers ? <ul>{allUsers.map((user) => user.name)}</ul> : 'Error'}
-    </CommunityLayout>
-  );
-}
+const AllCommunityPage: NextPageWithLayout<
+  InferGetServerSidePropsType<typeof getServerSideProps>
+> = ({ allUsers, categoriesCount }) => {
+  const storedAllUsers = useUsersListSelector();
+  const { setUsersList, resetUsersList, setCategoriesCount, resetCategoriesCount } =
+    useCommunityActionsSelector();
 
-export const getServerSideProps = (async (ctx) => {
-  const session = await getServerSession(ctx.req, ctx.res, authOptions);
+  useEffect(() => {
+    if (allUsers) {
+      setUsersList(allUsers);
+
+      if (categoriesCount) {
+        setCategoriesCount(categoriesCount);
+      }
+    }
+
+    return () => {
+      resetUsersList();
+      resetCategoriesCount();
+    };
+  }, [
+    setUsersList,
+    resetUsersList,
+    allUsers,
+    setCategoriesCount,
+    resetCategoriesCount,
+    categoriesCount,
+  ]);
+
+  return allUsers ? (
+    <UsersList users={storedAllUsers ?? allUsers} category={UsersCategoriesName.All} />
+  ) : (
+    <p>Error</p>
+  );
+};
+
+AllCommunityPage.getLayout = function getLayout(page) {
+  return <CommunityLayout>{page}</CommunityLayout>;
+};
+
+export const getServerSideProps = (async ({ req, res }) => {
+  const session = await getSessionData(req, res);
 
   if (!session) {
-    return {
-      redirect: {
-        permanent: false,
-        destination: ROUTES.signIn,
-      },
-    };
+    return gsspRedirectToSignIn();
   }
 
-  const props: ServerSidePropsType = {
+  const props: ServerSideProps = {
     session,
     allUsers: null,
+    categoriesCount: null,
   };
 
   try {
-    const allUsersResponse = await customKy
-      .get(`users/${session.user.id}/all`)
-      .json<AllUsersResponse>();
+    const allUsersPromise = getAllUsers(session.user.id);
+    const categoriesCountPromise = getUserCategoriesCount(session.user.id);
 
-    props.allUsers = allUsersResponse.data;
+    const [allUsers, categoriesCount] = await Promise.allSettled([
+      allUsersPromise,
+      categoriesCountPromise,
+    ]);
+
+    if (allUsers.status === 'fulfilled') {
+      props.allUsers = allUsers.value;
+    }
+    if (categoriesCount.status === 'fulfilled') {
+      props.categoriesCount = categoriesCount.value;
+    }
   } catch (err) {
-    logError('HomePage (getServerSideProps)', err);
+    logError('AllUsersPage (getServerSideProps)', err);
   }
 
   return { props };
 }) satisfies GetServerSideProps;
+
+export default AllCommunityPage;

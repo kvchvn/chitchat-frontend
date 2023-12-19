@@ -1,54 +1,98 @@
-import { ROUTES } from '@/constants/global';
-import { customKy } from '@/ky';
-import { CommunityLayout } from '@/layouts/community-layout';
-import { UsersResponse } from '@/types/api';
-import { logError } from '@/utils/log-error';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
-import { Session, getServerSession } from 'next-auth';
-import { authOptions } from '../api/auth/[...nextauth]';
+import { Session } from 'next-auth';
+import { useEffect } from 'react';
+import { UsersList } from '~/components/community-page/users-list';
+import { CommunityLayout } from '~/layouts/community-layout';
+import {
+  useCommunityActionsSelector,
+  useUsersListSelector,
+} from '~/store/selectors/community-selectors';
+import { Nullable } from '~/types/global';
+import { UserRelevant, UsersCategoriesCount, UsersCategoriesName } from '~/types/users';
+import { getGroupOfUsers, getUserCategoriesCount } from '~/utils/api';
+import { getSessionData } from '~/utils/get-session-data';
+import { gsspRedirectToSignIn } from '~/utils/gssp-redirect';
+import { logError } from '~/utils/log-error';
+import { NextPageWithLayout } from '../_app';
 
-type ServerSidePropsType = {
+type ServerSideProps = {
   session: Session;
-  friends: UsersResponse['data'];
+  friends: Nullable<UserRelevant[]>;
+  categoriesCount: Nullable<UsersCategoriesCount>;
 };
 
-export default function AllCommunityPage({
+const FriendsPage: NextPageWithLayout<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   friends,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  return (
-    <CommunityLayout>
-      <h2>Community/friends</h2>
-      {friends ? <ul>{friends.map((user) => user.name)}</ul> : 'Error'}
-    </CommunityLayout>
-  );
-}
+  categoriesCount,
+}) => {
+  const storedFriends = useUsersListSelector();
+  const { setUsersList, resetUsersList, setCategoriesCount, resetCategoriesCount } =
+    useCommunityActionsSelector();
 
-export const getServerSideProps = (async (ctx) => {
-  const session = await getServerSession(ctx.req, ctx.res, authOptions);
+  useEffect(() => {
+    if (friends) {
+      setUsersList(friends);
+
+      if (categoriesCount) {
+        setCategoriesCount(categoriesCount);
+      }
+    }
+
+    return () => {
+      resetUsersList();
+      resetCategoriesCount();
+    };
+  }, [
+    setUsersList,
+    resetUsersList,
+    friends,
+    setCategoriesCount,
+    resetCategoriesCount,
+    categoriesCount,
+  ]);
+
+  return friends ? (
+    <UsersList users={storedFriends ?? friends} category={UsersCategoriesName.Friends} />
+  ) : (
+    <p>Error</p>
+  );
+};
+
+FriendsPage.getLayout = (page) => <CommunityLayout>{page}</CommunityLayout>;
+
+export const getServerSideProps = (async ({ req, res }) => {
+  const session = await getSessionData(req, res);
 
   if (!session) {
-    return {
-      redirect: {
-        permanent: false,
-        destination: ROUTES.signIn,
-      },
-    };
+    return gsspRedirectToSignIn();
   }
 
-  const props: ServerSidePropsType = {
+  const props: ServerSideProps = {
     session,
     friends: null,
+    categoriesCount: null,
   };
 
   try {
-    const friendsResponse = await customKy
-      .get(`users/${session.user.id}/friends`)
-      .json<UsersResponse>();
+    const friendsPromise = getGroupOfUsers(session.user.id, 'friends');
+    const categoriesCountPromise = getUserCategoriesCount(session.user.id);
 
-    props.friends = friendsResponse.data;
+    const [friends, categoriesCount] = await Promise.allSettled([
+      friendsPromise,
+      categoriesCountPromise,
+    ]);
+
+    if (friends.status === 'fulfilled') {
+      props.friends = friends.value;
+    }
+    if (categoriesCount.status === 'fulfilled') {
+      props.categoriesCount = categoriesCount.value;
+    }
   } catch (err) {
     logError('HomePage (getServerSideProps)', err);
   }
 
   return { props };
 }) satisfies GetServerSideProps;
+
+export default FriendsPage;

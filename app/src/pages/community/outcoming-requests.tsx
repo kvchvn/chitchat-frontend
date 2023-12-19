@@ -1,54 +1,100 @@
-import { ROUTES } from '@/constants/global';
-import { customKy } from '@/ky';
-import { CommunityLayout } from '@/layouts/community-layout';
-import { UsersResponse } from '@/types/api';
-import { logError } from '@/utils/log-error';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
-import { Session, getServerSession } from 'next-auth';
-import { authOptions } from '../api/auth/[...nextauth]';
+import { Session } from 'next-auth';
+import { useEffect } from 'react';
+import { UsersList } from '~/components/community-page/users-list';
+import { CommunityLayout } from '~/layouts/community-layout';
+import {
+  useCommunityActionsSelector,
+  useUsersListSelector,
+} from '~/store/selectors/community-selectors';
+import { Nullable } from '~/types/global';
+import { UserRelevant, UsersCategoriesCount, UsersCategoriesName } from '~/types/users';
+import { getGroupOfUsers, getUserCategoriesCount } from '~/utils/api';
+import { getSessionData } from '~/utils/get-session-data';
+import { gsspRedirectToSignIn } from '~/utils/gssp-redirect';
+import { logError } from '~/utils/log-error';
+import { NextPageWithLayout } from '../_app';
 
-type ServerSidePropsType = {
+type ServerSideProps = {
   session: Session;
-  outcomingRequests: UsersResponse['data'];
+  outcomingRequests: Nullable<UserRelevant[]>;
+  categoriesCount: Nullable<UsersCategoriesCount>;
 };
 
-export default function AllCommunityPage({
-  outcomingRequests,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  return (
-    <CommunityLayout>
-      <h2>Community/outcoming-requests</h2>
-      {outcomingRequests ? <ul>{outcomingRequests.map((user) => user.name)}</ul> : 'Error'}
-    </CommunityLayout>
-  );
-}
+const OutcomingRequestsPage: NextPageWithLayout<
+  InferGetServerSidePropsType<typeof getServerSideProps>
+> = ({ outcomingRequests, categoriesCount }) => {
+  const storedOutcomingRequests = useUsersListSelector();
+  const { setUsersList, resetUsersList, setCategoriesCount, resetCategoriesCount } =
+    useCommunityActionsSelector();
 
-export const getServerSideProps = (async (ctx) => {
-  const session = await getServerSession(ctx.req, ctx.res, authOptions);
+  useEffect(() => {
+    if (outcomingRequests) {
+      setUsersList(outcomingRequests);
+
+      if (categoriesCount) {
+        setCategoriesCount(categoriesCount);
+      }
+    }
+
+    return () => {
+      resetUsersList();
+      resetCategoriesCount();
+    };
+  }, [
+    setUsersList,
+    resetUsersList,
+    outcomingRequests,
+    setCategoriesCount,
+    resetCategoriesCount,
+    categoriesCount,
+  ]);
+
+  return outcomingRequests ? (
+    <UsersList
+      users={storedOutcomingRequests ?? outcomingRequests}
+      category={UsersCategoriesName.OutcomingRequests}
+    />
+  ) : (
+    <p>Error</p>
+  );
+};
+
+OutcomingRequestsPage.getLayout = (page) => <CommunityLayout>{page}</CommunityLayout>;
+
+export const getServerSideProps = (async ({ req, res }) => {
+  const session = await getSessionData(req, res);
 
   if (!session) {
-    return {
-      redirect: {
-        permanent: false,
-        destination: ROUTES.signIn,
-      },
-    };
+    return gsspRedirectToSignIn();
   }
 
-  const props: ServerSidePropsType = {
+  const props: ServerSideProps = {
     session,
     outcomingRequests: null,
+    categoriesCount: null,
   };
 
   try {
-    const outcomingResponse = await customKy
-      .get(`users/${session.user.id}/outcoming-requests`)
-      .json<UsersResponse>();
+    const outcomingRequestsPromise = getGroupOfUsers(session.user.id, 'outcoming-requests');
+    const categoriesCountPromise = getUserCategoriesCount(session.user.id);
 
-    props.outcomingRequests = outcomingResponse.data;
+    const [outcomingRequests, categoriesCount] = await Promise.allSettled([
+      outcomingRequestsPromise,
+      categoriesCountPromise,
+    ]);
+
+    if (outcomingRequests.status === 'fulfilled') {
+      props.outcomingRequests = outcomingRequests.value;
+    }
+    if (categoriesCount.status === 'fulfilled') {
+      props.categoriesCount = categoriesCount.value;
+    }
   } catch (err) {
     logError('HomePage (getServerSideProps)', err);
   }
 
   return { props };
 }) satisfies GetServerSideProps;
+
+export default OutcomingRequestsPage;
