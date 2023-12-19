@@ -1,6 +1,5 @@
 import { ChatsRecord, ExtendedChatWithMessagesRecord } from './chats';
-import { Nullable } from './global';
-import { UserRelevant, UserRelevantWithStatus, UsersCategories } from './users';
+import { UserRelevant, UserRelevantWithStatus, UsersCategoriesCount } from './users';
 
 // common
 
@@ -19,23 +18,18 @@ export type Response<T> =
 
 // users
 
-export type UserResponse = Response<Nullable<UserRelevant>>;
+export type UserResponse = Response<UserRelevant>;
 
 export type AllUsersResponse = Response<UserRelevantWithStatus[]>;
 
 export type UsersResponse = Response<UserRelevant[]>;
 
-export type UsersCategoriesAmountResponse = {
-  [Property in UsersCategories]: number;
-};
-
-export type FriendRequestResponse = Response<{
-  requestReceiver: UserRelevant;
-  isAccepted: boolean;
-}>;
-
-// chats
+export type UsersCategoriesCountResponse = Response<UsersCategoriesCount>;
 
 export type UserChatsResponse = Response<ChatsRecord>;
+
+export type UserOperationResponse = Response<{ isOperationPerformed: boolean }>;
+
+// chats
 
 export type ChatResponse = Response<ExtendedChatWithMessagesRecord>;
