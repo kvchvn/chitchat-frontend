@@ -1,90 +1,42 @@
-import { ChatHeader } from '@/components/chat-header';
-import { ChatMessagesList } from '@/components/chat-messages-list';
-import { EditedMessagePreview } from '@/components/edited-message-preview';
-import { MessageContextMenu } from '@/components/message-context-menu';
-import { MessageForm } from '@/components/message-form';
-import { ROUTES } from '@/constants/global';
-import { customKy } from '@/ky';
-import { useChatActionsSelector, useSelectedChatSelector } from '@/store/selectors/chat-selectors';
-import {
-  useMessageActionsSelector,
-  useMessagesSelector,
-} from '@/store/selectors/message-selectors';
-import { useSocketSelector } from '@/store/selectors/socket-selectors';
-import { ChatResponse } from '@/types/api';
-import { Nullable } from '@/types/global';
-import { Icon } from '@/ui/icon';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
-import { Session, getServerSession } from 'next-auth';
-import { useEffect, useRef } from 'react';
-import { authOptions } from '../api/auth/[...nextauth]';
+import { Session } from 'next-auth';
+import { ROUTES } from '~/constants/global';
+import { ExtendedChatWithMessagesRecord } from '~/types/chats';
+import { Nullable } from '~/types/global';
+import { getChat } from '~/utils/api';
+import { getSessionData } from '~/utils/get-session-data';
+import { gsspRedirect, gsspRedirectToSignIn } from '~/utils/gssp-redirect';
+import { logError } from '~/utils/log-error';
+import { DisabledChatMessage } from '../../components/chat-page/disabled-chat-message';
+import { EditedMessagePreview } from '../../components/chat-page/edited-message-preview';
+import { Header } from '../../components/chat-page/header';
+import { MainContent } from '../../components/chat-page/main-content';
+import { MessageSendingForm } from '../../components/chat-page/message-sending-form';
 
-type ServerSidePropsType = {
+type ServerSideProps = {
   session: Session;
-  chat: ChatResponse['data'];
+  chat: Nullable<ExtendedChatWithMessagesRecord>;
 };
 
 export default function ChatPage({
   session,
   chat,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const messages = useMessagesSelector();
-  const { setSelectedChat, resetSelectedChat } = useChatActionsSelector();
-  const { setMessages, resetMessages } = useMessageActionsSelector();
-  const selectedChat = useSelectedChatSelector();
-  const socket = useSocketSelector();
-
-  const containerRef = useRef<Nullable<HTMLDivElement>>(null);
-  console.log('ChatPage RENDER', { chatId: chat?.id, socketId: socket?.id, messages });
-  useEffect(() => {
-    if (socket && chat) {
-      // initial messages array filling
-      setMessages(chat.messages);
-      setSelectedChat({ chatId: chat.id, isDisabled: chat.isDisabled });
-
-      return () => {
-        resetMessages();
-        resetSelectedChat();
-      };
-    }
-  }, [chat, socket, setMessages, setSelectedChat, resetMessages, resetSelectedChat]);
-
-  useEffect(() => {
-    if (messages && socket && chat) {
-      const lastMessage = Object.values(messages).at(-1)?.at(-1);
-
-      if (lastMessage && lastMessage.senderId !== session.user.id && !lastMessage.isRead) {
-        socket.emit('chat:read', { chatId: chat.id });
-      }
-    }
-  }, [socket, chat, messages, session.user.id]);
+  console.log('ChatPage RENDER');
 
   return (
     <>
       {!chat ? (
-        <p>Fetching error</p>
+        <p>Error</p>
       ) : (
         <section className="flex h-full flex-col">
-          <ChatHeader chatId={chat.id} chatUsers={chat.users} />
-          <div
-            ref={containerRef}
-            className="relative flex h-full flex-col gap-2 overflow-y-auto border-t border-black bg-stone-100 px-2 pb-8 pt-1"
-          >
-            <MessageContextMenu chatId={chat.id} parentRef={containerRef} />
-            {messages && <ChatMessagesList messages={messages} />}
-          </div>
+          <Header chatId={chat.id} chatUsers={chat.users} />
+          <MainContent chat={chat} userId={session.user.id} />
           <EditedMessagePreview />
-          {selectedChat?.isDisabled ? (
-            <div className="flex items-center gap-2 bg-red-100 p-1">
-              <span className="h-6 w-6">
-                <Icon id="warning" />
-              </span>
-              <p className="text-sm text-red-900">
-                You should add to friends the user to send messages.
-              </p>
-            </div>
+          {chat.isDisabled ? (
+            <DisabledChatMessage />
           ) : (
-            <MessageForm chatId={chat.id} userId={session.user.id} />
+            <MessageSendingForm chatId={chat.id} userId={session.user.id} />
           )}
         </section>
       )}
@@ -92,45 +44,32 @@ export default function ChatPage({
   );
 }
 
-export const getServerSideProps = (async (ctx) => {
-  const session = await getServerSession(ctx.req, ctx.res, authOptions);
+export const getServerSideProps = (async ({ req, res, params }) => {
+  const session = await getSessionData(req, res);
 
   if (!session) {
-    return {
-      redirect: {
-        permanent: false,
-        destination: ROUTES.signIn,
-      },
-    };
+    return gsspRedirectToSignIn();
   }
 
-  const props: ServerSidePropsType = {
+  const props: ServerSideProps = {
     session,
     chat: null,
   };
 
-  const chatId = ctx.params?.id;
+  const chatId = typeof params?.id === 'string' ? params.id : '';
 
-  if (typeof chatId === 'string') {
-    const chatResponse = await customKy.get(`chats/${chatId}`).json<ChatResponse>();
+  try {
+    const chat = await getChat(chatId);
 
-    props.chat = chatResponse.data;
+    const isSessionUserInChat = Boolean(chat?.users.find((user) => user.id === session.user.id));
 
-    if (chatResponse.data && !chatResponse.data.users.find((user) => user.id === session.user.id)) {
-      return {
-        redirect: {
-          permanent: false,
-          destination: ROUTES.chats,
-        },
-      };
+    if (!isSessionUserInChat) {
+      gsspRedirect(ROUTES.chats);
     }
-  } else {
-    return {
-      redirect: {
-        permanent: false,
-        destination: ROUTES.chats,
-      },
-    };
+
+    props.chat = chat;
+  } catch (err) {
+    logError('ChatPage (getServerSideProps)', err);
   }
 
   return { props };
