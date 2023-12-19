@@ -1,11 +1,11 @@
-import { DEFAULT_USERNAME, NO_MESSAGES_TEXT } from '@/constants/chats';
-import { ROUTES } from '@/constants/global';
-import { ChatsRecord } from '@/types/chats';
-import { UserAvatar } from '@/ui/user-avatar';
-import { getTime } from '@/utils/date';
 import classNames from 'classnames';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
+import { NO_MESSAGES_TEXT } from '~/constants/chats';
+import { ROUTES } from '~/constants/global';
+import { ChatsRecord } from '~/types/chats';
+import { UserAvatar } from '~/ui/user-avatar';
+import { getTime } from '~/utils/date';
 
 type ChatItemProps = {
   id: string;
@@ -47,7 +47,6 @@ export function ChatItem({
         />
       </div>
       <div className="flex max-w-[70%] flex-col">
-        <p>{friend.name ?? DEFAULT_USERNAME}</p>
         <p className="truncate text-sm text-gray-600">
           {lastMessage ? (
             <>

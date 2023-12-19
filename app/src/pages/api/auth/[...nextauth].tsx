@@ -1,6 +1,6 @@
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import { PrismaClient } from '@prisma/client';
-import NextAuth, { AuthOptions } from 'next-auth';
+import NextAuth, { NextAuthOptions } from 'next-auth';
 import FacebookProvider from 'next-auth/providers/facebook';
 import GitHubProvider from 'next-auth/providers/github';
 import GoogleProvider from 'next-auth/providers/google';
@@ -8,7 +8,7 @@ import YandexProvider from 'next-auth/providers/yandex';
 
 export const prisma = new PrismaClient();
 
-export const authOptions: AuthOptions = {
+export const authConfig = {
   adapter: PrismaAdapter(prisma),
   session: {
     strategy: 'database',
@@ -35,12 +35,11 @@ export const authOptions: AuthOptions = {
   ],
   callbacks: {
     session: ({ session, user }) => {
-      if (session.user) {
-        session.user.id = user.id;
-      }
+      session.user = user;
+
       return session;
     },
   },
-};
+} satisfies NextAuthOptions;
 
-export default NextAuth(authOptions);
+export default NextAuth(authConfig);

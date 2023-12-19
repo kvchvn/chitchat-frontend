@@ -1,16 +1,16 @@
-import { useMessageContextMenuActionsSelector } from '@/store/selectors/message-managing-selectors';
-import { useSocketSelector } from '@/store/selectors/socket-selectors';
-import { Icon } from '@/ui/icon';
-import { getTime } from '@/utils/date';
 import { Message } from '@prisma/client';
 import classnames from 'classnames';
 import { useSession } from 'next-auth/react';
+import { useMessageContextMenuActionsSelector } from '~/store/selectors/message-managing-selectors';
+import { useSocketSelector } from '~/store/selectors/socket-selectors';
+import { Icon } from '~/ui/icon';
+import { getTime } from '~/utils/date';
 
-type ChatMessageProps = {
+type MessageProps = {
   message: Message;
 };
 
-export function ChatMessage({ message }: ChatMessageProps) {
+export function Message({ message }: MessageProps) {
   const { data: session } = useSession();
   const { openContextMenu } = useMessageContextMenuActionsSelector();
   const socket = useSocketSelector();

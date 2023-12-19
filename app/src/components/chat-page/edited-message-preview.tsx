@@ -1,8 +1,8 @@
 import {
   useMessageEditModeActionsSelector,
   useMessageEditModeSelector,
-} from '@/store/selectors/message-managing-selectors';
-import { Icon } from '@/ui/icon';
+} from '~/store/selectors/message-managing-selectors';
+import { Icon } from '~/ui/icon';
 
 export function EditedMessagePreview() {
   const { isOn, messageContent } = useMessageEditModeSelector();

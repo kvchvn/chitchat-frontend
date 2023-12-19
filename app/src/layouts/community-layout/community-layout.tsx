@@ -1,10 +1,10 @@
 import { PropsWithChildren } from 'react';
-import { CommunityHeader } from './community-header';
+import { Header } from './components/header';
 
 export function CommunityLayout({ children }: PropsWithChildren) {
   return (
     <>
-      <CommunityHeader />
+      <Header />
       <section className="mt-2">{children}</section>
     </>
   );

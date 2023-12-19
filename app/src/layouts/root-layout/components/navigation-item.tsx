@@ -1,13 +1,17 @@
 import classNames from 'classnames';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { PropsWithChildren } from 'react';
 
-type SidebarItemProps = PropsWithChildren & {
+type NavigationItemProps = PropsWithChildren & {
   href?: string;
-  isActive?: boolean;
 };
 
-export function SidebarItem({ href, isActive, children }: SidebarItemProps) {
+export function NavigationItem({ href, children }: NavigationItemProps) {
+  const { pathname } = useRouter();
+
+  const isActive = Boolean(href && pathname.startsWith(href));
+
   return (
     <li className="relative h-12 w-full">
       {href ? (

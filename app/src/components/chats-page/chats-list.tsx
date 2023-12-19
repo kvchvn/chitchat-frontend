@@ -1,5 +1,5 @@
-import { ChatsRecord } from '@/types/chats';
-import { ChatItem } from '../chat-item';
+import { ChatsRecord } from '~/types/chats';
+import { ChatItem } from './chat-item';
 
 type ChatsListProps = {
   chats: ChatsRecord;

@@ -1,16 +1,16 @@
-import { NO_MESSAGES_TEXT } from '@/constants/chats';
-import { ExtendedChatWithMessagesRecord } from '@/types/chats';
-import { Nullable } from '@/types/global';
-import { getDateWithMonthName } from '@/utils/date';
 import { useSession } from 'next-auth/react';
 import { useEffect, useRef } from 'react';
-import { ChatMessage } from './chat-message';
+import { NO_MESSAGES_TEXT } from '~/constants/chats';
+import { ExtendedChatWithMessagesRecord } from '~/types/chats';
+import { Nullable } from '~/types/global';
+import { getDateWithMonthName } from '~/utils/date';
+import { ChatMessage } from './message';
 
-type ChatMessagesListProps = {
+type MessagesListProps = {
   messages: ExtendedChatWithMessagesRecord['messages'];
 };
 
-export function ChatMessagesList({ messages }: ChatMessagesListProps) {
+export function MessagesList({ messages }: MessagesListProps) {
   const { data: session } = useSession();
 
   const lowestElementRef = useRef<Nullable<HTMLDivElement>>(null);

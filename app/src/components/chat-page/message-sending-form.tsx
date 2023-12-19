@@ -1,18 +1,18 @@
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   useMessageEditModeActionsSelector,
   useMessageEditModeSelector,
-} from '@/store/selectors/message-managing-selectors';
-import { useSocketSelector } from '@/store/selectors/socket-selectors';
-import { Nullable } from '@/types/global';
-import { Icon } from '@/ui/icon';
-import { useCallback, useEffect, useRef, useState } from 'react';
+} from '~/store/selectors/message-managing-selectors';
+import { useSocketSelector } from '~/store/selectors/socket-selectors';
+import { Nullable } from '~/types/global';
+import { Icon } from '~/ui/icon';
 
-type MessageFormProps = {
+type MessageSendingFormProps = {
   chatId: string;
   userId: string;
 };
 
-export function MessageForm({ chatId, userId }: MessageFormProps) {
+export function MessageSendingForm({ chatId, userId }: MessageSendingFormProps) {
   const [messageContent, setMessageContent] = useState('');
 
   const socket = useSocketSelector();
