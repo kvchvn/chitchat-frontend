@@ -1,4 +1,4 @@
-import { User } from '@prisma/client';
+import { Session, User } from '@prisma/client';
 
 export type UsersCategories = 'all' | 'friends' | 'incomingRequests' | 'outcomingRequests';
 
@@ -17,7 +17,7 @@ export enum UserStatus {
   FriendRequestFromMeReceiver = 'friend-request-receiver',
 }
 
-export type UserRelevant = Omit<User, 'emailVerified'>;
+export type UserRelevant = Omit<User, 'emailVerified'> & { sessions: Session[] };
 
 export type UserRelevantWithStatus = UserRelevant & { status: UserStatus };
 
