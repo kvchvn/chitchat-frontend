@@ -5,13 +5,14 @@ import { CustomSocket, ServerToClientListenersArgs } from '~/types/socket';
 
 export const useChatListeners = () => {
   const { resetUnreadMessageCount: resetUnreadMessageCount, clearChat } = useChatActionsSelector();
-  const { setMessages } = useMessageActionsSelector();
+  const { setMessages, readMessages } = useMessageActionsSelector();
 
   const onReadChat = useCallback(
     ({ chatId }: ServerToClientListenersArgs['chat:read']) => {
       resetUnreadMessageCount(chatId);
+      readMessages();
     },
-    [resetUnreadMessageCount]
+    [resetUnreadMessageCount, readMessages]
   );
 
   const onClearChat = useCallback(
