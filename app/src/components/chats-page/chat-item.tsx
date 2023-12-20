@@ -6,6 +6,7 @@ import { ROUTES } from '~/constants/global';
 import { ChatsRecord } from '~/types/chats';
 import { UserAvatar } from '~/ui/user-avatar';
 import { getTime } from '~/utils/date';
+import { isUserOnline } from '~/utils/is-user-online';
 
 type ChatItemProps = {
   id: string;
@@ -45,6 +46,9 @@ export function ChatItem({
             'scale-75 grayscale': isDisabled,
           })}
         />
+        {isUserOnline(friend) && (
+          <span className="absolute bottom-0 right-0 block h-3 w-3 rounded-full border-2 border-gray-600 bg-green-600" />
+        )}
       </div>
       <div className="flex max-w-[70%] flex-col">
         <p className="truncate text-sm text-gray-600">
