@@ -65,5 +65,22 @@ export const messageSlice: ImmerStateCreator<MessageSlice> = (set) => ({
           }
         }
       }),
+    readMessages: () =>
+      set(({ messages }) => {
+        if (messages) {
+          const messagesArr = Object.values(messages).at(-1);
+
+          if (messagesArr) {
+            for (let i = messagesArr.length - 1; i >= 0; i--) {
+              const message = messagesArr[i];
+              if (message.isRead) {
+                break;
+              } else {
+                message.isRead = true;
+              }
+            }
+          }
+        }
+      }),
   },
 });
