@@ -68,11 +68,15 @@ export function Message({ message }: MessageProps) {
           <Icon id="heart" />
         </span>
       )}
-
       <p>{message.content}</p>
-      <p className="mt-1 text-right font-mono text-xs text-zinc-500">
-        {getTime(message.createdAt)}
-      </p>
+      <div className="mt-1 flex items-center justify-end">
+        {message.senderId === session.user.id && message.isRead && (
+          <span className="relative h-5 w-5">
+            <Icon id="check" />
+          </span>
+        )}
+        <p className="font-mono text-xs text-zinc-500">{getTime(message.createdAt)}</p>
+      </div>
     </li>
   );
 }
