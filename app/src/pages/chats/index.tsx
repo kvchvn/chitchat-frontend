@@ -54,7 +54,7 @@ export const getServerSideProps = (async ({ req, res }) => {
   };
 
   try {
-    const chats = await getUserChats(session.user.id);
+    const chats = await getUserChats(session.user.id, req.cookies);
 
     props.chats = chats;
   } catch (err) {

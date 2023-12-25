@@ -59,7 +59,7 @@ export const getServerSideProps = (async ({ req, res, params }) => {
   const chatId = typeof params?.id === 'string' ? params.id : '';
 
   try {
-    const chat = await getChat(chatId);
+    const chat = await getChat(chatId, req.cookies);
 
     const isSessionUserInChat = Boolean(chat?.users.find((user) => user.id === session.user.id));
 
