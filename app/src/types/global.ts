@@ -22,6 +22,10 @@ export type IconId =
 
 export type Nullable<T> = T | null;
 
+export type SessionWithToken = Session & {
+  sessionToken?: string;
+};
+
 export type PageProps = {
-  session: Nullable<Session>;
+  session: Nullable<SessionWithToken>;
 };
