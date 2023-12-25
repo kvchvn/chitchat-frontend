@@ -5,7 +5,13 @@ import { CustomSocket } from '~/types/socket';
 import { useChatListeners } from './use-chat-listeners';
 import { useMessageListeners } from './use-message-listeners';
 
-export const useSocketInitialization = ({ userId }: { userId?: string }) => {
+export const useSocketInitialization = ({
+  userId,
+  sessionToken,
+}: {
+  userId?: string;
+  sessionToken?: string;
+}) => {
   const { setSocket, resetSocket } = useSocketActionsSelector();
   const { registerListeners: registerChatListeners } = useChatListeners();
   const { registerListeners: registerMessageListeners } = useMessageListeners({
@@ -14,11 +20,11 @@ export const useSocketInitialization = ({ userId }: { userId?: string }) => {
 
   useEffect(() => {
     const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL;
-    if (!userId || !SERVER_URL) return;
+    if (!userId || !SERVER_URL || !sessionToken) return;
 
     console.log('useSocketInitialization');
     const socketInstance: CustomSocket = io(SERVER_URL, { autoConnect: false });
-    socketInstance.auth = { userId };
+    socketInstance.auth = { userId, sessionToken };
     socketInstance.connect();
 
     socketInstance.on('connect', () => {

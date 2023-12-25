@@ -15,7 +15,10 @@ type AppPropsWithLayout<Props> = AppProps<Props> & {
 };
 
 export default function App({ Component, pageProps }: AppPropsWithLayout<PageProps>) {
-  useSocketInitialization({ userId: pageProps.session?.user.id });
+  useSocketInitialization({
+    userId: pageProps.session?.user.id,
+    sessionToken: pageProps.session?.sessionToken,
+  });
   console.log('App render');
 
   const getLayout = Component.getLayout ?? ((page) => page);
