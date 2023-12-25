@@ -1,6 +1,7 @@
 import { Message } from '@prisma/client';
 import classnames from 'classnames';
 import { useSession } from 'next-auth/react';
+import React from 'react';
 import { useMessageContextMenuActionsSelector } from '~/store/selectors/message-managing-selectors';
 import { useSocketSelector } from '~/store/selectors/socket-selectors';
 import { Icon } from '~/ui/icon';
@@ -39,7 +40,7 @@ export function Message({ message }: MessageProps) {
       onContextMenu={handleContextMenu}
       onDoubleClick={handleDoubleClick}
       className={classnames(
-        'relative w-fit max-w-[45%] cursor-pointer whitespace-pre-line border px-3 py-1 overflow-anywhere',
+        'relative w-fit max-w-[45%] cursor-pointer select-none whitespace-pre-line border px-3 py-1 overflow-anywhere',
         {
           'ml-auto self-end rounded-t-xl rounded-bl-xl border-black bg-white':
             message.senderId === session.user.id,
@@ -50,7 +51,7 @@ export function Message({ message }: MessageProps) {
     >
       {message.isEdited && (
         <span
-          className={classnames('absolute bottom-0 block h-4 w-4 opacity-50', {
+          className={classnames('absolute bottom-0 block h-4 w-4 opacity-70', {
             '-left-5': message.senderId === session.user.id,
             '-right-5': message.senderId !== session.user.id,
           })}
