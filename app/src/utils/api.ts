@@ -9,9 +9,23 @@ import {
 } from '~/types/api';
 import { isErrorResponse } from '~/types/guards';
 
-const baseFetch = async <T extends Response<unknown>>(input: RequestInfo, init?: RequestInit) => {
+type Cookies = Partial<Record<string, string | number | boolean>>;
+
+const baseFetch = async <T extends Response<unknown>>(
+  input: RequestInfo,
+  cookies: Cookies,
+  init?: RequestInit
+) => {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/${input}`, init);
+    const CookieHeader = Object.entries(cookies)
+      .map(([key, value]) => `${key}=${value};`)
+      .join('');
+
+    const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/${input}`, {
+      credentials: 'include',
+      headers: { Cookie: CookieHeader, ...init?.headers },
+      ...init,
+    });
     const parsedResponse = (await response.json()) as T;
 
     if (!response.ok) {
@@ -27,34 +41,34 @@ const baseFetch = async <T extends Response<unknown>>(input: RequestInfo, init?:
   }
 };
 
-export const getUserChats = async (userId: string = '') => {
-  const chats = await baseFetch<UserChatsResponse>(`users/${userId}/chats`);
+export const getUserChats = async (userId: string = '', cookies: Cookies) => {
+  const chats = await baseFetch<UserChatsResponse>(`users/${userId}/chats`, cookies);
   return chats.data;
 };
 
-export const getChat = async (chatId: string = '') => {
-  const chat = await baseFetch<ChatResponse>(`chats/${chatId}`);
+export const getChat = async (chatId: string = '', cookies: Cookies) => {
+  const chat = await baseFetch<ChatResponse>(`chats/${chatId}`, cookies);
   return chat.data;
 };
 
-export const getAllUsers = async (userId: string = '') => {
-  const allUsers = await baseFetch<AllUsersResponse>(`users/${userId}/all`, { cache: 'no-store' });
+export const getAllUsers = async (userId: string = '', cookies: Cookies) => {
+  const allUsers = await baseFetch<AllUsersResponse>(`users/${userId}/all`, cookies);
   return allUsers.data;
 };
 
 export const getGroupOfUsers = async (
   userId: string = '',
-  group: 'friends' | 'incoming-requests' | 'outcoming-requests'
+  group: 'friends' | 'incoming-requests' | 'outcoming-requests',
+  cookies: Cookies
 ) => {
-  const usersGroup = await baseFetch<UsersResponse>(`users/${userId}/${group}`, {
-    cache: 'no-store',
-  });
+  const usersGroup = await baseFetch<UsersResponse>(`users/${userId}/${group}`, cookies);
   return usersGroup.data;
 };
 
-export const getUserCategoriesCount = async (userId: string = '') => {
+export const getUserCategoriesCount = async (userId: string = '', cookies: Cookies) => {
   const categoriesCount = await baseFetch<UsersCategoriesCountResponse>(
-    `users/${userId}/categories-count`
+    `users/${userId}/categories-count`,
+    cookies
   );
   return categoriesCount.data;
 };
