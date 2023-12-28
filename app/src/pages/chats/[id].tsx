@@ -1,8 +1,9 @@
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
-import { Session } from 'next-auth';
-import { ROUTES } from '~/constants/global';
+import { ServerErrorFallback } from '~/components/chat-page/server-error-fallback';
+import { DEFAULT_ERROR_RESPONSE, ROUTES } from '~/constants/global';
 import { ExtendedChatWithMessagesRecord } from '~/types/chats';
-import { Nullable } from '~/types/global';
+import { BasicServerSideProps, Nullable } from '~/types/global';
+import { isErrorResponse } from '~/types/guards';
 import { getChat } from '~/utils/api';
 import { getSessionData } from '~/utils/get-session-data';
 import { gsspRedirect, gsspRedirectToSignIn } from '~/utils/gssp-redirect';
@@ -13,22 +14,20 @@ import { Header } from '../../components/chat-page/header';
 import { MainContent } from '../../components/chat-page/main-content';
 import { MessageSendingForm } from '../../components/chat-page/message-sending-form';
 
-type ServerSideProps = {
-  session: Session;
+type ServerSideProps = BasicServerSideProps & {
   chat: Nullable<ExtendedChatWithMessagesRecord>;
 };
 
 export default function ChatPage({
   session,
   chat,
+  error,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   console.log('ChatPage RENDER');
 
   return (
-    <>
-      {!chat ? (
-        <p>Error</p>
-      ) : (
+    <ServerErrorFallback error={error}>
+      {chat && (
         <section className="flex h-full flex-col">
           <Header chatId={chat.id} chatUsers={chat.users} />
           <MainContent chat={chat} userId={session.user.id} />
@@ -40,7 +39,7 @@ export default function ChatPage({
           )}
         </section>
       )}
-    </>
+    </ServerErrorFallback>
   );
 }
 
@@ -51,15 +50,15 @@ export const getServerSideProps = (async ({ req, res, params }) => {
     return gsspRedirectToSignIn();
   }
 
-  const props: ServerSideProps = {
-    session,
-    chat: null,
-  };
-
-  const chatId = typeof params?.id === 'string' ? params.id : '';
+  const props: ServerSideProps = { session, chat: null, error: null };
 
   try {
+    const chatId = typeof params?.id === 'string' ? params.id : '';
     const chat = await getChat(chatId, req.cookies);
+
+    if (!chat) {
+      throw new Error(`Failed to load chat (chatId=${chatId}) in getServerSideProps on ChatPage.`);
+    }
 
     const isSessionUserInChat = Boolean(chat?.users.find((user) => user.id === session.user.id));
 
@@ -70,7 +69,8 @@ export const getServerSideProps = (async ({ req, res, params }) => {
     props.chat = chat;
   } catch (err) {
     logError('ChatPage (getServerSideProps)', err);
+    props.error = isErrorResponse(err) ? err : DEFAULT_ERROR_RESPONSE;
   }
 
   return { props };
-}) satisfies GetServerSideProps;
+}) satisfies GetServerSideProps<ServerSideProps>;
