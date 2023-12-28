@@ -1,4 +1,4 @@
-import { useMergedStore } from '..';
+import { useMergedStore } from '../store';
 
 export const useSocketSelector = () => useMergedStore((state) => state.socket);
 

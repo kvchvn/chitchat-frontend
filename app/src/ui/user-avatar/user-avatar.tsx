@@ -1,11 +1,11 @@
-import { DEFAULT_USERNAME } from '@/constants';
-import { Nullable } from '@/types';
 import Image from 'next/image';
+import { DEFAULT_USER } from '~/constants/chats';
+import { Nullable } from '~/types/global';
 import { Icon } from '../icon';
 
 type UserAvatarProps = {
-  username: Nullable<string>;
-  src: Nullable<string>;
+  username?: Nullable<string>;
+  src?: Nullable<string>;
   size?: number;
   className?: string;
 };
@@ -17,7 +17,7 @@ export function UserAvatar({ src, size, username, className = '' }: UserAvatarPr
       width={size}
       height={size}
       fill={!size}
-      alt={`Avatar of ${username ?? DEFAULT_USERNAME}`}
+      alt={`Avatar of ${username ?? DEFAULT_USER.username}`}
       className={className}
     />
   ) : (

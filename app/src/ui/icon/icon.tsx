@@ -1,4 +1,4 @@
-import { IconId } from '@/types';
+import { IconId } from '~/types/global';
 
 type IconProps = {
   id: IconId;

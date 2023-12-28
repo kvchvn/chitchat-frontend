@@ -1,30 +1,35 @@
-import { Chat, Message } from '@prisma/client';
-import { Nullable, UserCounts, UserRelevant } from '.';
+import { ChatsRecord, ExtendedChatWithMessagesRecord } from './chats';
+import { UserRelevant, UserRelevantWithStatus, UsersCategoriesCount } from './users';
+
+// common
 
 export type ErrorResponse = {
-  ok: false;
+  data: null;
   status: number;
   message: string;
   issues?: string[];
 };
 
-export type Users = {
-  allUsersExceptOneself: Nullable<(UserRelevant & { _count: UserCounts })[]>;
-  friends: Nullable<UserRelevant[]>;
-  incomingRequests: Nullable<UserRelevant[]>;
-  outcomingRequests: Nullable<UserRelevant[]>;
-};
+export type Response<T> =
+  | {
+      data: T;
+    }
+  | ErrorResponse;
 
-export type ChatRelevant = Chat & { messages: Record<string, Message[]> } & {
-  users: UserRelevant[];
-};
+// users
 
-export type ChatsRecord = Record<
-  string,
-  {
-    isDisabled: boolean;
-    lastMessage: Pick<Message, 'content' | 'senderId' | 'createdAt'> | undefined;
-    users: UserRelevant[];
-    unreadMessagesCount: number;
-  }
->;
+export type UserResponse = Response<UserRelevant>;
+
+export type AllUsersResponse = Response<UserRelevantWithStatus[]>;
+
+export type UsersResponse = Response<UserRelevant[]>;
+
+export type UsersCategoriesCountResponse = Response<UsersCategoriesCount>;
+
+export type UserChatsResponse = Response<ChatsRecord>;
+
+export type UserOperationResponse = Response<{ isOperationPerformed: boolean }>;
+
+// chats
+
+export type ChatResponse = Response<ExtendedChatWithMessagesRecord>;

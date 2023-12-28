@@ -1,4 +1,4 @@
-import { useMergedStore } from '..';
+import { useMergedStore } from '../store';
 
 export const useChatsSelector = () => useMergedStore((state) => state.chats);
 

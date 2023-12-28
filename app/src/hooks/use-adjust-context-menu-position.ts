@@ -1,5 +1,5 @@
-import { Nullable } from '@/types';
 import { MutableRefObject, useEffect } from 'react';
+import { Nullable } from '~/types/global';
 
 type UseAdjustContextMenuPositionArgs<T, U> = {
   contextMenuRef: MutableRefObject<Nullable<T>>;

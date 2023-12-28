@@ -1,21 +1,33 @@
-import { useSocketInitialization } from '@/hooks';
-import { RootLayout } from '@/layouts/root-layout';
-import { useSocketSelector } from '@/store';
-import '@/styles/globals.css';
-import { PageProps } from '@/types';
+import { NextPage } from 'next';
 import { SessionProvider } from 'next-auth/react';
-import type { AppProps } from 'next/app';
+import { AppProps } from 'next/app';
+import { ErrorBoundary } from '~/components/global/error-boundary';
+import { useSocketInitialization } from '~/hooks/use-socket-initialization';
+import { RootLayout } from '~/layouts/root-layout';
+import '~/styles/globals.css';
+import { PageProps } from '~/types/global';
 
-export default function App({ Component, pageProps }: AppProps<PageProps>) {
-  useSocketInitialization({ userId: pageProps.session?.user.id });
-  console.log('App render');
+export type NextPageWithLayout<P = Record<string, unknown>, IP = P> = NextPage<P, IP> & {
+  getLayout?: (page: React.ReactElement) => React.ReactNode;
+};
 
-  const socket = useSocketSelector();
+type AppPropsWithLayout<Props> = AppProps<Props> & {
+  Component: NextPageWithLayout;
+};
+
+export default function App({ Component, pageProps }: AppPropsWithLayout<PageProps>) {
+  useSocketInitialization({
+    userId: pageProps.session?.user.id,
+    sessionToken: pageProps.session?.sessionToken,
+  });
+
+  const getLayout = Component.getLayout ?? ((page) => page);
+
   return (
-    <SessionProvider session={pageProps.session}>
-      <RootLayout socket={socket} {...pageProps}>
-        <Component {...pageProps} />
-      </RootLayout>
-    </SessionProvider>
+    <ErrorBoundary fallback={<p>Error Boundary</p>}>
+      <SessionProvider session={pageProps.session}>
+        <RootLayout>{getLayout(<Component {...pageProps} />)}</RootLayout>
+      </SessionProvider>
+    </ErrorBoundary>
   );
 }

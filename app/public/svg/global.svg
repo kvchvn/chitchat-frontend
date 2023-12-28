@@ -32,4 +32,24 @@
   <symbol id="warning" viewBox="0 0 24 24" fill="#fee2e2">
     <path d="M12 8.4502V12.4502M12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21ZM12.0498 15.4502V15.5502L11.9502 15.5498V15.4502H12.0498Z" stroke="#7f1d1d" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
   </symbol>
+  <symbol id="user-add" viewBox="0 0 24 24" fill="none">
+    <path d="M15 19C15 16.7909 12.3137 15 9 15C5.68629 15 3 16.7909 3 19M19 16V13M19 13V10M19 13H16M19 13H22M9 12C6.79086 12 5 10.2091 5 8C5 5.79086 6.79086 4 9 4C11.2091 4 13 5.79086 13 8C13 10.2091 11.2091 12 9 12Z" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="user-incoming-request" viewBox="0 0 24 24" fill="none">
+    <path d="M15 19C15 16.7909 12.3137 15 9 15C5.68629 15 3 16.7909 3 19M9 12C6.79086 12 5 10.2091 5 8C5 5.79086 6.79086 4 9 4C11.2091 4 13 5.79086 13 8C13 10.2091 11.2091 12 9 12Z" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M20 16L17 13L20 10" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="user-outcoming-request" viewBox="0 0 24 24" fill="none">
+    <path d="M15 19C15 16.7909 12.3137 15 9 15C5.68629 15 3 16.7909 3 19M9 12C6.79086 12 5 10.2091 5 8C5 5.79086 6.79086 4 9 4C11.2091 4 13 5.79086 13 8C13 10.2091 11.2091 12 9 12Z" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M17 10L20 13L17 16" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="friend" viewBox="0 0 24 24" fill="none">
+    <path d="M15 19C15 16.7909 12.3137 15 9 15C5.68629 15 3 16.7909 3 19M21 10L17 14L15 12M9 12C6.79086 12 5 10.2091 5 8C5 5.79086 6.79086 4 9 4C11.2091 4 13 5.79086 13 8C13 10.2091 11.2091 12 9 12Z" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="user-remove" viewBox="0 0 24 24" fill="none">
+    <path d="M15 19C15 16.7909 12.3137 15 9 15C5.68629 15 3 16.7909 3 19M17 14L19 12M19 12L21 10M19 12L17 10M19 12L21 14M9 12C6.79086 12 5 10.2091 5 8C5 5.79086 6.79086 4 9 4C11.2091 4 13 5.79086 13 8C13 10.2091 11.2091 12 9 12Z" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="check" viewBox="0 0 24 24" fill="none">
+    <path d="M6 12L10.2426 16.2426L18.727 7.75732" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
 </svg>

@@ -1,5 +1,5 @@
-import { User } from '@prisma/client';
 import { Session } from 'next-auth';
+import { ErrorResponse } from './api';
 
 export type IconId =
   | 'chat'
@@ -13,18 +13,30 @@ export type IconId =
   | 'pencil'
   | 'save'
   | 'heart'
-  | 'warning';
+  | 'warning'
+  | 'user-add'
+  | 'user-remove'
+  | 'user-outcoming-request'
+  | 'user-incoming-request'
+  | 'friend'
+  | 'check';
 
 export type Nullable<T> = T | null;
 
-export type UserCounts = {
-  friends: number;
-  incomingRequests: number;
-  outcomingRequests: number;
+export type SessionWithToken = Session & {
+  sessionToken?: string;
 };
 
-export type UserRelevant = Omit<User, 'emailVerified'>;
-
 export type PageProps = {
-  session: Nullable<Session>;
+  session: Nullable<SessionWithToken>;
+};
+
+export type BasicServerSideProps = {
+  session: Session;
+  error: Nullable<ErrorResponse>;
+};
+
+export type ServerError = {
+  status: number;
+  message: string;
 };
