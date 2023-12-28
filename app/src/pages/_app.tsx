@@ -1,6 +1,7 @@
 import { NextPage } from 'next';
 import { SessionProvider } from 'next-auth/react';
 import { AppProps } from 'next/app';
+import { ErrorBoundary } from '~/components/global/error-boundary';
 import { useSocketInitialization } from '~/hooks/use-socket-initialization';
 import { RootLayout } from '~/layouts/root-layout';
 import '~/styles/globals.css';
@@ -19,13 +20,14 @@ export default function App({ Component, pageProps }: AppPropsWithLayout<PagePro
     userId: pageProps.session?.user.id,
     sessionToken: pageProps.session?.sessionToken,
   });
-  console.log('App render');
 
   const getLayout = Component.getLayout ?? ((page) => page);
 
   return (
-    <SessionProvider session={pageProps.session}>
-      <RootLayout>{getLayout(<Component {...pageProps} />)}</RootLayout>
-    </SessionProvider>
+    <ErrorBoundary fallback={<p>Error Boundary</p>}>
+      <SessionProvider session={pageProps.session}>
+        <RootLayout>{getLayout(<Component {...pageProps} />)}</RootLayout>
+      </SessionProvider>
+    </ErrorBoundary>
   );
 }
