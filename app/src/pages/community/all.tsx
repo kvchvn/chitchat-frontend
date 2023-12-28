@@ -1,13 +1,15 @@
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
-import { Session } from 'next-auth';
 import { useEffect } from 'react';
+import { ServerErrorFallback } from '~/components/community-page/server-error-fallback';
 import { UsersList } from '~/components/community-page/users-list';
+import { DEFAULT_ERROR_RESPONSE } from '~/constants/global';
 import { CommunityLayout } from '~/layouts/community-layout';
 import {
   useCommunityActionsSelector,
   useUsersListSelector,
 } from '~/store/selectors/community-selectors';
-import { Nullable } from '~/types/global';
+import { BasicServerSideProps, Nullable } from '~/types/global';
+import { isErrorResponse } from '~/types/guards';
 import { UserRelevantWithStatus, UsersCategoriesCount, UsersCategoriesName } from '~/types/users';
 import { getAllUsers, getUserCategoriesCount } from '~/utils/api';
 import { getSessionData } from '~/utils/get-session-data';
@@ -15,22 +17,21 @@ import { gsspRedirectToSignIn } from '~/utils/gssp-redirect';
 import { logError } from '~/utils/log-error';
 import { NextPageWithLayout } from '../_app';
 
-type ServerSideProps = {
-  session: Session;
+type ServerSideProps = BasicServerSideProps & {
   allUsers: Nullable<UserRelevantWithStatus[]>;
   categoriesCount: Nullable<UsersCategoriesCount>;
 };
 
 const AllCommunityPage: NextPageWithLayout<
   InferGetServerSidePropsType<typeof getServerSideProps>
-> = ({ allUsers, categoriesCount }) => {
-  const storedAllUsers = useUsersListSelector();
+> = ({ allUsers: allUsersFromProps, categoriesCount, error }) => {
+  const allUsers = useUsersListSelector();
   const { setUsersList, resetUsersList, setCategoriesCount, resetCategoriesCount } =
     useCommunityActionsSelector();
 
   useEffect(() => {
-    if (allUsers) {
-      setUsersList(allUsers);
+    if (allUsersFromProps) {
+      setUsersList(allUsersFromProps);
 
       if (categoriesCount) {
         setCategoriesCount(categoriesCount);
@@ -44,16 +45,18 @@ const AllCommunityPage: NextPageWithLayout<
   }, [
     setUsersList,
     resetUsersList,
-    allUsers,
+    allUsersFromProps,
     setCategoriesCount,
     resetCategoriesCount,
     categoriesCount,
   ]);
 
-  return allUsers ? (
-    <UsersList users={storedAllUsers ?? allUsers} category={UsersCategoriesName.All} />
-  ) : (
-    <p>Error</p>
+  return (
+    <ServerErrorFallback error={error}>
+      {allUsersFromProps && (
+        <UsersList users={allUsers ?? allUsersFromProps} category={UsersCategoriesName.All} />
+      )}
+    </ServerErrorFallback>
   );
 };
 
@@ -68,11 +71,7 @@ export const getServerSideProps = (async ({ req, res }) => {
     return gsspRedirectToSignIn();
   }
 
-  const props: ServerSideProps = {
-    session,
-    allUsers: null,
-    categoriesCount: null,
-  };
+  const props: ServerSideProps = { session, allUsers: null, categoriesCount: null, error: null };
 
   try {
     const allUsersPromise = getAllUsers(session.user.id, req.cookies);
@@ -84,16 +83,23 @@ export const getServerSideProps = (async ({ req, res }) => {
     ]);
 
     if (allUsers.status === 'fulfilled') {
+      if (!allUsers.value) {
+        throw new Error(
+          `Failed to load all users (userId=${session.user.id}) in getServerSideProps on AllCommunityPage.`
+        );
+      }
+
       props.allUsers = allUsers.value;
     }
     if (categoriesCount.status === 'fulfilled') {
       props.categoriesCount = categoriesCount.value;
     }
   } catch (err) {
-    logError('AllUsersPage (getServerSideProps)', err);
+    logError('AllCommunityPage (getServerSideProps)', err);
+    props.error = isErrorResponse(err) ? err : DEFAULT_ERROR_RESPONSE;
   }
 
   return { props };
-}) satisfies GetServerSideProps;
+}) satisfies GetServerSideProps<ServerSideProps>;
 
 export default AllCommunityPage;

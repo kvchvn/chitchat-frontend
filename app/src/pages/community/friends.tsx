@@ -1,13 +1,15 @@
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
-import { Session } from 'next-auth';
 import { useEffect } from 'react';
+import { ServerErrorFallback } from '~/components/community-page/server-error-fallback';
 import { UsersList } from '~/components/community-page/users-list';
+import { DEFAULT_ERROR_RESPONSE } from '~/constants/global';
 import { CommunityLayout } from '~/layouts/community-layout';
 import {
   useCommunityActionsSelector,
   useUsersListSelector,
 } from '~/store/selectors/community-selectors';
-import { Nullable } from '~/types/global';
+import { BasicServerSideProps, Nullable } from '~/types/global';
+import { isErrorResponse } from '~/types/guards';
 import { UserRelevant, UsersCategoriesCount, UsersCategoriesName } from '~/types/users';
 import { getGroupOfUsers, getUserCategoriesCount } from '~/utils/api';
 import { getSessionData } from '~/utils/get-session-data';
@@ -15,23 +17,23 @@ import { gsspRedirectToSignIn } from '~/utils/gssp-redirect';
 import { logError } from '~/utils/log-error';
 import { NextPageWithLayout } from '../_app';
 
-type ServerSideProps = {
-  session: Session;
+type ServerSideProps = BasicServerSideProps & {
   friends: Nullable<UserRelevant[]>;
   categoriesCount: Nullable<UsersCategoriesCount>;
 };
 
 const FriendsPage: NextPageWithLayout<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
-  friends,
+  friends: friendsFromProps,
   categoriesCount,
+  error,
 }) => {
   const storedFriends = useUsersListSelector();
   const { setUsersList, resetUsersList, setCategoriesCount, resetCategoriesCount } =
     useCommunityActionsSelector();
 
   useEffect(() => {
-    if (friends) {
-      setUsersList(friends);
+    if (friendsFromProps) {
+      setUsersList(friendsFromProps);
 
       if (categoriesCount) {
         setCategoriesCount(categoriesCount);
@@ -45,16 +47,21 @@ const FriendsPage: NextPageWithLayout<InferGetServerSidePropsType<typeof getServ
   }, [
     setUsersList,
     resetUsersList,
-    friends,
+    friendsFromProps,
     setCategoriesCount,
     resetCategoriesCount,
     categoriesCount,
   ]);
 
-  return friends ? (
-    <UsersList users={storedFriends ?? friends} category={UsersCategoriesName.Friends} />
-  ) : (
-    <p>Error</p>
+  return (
+    <ServerErrorFallback error={error}>
+      {friendsFromProps && (
+        <UsersList
+          users={storedFriends ?? friendsFromProps}
+          category={UsersCategoriesName.Friends}
+        />
+      )}
+    </ServerErrorFallback>
   );
 };
 
@@ -67,11 +74,7 @@ export const getServerSideProps = (async ({ req, res }) => {
     return gsspRedirectToSignIn();
   }
 
-  const props: ServerSideProps = {
-    session,
-    friends: null,
-    categoriesCount: null,
-  };
+  const props: ServerSideProps = { session, friends: null, categoriesCount: null, error: null };
 
   try {
     const friendsPromise = getGroupOfUsers(session.user.id, 'friends', req.cookies);
@@ -83,16 +86,23 @@ export const getServerSideProps = (async ({ req, res }) => {
     ]);
 
     if (friends.status === 'fulfilled') {
+      if (!friends.value) {
+        throw new Error(
+          `Failed to load user's friends (userId=${session.user.id}) in getServerSideProps on FriendsPage.`
+        );
+      }
+
       props.friends = friends.value;
     }
     if (categoriesCount.status === 'fulfilled') {
       props.categoriesCount = categoriesCount.value;
     }
   } catch (err) {
-    logError('HomePage (getServerSideProps)', err);
+    logError('FriendsPage (getServerSideProps)', err);
+    props.error = isErrorResponse(err) ? err : DEFAULT_ERROR_RESPONSE;
   }
 
   return { props };
-}) satisfies GetServerSideProps;
+}) satisfies GetServerSideProps<ServerSideProps>;
 
 export default FriendsPage;

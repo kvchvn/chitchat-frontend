@@ -1,13 +1,15 @@
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
-import { Session } from 'next-auth';
 import { useEffect } from 'react';
+import { ServerErrorFallback } from '~/components/community-page/server-error-fallback';
 import { UsersList } from '~/components/community-page/users-list';
+import { DEFAULT_ERROR_RESPONSE } from '~/constants/global';
 import { CommunityLayout } from '~/layouts/community-layout';
 import {
   useCommunityActionsSelector,
   useUsersListSelector,
 } from '~/store/selectors/community-selectors';
-import { Nullable } from '~/types/global';
+import { BasicServerSideProps, Nullable } from '~/types/global';
+import { isErrorResponse } from '~/types/guards';
 import { UserRelevant, UsersCategoriesCount, UsersCategoriesName } from '~/types/users';
 import { getGroupOfUsers, getUserCategoriesCount } from '~/utils/api';
 import { getSessionData } from '~/utils/get-session-data';
@@ -15,22 +17,21 @@ import { gsspRedirectToSignIn } from '~/utils/gssp-redirect';
 import { logError } from '~/utils/log-error';
 import { NextPageWithLayout } from '../_app';
 
-type ServerSideProps = {
-  session: Session;
+type ServerSideProps = BasicServerSideProps & {
   outcomingRequests: Nullable<UserRelevant[]>;
   categoriesCount: Nullable<UsersCategoriesCount>;
 };
 
 const OutcomingRequestsPage: NextPageWithLayout<
   InferGetServerSidePropsType<typeof getServerSideProps>
-> = ({ outcomingRequests, categoriesCount }) => {
+> = ({ outcomingRequests: outcomingRequestsFromProps, categoriesCount, error }) => {
   const storedOutcomingRequests = useUsersListSelector();
   const { setUsersList, resetUsersList, setCategoriesCount, resetCategoriesCount } =
     useCommunityActionsSelector();
 
   useEffect(() => {
-    if (outcomingRequests) {
-      setUsersList(outcomingRequests);
+    if (outcomingRequestsFromProps) {
+      setUsersList(outcomingRequestsFromProps);
 
       if (categoriesCount) {
         setCategoriesCount(categoriesCount);
@@ -44,19 +45,21 @@ const OutcomingRequestsPage: NextPageWithLayout<
   }, [
     setUsersList,
     resetUsersList,
-    outcomingRequests,
+    outcomingRequestsFromProps,
     setCategoriesCount,
     resetCategoriesCount,
     categoriesCount,
   ]);
 
-  return outcomingRequests ? (
-    <UsersList
-      users={storedOutcomingRequests ?? outcomingRequests}
-      category={UsersCategoriesName.OutcomingRequests}
-    />
-  ) : (
-    <p>Error</p>
+  return (
+    <ServerErrorFallback error={error}>
+      {outcomingRequestsFromProps && (
+        <UsersList
+          users={storedOutcomingRequests ?? outcomingRequestsFromProps}
+          category={UsersCategoriesName.OutcomingRequests}
+        />
+      )}
+    </ServerErrorFallback>
   );
 };
 
@@ -73,6 +76,7 @@ export const getServerSideProps = (async ({ req, res }) => {
     session,
     outcomingRequests: null,
     categoriesCount: null,
+    error: null,
   };
 
   try {
@@ -89,16 +93,23 @@ export const getServerSideProps = (async ({ req, res }) => {
     ]);
 
     if (outcomingRequests.status === 'fulfilled') {
+      if (!outcomingRequests.value) {
+        throw new Error(
+          `Failed to load user's outcoming requests (userId=${session.user.id}) in getServerSideProps on OutcomingRequestsPage.`
+        );
+      }
+
       props.outcomingRequests = outcomingRequests.value;
     }
     if (categoriesCount.status === 'fulfilled') {
       props.categoriesCount = categoriesCount.value;
     }
   } catch (err) {
-    logError('HomePage (getServerSideProps)', err);
+    logError('OutcomingRequestsPage (getServerSideProps)', err);
+    props.error = isErrorResponse(err) ? err : DEFAULT_ERROR_RESPONSE;
   }
 
   return { props };
-}) satisfies GetServerSideProps;
+}) satisfies GetServerSideProps<ServerSideProps>;
 
 export default OutcomingRequestsPage;
