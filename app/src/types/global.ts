@@ -1,4 +1,5 @@
 import { Session } from 'next-auth';
+import { ErrorResponse } from './api';
 
 export type IconId =
   | 'chat'
@@ -28,4 +29,14 @@ export type SessionWithToken = Session & {
 
 export type PageProps = {
   session: Nullable<SessionWithToken>;
+};
+
+export type BasicServerSideProps = {
+  session: Session;
+  error: Nullable<ErrorResponse>;
+};
+
+export type ServerError = {
+  status: number;
+  message: string;
 };
