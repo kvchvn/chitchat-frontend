@@ -1,3 +1,5 @@
+import { ErrorResponse } from '~/types/api';
+
 export const ROUTES = {
   home: '/',
   about: '/about',
@@ -15,3 +17,9 @@ export const ROUTES = {
 } as const;
 
 export const SESSION_TOKEN_COOKIE = 'next-auth.session-token';
+
+export const DEFAULT_ERROR_RESPONSE: ErrorResponse = {
+  data: null,
+  status: 500,
+  message: 'Internal Server Error',
+};
