@@ -1,5 +1,6 @@
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { Session } from 'next-auth';
+import Head from 'next/head';
 import Link from 'next/link';
 import { ROUTES } from '~/constants/global';
 import { Nullable } from '~/types/global';
@@ -14,6 +15,7 @@ export default function HomePage({
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
     <>
+      <Head>Home | Chit-Chat</Head>
       <div>
         Welcome to <h1>Chit-Chat</h1>
       </div>

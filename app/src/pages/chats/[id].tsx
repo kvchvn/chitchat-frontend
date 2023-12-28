@@ -1,4 +1,5 @@
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+import Head from 'next/head';
 import { ServerErrorFallback } from '~/components/chat-page/server-error-fallback';
 import { DEFAULT_ERROR_RESPONSE, ROUTES } from '~/constants/global';
 import { ExtendedChatWithMessagesRecord } from '~/types/chats';
@@ -26,20 +27,25 @@ export default function ChatPage({
   console.log('ChatPage RENDER');
 
   return (
-    <ServerErrorFallback error={error}>
-      {chat && (
-        <section className="flex h-full flex-col">
-          <Header chatId={chat.id} chatUsers={chat.users} />
-          <MainContent chat={chat} userId={session.user.id} />
-          <EditedMessagePreview />
-          {chat.isDisabled ? (
-            <DisabledChatMessage />
-          ) : (
-            <MessageSendingForm chatId={chat.id} userId={session.user.id} />
-          )}
-        </section>
-      )}
-    </ServerErrorFallback>
+    <>
+      <Head>
+        <title>Chat {chat?.users[0].name ? `with ${chat.users[0].name}` : ''} | Chit-Chat</title>
+      </Head>
+      <ServerErrorFallback error={error}>
+        {chat && (
+          <section className="flex h-full flex-col">
+            <Header chatId={chat.id} chatUsers={chat.users} />
+            <MainContent chat={chat} userId={session.user.id} />
+            <EditedMessagePreview />
+            {chat.isDisabled ? (
+              <DisabledChatMessage />
+            ) : (
+              <MessageSendingForm chatId={chat.id} userId={session.user.id} />
+            )}
+          </section>
+        )}
+      </ServerErrorFallback>
+    </>
   );
 }
 

@@ -1,4 +1,5 @@
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+import Head from 'next/head';
 import { useEffect } from 'react';
 import { ServerErrorFallback } from '~/components/chats-page/server-error-fallback';
 import { DEFAULT_ERROR_RESPONSE } from '~/constants/global';
@@ -36,6 +37,9 @@ export default function ChatsPage({
 
   return (
     <>
+      <Head>
+        <title>Chats | Chit-Chat</title>
+      </Head>
       <h2 className="text-2xl font-semibold">Chats</h2>
       <ServerErrorFallback error={error}>
         {chatsFromProps && <ChatsList chats={chats ?? chatsFromProps} />}

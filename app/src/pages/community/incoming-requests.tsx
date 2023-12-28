@@ -1,4 +1,5 @@
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+import Head from 'next/head';
 import { useEffect } from 'react';
 import { ServerErrorFallback } from '~/components/community-page/server-error-fallback';
 import { UsersList } from '~/components/community-page/users-list';
@@ -52,14 +53,19 @@ const IncomingRequestsPage: NextPageWithLayout<
   ]);
 
   return (
-    <ServerErrorFallback error={error}>
-      {incomingRequestsFromProps && (
-        <UsersList
-          users={storedIncomingRequests ?? incomingRequestsFromProps}
-          category={UsersCategoriesName.IncomingRequests}
-        />
-      )}
-    </ServerErrorFallback>
+    <>
+      <Head>
+        <title>Incoming Requests | Community | Chit-Chat</title>
+      </Head>
+      <ServerErrorFallback error={error}>
+        {incomingRequestsFromProps && (
+          <UsersList
+            users={storedIncomingRequests ?? incomingRequestsFromProps}
+            category={UsersCategoriesName.IncomingRequests}
+          />
+        )}
+      </ServerErrorFallback>
+    </>
   );
 };
 
