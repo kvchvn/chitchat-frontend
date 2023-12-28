@@ -1,6 +1,6 @@
 import { Message } from '@prisma/client';
 import { Socket } from 'socket.io-client';
-import { Nullable } from './global';
+import { Nullable, ServerError } from './global';
 
 export type SocketEvents<T extends Record<string, Nullable<object>>> = {
   [Property in keyof T]: (args: T[Property]) => void;
@@ -17,6 +17,7 @@ export type ServerToClientListenersArgs = {
   'message:remove': { messageId: string };
   'message:edit': { messageId: string; content: Message['content'] };
   'message:react': { messageId: string; reactions: Reactions };
+  error: ServerError;
 };
 
 export type ClientToServerListenersArgs = {
