@@ -36,6 +36,10 @@ export const useSocketInitialization = ({
       resetSocket();
     });
 
+    socketInstance.on('error', (err) => {
+      console.log('Server Error (Socket): ', err.message);
+    });
+
     registerChatListeners(socketInstance);
     registerMessageListeners(socketInstance);
 
@@ -43,5 +47,12 @@ export const useSocketInitialization = ({
       resetSocket();
       socketInstance.disconnect();
     };
-  }, [setSocket, resetSocket, userId, registerChatListeners, registerMessageListeners]);
+  }, [
+    setSocket,
+    resetSocket,
+    userId,
+    registerChatListeners,
+    registerMessageListeners,
+    sessionToken,
+  ]);
 };
