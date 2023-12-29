@@ -9,16 +9,21 @@ export const useMessageListeners = ({ userId }: { userId?: string }) => {
   const { createMessage, removeMessage, editMessage, reactToMessage } = useMessageActionsSelector();
 
   const onCreateMessage = useCallback(
-    (message: ServerToClientListenersArgs['message:create']) => {
-      if (message && userId) {
-        createMessage(message);
-        if (message.senderId !== userId) {
+    ({ newMessage, removedMessage }: ServerToClientListenersArgs['message:create']) => {
+      if (newMessage && userId) {
+        createMessage(newMessage);
+
+        if (removedMessage) {
+          removeMessage(removedMessage.id);
+        }
+
+        if (newMessage.senderId !== userId) {
           incrementUnreadMessagesCount({
-            chatId: message.chatId,
+            chatId: newMessage.chatId,
             newLastMessage: {
-              content: message.content,
-              senderId: message.senderId,
-              createdAt: message.createdAt,
+              content: newMessage.content,
+              senderId: newMessage.senderId,
+              createdAt: newMessage.createdAt,
             },
           });
         }

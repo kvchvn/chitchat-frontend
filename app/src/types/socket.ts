@@ -13,7 +13,7 @@ export type Reactions = {
 export type ServerToClientListenersArgs = {
   'chat:read': { chatId: string };
   'chat:clear': { chatId: string };
-  'message:create': Nullable<Message>;
+  'message:create': { newMessage: Nullable<Message>; removedMessage: Nullable<Message> };
   'message:remove': { messageId: string };
   'message:edit': { messageId: string; content: Message['content'] };
   'message:react': { messageId: string; reactions: Reactions };
