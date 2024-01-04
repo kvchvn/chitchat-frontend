@@ -4,6 +4,7 @@ import {
   Response,
   UserChatsResponse,
   UserOperationResponse,
+  UserOperationResponseWithAdditionalData,
   UsersCategoriesCountResponse,
   UsersResponse,
 } from '~/types/api';
@@ -164,8 +165,7 @@ export const respondToFriendRequest = async ({
     : `users/${requestReceiverId}/refuse-friend-request?requestSenderId=${requestSenderId}`;
 
   const res = await baseFetch<
-  const res = await baseFetch<UserOperationResponse>(endpoint, {
-    method: 'POST',
+    UserOperationResponse | UserOperationResponseWithAdditionalData<{ chatId: Nullable<string> }>
   >({
     urlPathname,
     options: { method: 'POST' },

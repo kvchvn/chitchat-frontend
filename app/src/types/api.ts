@@ -30,6 +30,10 @@ export type UserChatsResponse = Response<ChatsRecord>;
 
 export type UserOperationResponse = Response<{ isOperationPerformed: boolean }>;
 
+export type UserOperationResponseWithAdditionalData<
+  AdditionalData extends Record<string, unknown>,
+> = Response<{ isOperationPerformed: boolean } & AdditionalData>;
+
 // chats
 
 export type ChatResponse = Response<ExtendedChatWithMessagesRecord>;
