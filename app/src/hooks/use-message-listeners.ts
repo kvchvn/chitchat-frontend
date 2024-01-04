@@ -6,7 +6,8 @@ import { logError } from '~/utils/log-error';
 
 export const useMessageListeners = ({ userId }: { userId?: string }) => {
   const { incrementUnreadMessagesCount: incrementUnreadMessagesCount } = useChatActionsSelector();
-  const { createMessage, removeMessage, editMessage, reactToMessage } = useMessageActionsSelector();
+  const { createMessage, removeFirstMessageByDate, removeMessage, editMessage, reactToMessage } =
+    useMessageActionsSelector();
 
   const onCreateMessage = useCallback(
     ({ newMessage, removedMessage }: ServerToClientListenersArgs['message:create']) => {
@@ -14,7 +15,10 @@ export const useMessageListeners = ({ userId }: { userId?: string }) => {
         createMessage(newMessage);
 
         if (removedMessage) {
-          removeMessage(removedMessage.id);
+          removeFirstMessageByDate({
+            messageId: removedMessage.id,
+            messageCreatedAt: removedMessage.createdAt,
+          });
         }
 
         if (newMessage.senderId !== userId) {
@@ -31,7 +35,7 @@ export const useMessageListeners = ({ userId }: { userId?: string }) => {
         logError('Chat Listeners (message:create)', 'Message sending error occurred.');
       }
     },
-    [incrementUnreadMessagesCount, createMessage, userId]
+    [incrementUnreadMessagesCount, createMessage, userId, removeFirstMessageByDate]
   );
 
   const onRemoveMessage = useCallback(
