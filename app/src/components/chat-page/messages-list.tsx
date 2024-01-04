@@ -25,7 +25,7 @@ export function MessagesList({ messages }: MessagesListProps) {
     return null;
   }
 
-  return messages ? (
+  return Object.keys(messages).length ? (
     <>
       {Object.entries(messages).map(([date, messagesOfDate]) =>
         messagesOfDate.length ? (
