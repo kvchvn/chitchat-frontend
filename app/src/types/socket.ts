@@ -27,6 +27,7 @@ export type ClientToServerListenersArgs = {
   'message:remove': { chatId: string; messageId: string };
   'message:edit': { chatId: string; messageId: string; updatedContent: Message['content'] };
   'message:react': { chatId: string; messageId: string; reactions: Reactions };
+  join: { room: string; friendId: string };
 };
 
 export type ServerToClientEvents = SocketEvents<ServerToClientListenersArgs>;

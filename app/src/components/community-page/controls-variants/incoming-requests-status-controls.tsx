@@ -4,6 +4,7 @@ import {
   useCommunityActionsSelector,
   useCurrentCommunityCategorySelector,
 } from '~/store/selectors/community-selectors';
+import { useSocketSelector } from '~/store/selectors/socket-selectors';
 import { UserStatus } from '~/types/users';
 import { respondToFriendRequest } from '~/utils/api';
 
@@ -13,6 +14,8 @@ type IncomingRequestStatusControlsProps = {
 
 export function IncomingRequestStatusControls({ userId }: IncomingRequestStatusControlsProps) {
   const { data: session } = useSession();
+
+  const socket = useSocketSelector();
   const currentCategory = useCurrentCommunityCategorySelector();
   const { updateUserStatus, decreaseCategoryCount, increaseCategoryCount, removeUserFromList } =
     useCommunityActionsSelector();
@@ -36,8 +39,11 @@ export function IncomingRequestStatusControls({ userId }: IncomingRequestStatusC
           decreaseCategoryCount('incomingRequests');
           if (accept) {
             increaseCategoryCount('friends');
-          }
 
+            if ('chatId' in operationResult && operationResult.chatId) {
+              socket?.emit('join', { room: operationResult.chatId, friendId: userId });
+            }
+          }
           if (currentCategory === 'incomingRequests') {
             removeUserFromList(userId);
           }
