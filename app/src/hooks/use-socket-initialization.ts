@@ -30,6 +30,9 @@ export const useSocketInitialization = ({
     socketInstance.on('connect', () => {
       console.log('socket is connected');
       setSocket(socketInstance);
+
+      registerChatListeners(socketInstance);
+      registerMessageListeners(socketInstance);
     });
 
     socketInstance.on('disconnect', () => {
@@ -39,9 +42,6 @@ export const useSocketInitialization = ({
     socketInstance.on('error', (err) => {
       console.log('Server Error (Socket): ', err.message);
     });
-
-    registerChatListeners(socketInstance);
-    registerMessageListeners(socketInstance);
 
     return () => {
       resetSocket();
