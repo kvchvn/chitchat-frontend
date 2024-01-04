@@ -46,6 +46,7 @@ export type MessageSlice = {
     resetMessages: () => void;
     createMessage: (message: Message) => void;
     removeMessage: (messageId: string) => void;
+    removeFirstMessageByDate: (args: { messageId: string; messageCreatedAt: Date }) => void;
     editMessage: (args: { messageId: string; content: string }) => void;
     reactToMessage: (args: { messageId: string; reactions: Reactions }) => void;
     readMessages: () => void;

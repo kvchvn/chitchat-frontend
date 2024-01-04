@@ -38,6 +38,20 @@ export const messageSlice: ImmerStateCreator<MessageSlice> = (set) => ({
           }
         }
       }),
+    removeFirstMessageByDate: ({ messageId, messageCreatedAt }) =>
+      set(({ messages }) => {
+        if (messages) {
+          const dateAsKey = getDateAsKey(messageCreatedAt);
+
+          if (dateAsKey in messages) {
+            const firstMessageByDate = messages[dateAsKey][0];
+
+            if (firstMessageByDate && firstMessageByDate.id === messageId) {
+              messages[dateAsKey].splice(0, 1);
+            }
+          }
+        }
+      }),
     editMessage: ({ messageId, content }) =>
       set(({ messages }) => {
         if (messages) {
