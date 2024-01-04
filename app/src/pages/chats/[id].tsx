@@ -29,7 +29,9 @@ export default function ChatPage({
   return (
     <>
       <Head>
-        <title>Chat {chat?.users[0].name ? `with ${chat.users[0].name}` : ''} | Chit-Chat</title>
+        <title>{`Chat ${
+          chat?.users[0].name ? `with ${chat.users[0].name}` : ''
+        } | Chit-Chat`}</title>
       </Head>
       <ServerErrorFallback error={error}>
         {chat && (
@@ -60,7 +62,7 @@ export const getServerSideProps = (async ({ req, res, params }) => {
 
   try {
     const chatId = typeof params?.id === 'string' ? params.id : '';
-    const chat = await getChat(chatId, req.cookies);
+    const chat = await getChat({ chatId, cookies: req.cookies });
 
     if (!chat) {
       throw new Error(`Failed to load chat (chatId=${chatId}) in getServerSideProps on ChatPage.`);
@@ -69,7 +71,7 @@ export const getServerSideProps = (async ({ req, res, params }) => {
     const isSessionUserInChat = Boolean(chat?.users.find((user) => user.id === session.user.id));
 
     if (!isSessionUserInChat) {
-      gsspRedirect(ROUTES.chats);
+      return gsspRedirect(ROUTES.chats);
     }
 
     props.chat = chat;

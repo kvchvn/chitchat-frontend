@@ -58,7 +58,7 @@ export const getServerSideProps = (async ({ req, res }) => {
   const props: ServerSideProps = { session, chats: null, error: null };
 
   try {
-    const chats = await getUserChats(session.user.id, req.cookies);
+    const chats = await getUserChats({ userId: session.user.id, cookies: req.cookies });
 
     if (!chats) {
       throw new Error(

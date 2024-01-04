@@ -83,8 +83,15 @@ export const getServerSideProps = (async ({ req, res }) => {
   const props: ServerSideProps = { session, friends: null, categoriesCount: null, error: null };
 
   try {
-    const friendsPromise = getGroupOfUsers(session.user.id, 'friends', req.cookies);
-    const categoriesCountPromise = getUserCategoriesCount(session.user.id, req.cookies);
+    const friendsPromise = getGroupOfUsers({
+      userId: session.user.id,
+      group: 'friends',
+      cookies: req.cookies,
+    });
+    const categoriesCountPromise = getUserCategoriesCount({
+      userId: session.user.id,
+      cookies: req.cookies,
+    });
 
     const [friends, categoriesCount] = await Promise.allSettled([
       friendsPromise,
