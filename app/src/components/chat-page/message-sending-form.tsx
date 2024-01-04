@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { MESSAGE_MAX_LENGTH } from '~/constants/chat';
 import {
   useMessageEditModeActionsSelector,
   useMessageEditModeSelector,
@@ -27,7 +28,13 @@ export function MessageSendingForm({ chatId, userId }: MessageSendingFormProps) 
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const target = e.target;
-    setMessageContent(target.value);
+
+    setMessageContent((prevValue) =>
+      (!(MESSAGE_MAX_LENGTH - prevValue.length) && prevValue.length > target.value.length) ||
+      MESSAGE_MAX_LENGTH - prevValue.length
+        ? target.value
+        : prevValue
+    );
   };
 
   const handleSendMessage = useCallback(async () => {
@@ -100,6 +107,7 @@ export function MessageSendingForm({ chatId, userId }: MessageSendingFormProps) 
         onChange={handleChange}
         className="h-6 max-h-32 w-full resize-none outline-none placeholder:font-thin"
       />
+      <p>{MESSAGE_MAX_LENGTH - messageContent.length}</p>
       <button
         onClick={handleSendMessage}
         disabled={!messageContent || (isOnEditMode && messageContent == editedMessageContent)}
