@@ -1,6 +1,7 @@
 import { useSession } from 'next-auth/react';
 import { ROUTES } from '~/constants/global';
 import { Icon } from '~/ui/icon';
+import { ChatIcon } from './chat-icon';
 import { NavigationItem } from './navigation-item';
 import { UserInfo } from './user-info';
 
@@ -18,7 +19,7 @@ export function Navigation() {
           <Icon id="users" />
         </NavigationItem>
         <NavigationItem href={ROUTES.chats}>
-          <Icon id="chat" />
+          <ChatIcon />
         </NavigationItem>
         <NavigationItem>
           <UserInfo />

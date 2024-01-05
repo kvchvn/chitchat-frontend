@@ -5,7 +5,7 @@ import { CustomSocket, ServerToClientListenersArgs } from '~/types/socket';
 import { logError } from '~/utils/log-error';
 
 export const useMessageListeners = ({ userId }: { userId?: string }) => {
-  const { incrementUnreadMessagesCount: incrementUnreadMessagesCount } = useChatActionsSelector();
+  const { incrementUnreadMessagesCount, addUnreadChatId } = useChatActionsSelector();
   const { createMessage, removeFirstMessageByDate, removeMessage, editMessage, reactToMessage } =
     useMessageActionsSelector();
 
@@ -30,12 +30,13 @@ export const useMessageListeners = ({ userId }: { userId?: string }) => {
               createdAt: newMessage.createdAt,
             },
           });
+          addUnreadChatId(newMessage.chatId);
         }
       } else {
         logError('Chat Listeners (message:create)', 'Message sending error occurred.');
       }
     },
-    [incrementUnreadMessagesCount, createMessage, userId, removeFirstMessageByDate]
+    [incrementUnreadMessagesCount, createMessage, userId, removeFirstMessageByDate, addUnreadChatId]
   );
 
   const onRemoveMessage = useCallback(

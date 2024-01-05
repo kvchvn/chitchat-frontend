@@ -9,6 +9,7 @@ import { BasicServerSideProps, Nullable } from '~/types/global';
 import { isErrorResponse } from '~/types/guards';
 import { getUserChats } from '~/utils/api';
 import { getSessionData } from '~/utils/get-session-data';
+import { getUnreadChatsIds } from '~/utils/get-unread-chats-ids';
 import { gsspRedirectToSignIn } from '~/utils/gssp-redirect';
 import { logError } from '~/utils/log-error';
 import { ChatsList } from '../../components/chats-page/chats-list';
@@ -19,21 +20,35 @@ type ServerSideProps = BasicServerSideProps & {
 
 export default function ChatsPage({
   chats: chatsFromProps,
+  session,
   error,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const chats = useChatsSelector();
-  const { setChats, resetChats } = useChatActionsSelector();
+  const { setChats, resetChats, setUnreadChatsIds, resetUnreadChatsIds } = useChatActionsSelector();
 
   console.log('ChatsPage RENDER', chats);
   useEffect(() => {
     if (chatsFromProps) {
       setChats(chatsFromProps);
+
+      const unreadChatsIds = getUnreadChatsIds({
+        chats: chatsFromProps,
+        sessionUserId: session.user.id,
+      });
+      setUnreadChatsIds(unreadChatsIds);
     }
 
     return () => {
-      resetChats;
+      resetChats();
     };
-  }, [chatsFromProps, setChats, resetChats]);
+  }, [
+    chatsFromProps,
+    setChats,
+    resetChats,
+    setUnreadChatsIds,
+    resetUnreadChatsIds,
+    session.user.id,
+  ]);
 
   return (
     <>
