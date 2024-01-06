@@ -5,6 +5,7 @@ import {
   UserChatsResponse,
   UserOperationResponse,
   UserOperationResponseWithAdditionalData,
+  UserUnreadChatsIdsResponse,
   UsersCategoriesCountResponse,
   UsersResponse,
 } from '~/types/api';
@@ -48,16 +49,30 @@ const baseFetch = async <T extends Response<unknown>>({
 
 export const getUserChats = async ({
   userId = '',
-  cookies,
+  cookies = {},
 }: {
   userId?: string;
-  cookies: Cookies;
+  cookies?: Cookies;
 }) => {
   const chats = await baseFetch<UserChatsResponse>({
     urlPathname: `users/${userId}/chats`,
     cookies,
   });
   return chats.data;
+};
+
+export const getUserUnreadChatsIds = async ({
+  userId = '',
+  cookies = {},
+}: {
+  userId?: string;
+  cookies?: Cookies;
+}) => {
+  const unreadChats = await baseFetch<UserUnreadChatsIdsResponse>({
+    urlPathname: `users/${userId}/unread-chats-ids`,
+    cookies,
+  });
+  return unreadChats.data;
 };
 
 export const getChat = async ({ chatId = '', cookies }: { chatId?: string; cookies: Cookies }) => {

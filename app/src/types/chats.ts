@@ -23,3 +23,7 @@ export type ExtendedChatWithMessagesRecord = Chat & {
   users: Omit<UserRelevant, 'email'>[];
   messages: MessagesRecord;
 };
+
+export type UnreadChatsIds = {
+  ids: string[];
+};

@@ -1,4 +1,4 @@
-import { ChatsRecord, ExtendedChatWithMessagesRecord } from './chats';
+import { ChatsRecord, ExtendedChatWithMessagesRecord, UnreadChatsIds } from './chats';
 import { UserRelevant, UserRelevantWithStatus, UsersCategoriesCount } from './users';
 
 // common
@@ -27,6 +27,8 @@ export type UsersResponse = Response<UserRelevant[]>;
 export type UsersCategoriesCountResponse = Response<UsersCategoriesCount>;
 
 export type UserChatsResponse = Response<ChatsRecord>;
+
+export type UserUnreadChatsIdsResponse = Response<UnreadChatsIds>;
 
 export type UserOperationResponse = Response<{ isOperationPerformed: boolean }>;
 
