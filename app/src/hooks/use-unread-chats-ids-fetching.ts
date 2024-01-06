@@ -1,10 +1,9 @@
 import { useEffect } from 'react';
 import { useChatActionsSelector } from '~/store/selectors/chat-selectors';
-import { getUserChats } from '~/utils/api';
-import { getUnreadChatsIds } from '~/utils/get-unread-chats-ids';
+import { getUserUnreadChatsIds } from '~/utils/api';
 import { logError } from '~/utils/log-error';
 
-export const useUserChatsFetching = ({ userId }: { userId?: string }) => {
+export const useUnreadChatsIdsFetching = ({ userId }: { userId?: string }) => {
   const { setChats, setUnreadChatsIds, resetChats } = useChatActionsSelector();
 
   console.log('App render');
@@ -12,13 +11,10 @@ export const useUserChatsFetching = ({ userId }: { userId?: string }) => {
   useEffect(() => {
     if (!userId) return;
 
-    getUserChats({ userId, cookies: {} })
-      .then((chats) => {
-        if (chats) {
-          setChats(chats);
-
-          const unreadChatsIds = getUnreadChatsIds({ chats, sessionUserId: userId });
-          setUnreadChatsIds(unreadChatsIds);
+    getUserUnreadChatsIds({ userId })
+      .then((unreadChats) => {
+        if (unreadChats) {
+          setUnreadChatsIds(unreadChats.ids);
         }
       })
       .catch((err) => {
