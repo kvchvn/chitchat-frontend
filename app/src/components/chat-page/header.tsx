@@ -1,6 +1,8 @@
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+import { Icon } from '~/components/ui/icon';
+import { UserAvatar } from '~/components/ui/user-avatar';
 import { DEFAULT_USER } from '~/constants/chats';
 import { useSocketSelector } from '~/store/selectors/socket-selectors';
 import { UserRelevant } from '~/types/users';

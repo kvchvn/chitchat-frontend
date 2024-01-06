@@ -1,10 +1,10 @@
 import classNames from 'classnames';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
+import { UserAvatar } from '~/components/ui/user-avatar';
 import { NO_MESSAGES_TEXT } from '~/constants/chats';
 import { ROUTES } from '~/constants/global';
 import { ChatsRecord } from '~/types/chats';
-import { UserAvatar } from '~/ui/user-avatar';
 import { getTime } from '~/utils/date';
 import { isUserOnline } from '~/utils/is-user-online';
 

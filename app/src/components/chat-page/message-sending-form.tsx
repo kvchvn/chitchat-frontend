@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { Icon } from '~/components/ui/icon';
 import { MESSAGE_MAX_LENGTH } from '~/constants/chat';
 import {
   useMessageEditModeActionsSelector,
@@ -6,7 +7,6 @@ import {
 } from '~/store/selectors/message-managing-selectors';
 import { useSocketSelector } from '~/store/selectors/socket-selectors';
 import { Nullable } from '~/types/global';
-import { Icon } from '~/ui/icon';
 
 type MessageSendingFormProps = {
   chatId: string;

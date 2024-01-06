@@ -1,8 +1,8 @@
 import classNames from 'classnames';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
+import { UserAvatar } from '~/components/ui/user-avatar';
 import { useSocketSelector } from '~/store/selectors/socket-selectors';
-import { UserAvatar } from '~/ui/user-avatar';
 import { UserInfoModal } from './user-info-modal';
 
 export function UserInfo() {

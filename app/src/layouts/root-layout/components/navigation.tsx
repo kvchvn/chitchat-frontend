@@ -1,6 +1,6 @@
 import { useSession } from 'next-auth/react';
+import { Icon } from '~/components/ui/icon';
 import { ROUTES } from '~/constants/global';
-import { Icon } from '~/ui/icon';
 import { ChatIcon } from './chat-icon';
 import { NavigationItem } from './navigation-item';
 import { UserInfo } from './user-info';

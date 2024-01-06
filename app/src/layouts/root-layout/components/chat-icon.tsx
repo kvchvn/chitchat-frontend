@@ -1,5 +1,5 @@
+import { Icon } from '~/components/ui/icon';
 import { useUnreadChatsIdsCount } from '~/store/selectors/chat-selectors';
-import { Icon } from '~/ui/icon';
 
 export function ChatIcon() {
   const unreadChatsIdsCount = useUnreadChatsIdsCount();

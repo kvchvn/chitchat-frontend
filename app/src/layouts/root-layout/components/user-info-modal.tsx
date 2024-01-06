@@ -1,8 +1,8 @@
 import classNames from 'classnames';
 import { signOut, useSession } from 'next-auth/react';
+import { Icon } from '~/components/ui/icon';
 import { DEFAULT_USER } from '~/constants/chats';
 import { useSocketSelector } from '~/store/selectors/socket-selectors';
-import { Icon } from '~/ui/icon';
 
 type UserInfoModalProps = {
   closeModal: () => void;
