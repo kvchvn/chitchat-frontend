@@ -8,8 +8,8 @@ import { ChatsRecord } from '~/types/chats';
 import { BasicServerSideProps, Nullable } from '~/types/global';
 import { isErrorResponse } from '~/types/guards';
 import { getUserChats } from '~/utils/api';
+import { extractUnreadChatsIdsFromRecord } from '~/utils/extract-unread-chats-ids-from-record';
 import { getSessionData } from '~/utils/get-session-data';
-import { getUnreadChatsIds } from '~/utils/get-unread-chats-ids';
 import { gsspRedirectToSignIn } from '~/utils/gssp-redirect';
 import { logError } from '~/utils/log-error';
 import { ChatsList } from '../../components/chats-page/chats-list';
@@ -31,7 +31,7 @@ export default function ChatsPage({
     if (chatsFromProps) {
       setChats(chatsFromProps);
 
-      const unreadChatsIds = getUnreadChatsIds({
+      const unreadChatsIds = extractUnreadChatsIdsFromRecord({
         chats: chatsFromProps,
         sessionUserId: session.user.id,
       });

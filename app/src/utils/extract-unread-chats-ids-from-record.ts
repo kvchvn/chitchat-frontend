@@ -1,6 +1,6 @@
 import { ChatsRecord } from '~/types/chats';
 
-export const getUnreadChatsIds = ({
+export const extractUnreadChatsIdsFromRecord = ({
   chats,
   sessionUserId,
 }: {
