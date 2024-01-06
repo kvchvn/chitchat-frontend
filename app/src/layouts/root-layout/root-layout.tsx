@@ -7,9 +7,9 @@ export function RootLayout({ children }: PropsWithChildren) {
   const { pathname } = useRouter();
 
   return (
-    <main className="flex h-full">
+    <>
       {pathname === ROUTES.home ? null : <Navigation />}
       <div className="mx-auto w-[90vw] px-10 py-5">{children}</div>
-    </main>
+    </>
   );
 }
