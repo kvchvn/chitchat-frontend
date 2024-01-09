@@ -40,3 +40,7 @@ export type ServerError = {
   status: number;
   message: string;
 };
+
+export type LocalStorage = {
+  theme: 'dark' | 'light';
+};
