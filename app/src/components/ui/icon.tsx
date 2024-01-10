@@ -13,7 +13,7 @@ export function Icon({ id, color, size, className = '' }: IconProps) {
       width={size ?? '100%'}
       height={size ?? '100%'}
       fill={color ?? '#000000'}
-      className={`${className} mx-auto`}
+      className={`${className} fill-primary-outline-dark dark:fill-primary-outline-light mx-auto`}
     >
       <use xlinkHref={`/svg/global.svg#${id}`} />
     </svg>

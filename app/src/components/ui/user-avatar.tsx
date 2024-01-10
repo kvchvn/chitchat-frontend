@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import { DEFAULT_USER } from '~/constants/chats';
 import { Nullable } from '~/types/global';
-import { Icon } from '../icon';
+import { Icon } from './icon';
 
 type UserAvatarProps = {
   username?: Nullable<string>;
