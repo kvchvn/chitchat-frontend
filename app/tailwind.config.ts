@@ -1,4 +1,5 @@
 import type { Config } from 'tailwindcss';
+import colors from 'tailwindcss/colors';
 
 const config = {
   darkMode: 'class',
@@ -11,6 +12,49 @@ const config = {
   theme: {
     screens: {
       xs: '480px',
+      sm: '640px',
+      md: '768px',
+      lg: '1024px',
+      xl: '1280px',
+      '2xl': '1400px',
+    },
+    colors: {
+      primary: {
+        base: colors.slate,
+        outline: {
+          light: colors.slate[200],
+          dark: colors.slate[800],
+        },
+        bg: {
+          lightest: colors.slate[100],
+          lighter: colors.slate[200],
+          light: colors.slate[300],
+          dark: colors.slate[400],
+          darker: colors.slate[600],
+          darkest: colors.slate[700],
+        },
+      },
+      success: {
+        base: {
+          light: colors.teal[500],
+          dark: colors.teal[700],
+        },
+        hover: {
+          light: colors.teal[600],
+          dark: colors.teal[800],
+        },
+      },
+      error: {
+        base: {
+          light: colors.rose[500],
+          dark: colors.rose[700],
+        },
+        hover: {
+          light: colors.rose[600],
+          dark: colors.rose[800],
+        },
+      },
+      ...colors,
     },
     container: {
       center: true,
