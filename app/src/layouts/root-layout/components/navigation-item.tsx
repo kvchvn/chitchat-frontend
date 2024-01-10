@@ -13,13 +13,13 @@ export function NavigationItem({ href, children }: NavigationItemProps) {
   const isActive = Boolean(href && pathname.startsWith(href));
 
   return (
-    <li className="relative h-12 w-full">
+    <li className="relative h-14 w-full">
       {href ? (
         <Link
           href={href}
-          className={classNames('block h-full w-full border-r-[3px] py-1', {
-            'border-stone-600': isActive,
-            'border-stone-300 hover:border-stone-400': !isActive,
+          className={classNames('block h-full w-full border-r-[3px] py-3 text-green-600', {
+            'dark:border-primary-bg-darker border-primary-bg-dark': isActive,
+            'hover:border-primary-bg-light border-transparent': !isActive,
           })}
         >
           {children}

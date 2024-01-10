@@ -21,18 +21,18 @@ export function UserInfo() {
   };
 
   return (
-    <div onClick={openModal} className="relative mx-auto h-10 w-10">
+    <div onClick={openModal} className="relative mx-auto mt-3 h-8 w-8">
       <UserAvatar
         src={session?.user.image}
         username={session?.user.name}
-        className="cursor-pointer rounded-full border-2 border-black"
+        className="dark:border-primary-outline-light border-primary-outline-dark cursor-pointer rounded-full border"
       />
       <span
         className={classNames(
-          'absolute bottom-0 right-0 block h-3 w-3 rounded-full border-2 border-black',
+          'dark:border-primary-outline-light border-primary-outline-dark absolute bottom-0 right-0 block h-2 w-2 rounded-full border',
           {
-            'bg-green-600': socket,
-            'bg-red-700': !socket,
+            'bg-success-base-light dark:bg-success-base-dark': socket,
+            'bg-error-base-light dark:bg-error-base-dark': !socket,
           }
         )}
       />
