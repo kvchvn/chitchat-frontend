@@ -4,7 +4,7 @@ import { ROUTES } from '~/constants/global';
 import { ChatIcon } from './chat-icon';
 import { NavigationItem } from './navigation-item';
 import { ThemeToggler } from './theme-toggler';
-import { UserInfo } from './user-info';
+import { UserIcon } from './user-icon';
 
 export function Navigation() {
   const { data: session } = useSession();
@@ -23,7 +23,7 @@ export function Navigation() {
           <ChatIcon />
         </NavigationItem>
         <NavigationItem href={ROUTES.profile}>
-          <UserInfo />
+          <UserIcon />
         </NavigationItem>
       </ul>
       <ThemeToggler />
