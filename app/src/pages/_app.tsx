@@ -32,7 +32,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout<PagePro
     <ErrorBoundary fallback={<p>Error Boundary</p>}>
       <SessionProvider session={pageProps.session}>
         <main
-          className={`${onestFont.variable} ${sometypeMonoFont.variable} flex h-full font-sans`}
+          className={`${onestFont.variable} ${sometypeMonoFont.variable} flex h-full flex-col-reverse font-sans`}
         >
           <RootLayout>{getLayout(<Component {...pageProps} />)}</RootLayout>
         </main>
