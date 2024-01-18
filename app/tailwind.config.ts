@@ -1,5 +1,6 @@
 import type { Config } from 'tailwindcss';
 import colors from 'tailwindcss/colors';
+import plugin from 'tailwindcss/plugin';
 
 const config = {
   darkMode: 'class',
@@ -54,6 +55,12 @@ const config = {
           dark: colors.rose[800],
         },
       },
+      warning: {
+        base: {
+          light: colors.orange[400],
+          dark: colors.orange[700],
+        },
+      },
       ...colors,
     },
     container: {
@@ -84,7 +91,34 @@ const config = {
       },
     },
   },
-  plugins: [require('tailwindcss-animate')],
+  plugins: [
+    require('tailwindcss-animate'),
+    plugin(({ addUtilities, addComponents }) => {
+      addUtilities({
+        '.shadow-top': {
+          'box-shadow':
+            'rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.09) 0px -3px 5px',
+        },
+      });
+      addComponents({
+        '.title': {
+          'padding-right': '0.5rem',
+          'font-size': '1.5rem',
+          'line-height': '2rem',
+          'font-weight': '600',
+          'margin-bottom': '1rem',
+          width: 'fit-content',
+          'background-image': `linear-gradient(transparent 60%, ${colors.teal[300]} 40%)`,
+          'background-size': '100%',
+          'background-repeat': 'no-repeat',
+          'background-position': '10px',
+        },
+        '.dark .title': {
+          'background-image': `linear-gradient(transparent 60%, ${colors.teal[700]} 40%)`,
+        },
+      });
+    }),
+  ],
 } satisfies Config;
 
 export default config;
