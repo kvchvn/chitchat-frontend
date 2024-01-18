@@ -55,7 +55,7 @@ export default function ChatsPage({
       <Head>
         <title>Chats | Chit-Chat</title>
       </Head>
-      <h2 className="text-2xl font-semibold">Chats</h2>
+      <h1 className="title">Your chats</h1>
       <ServerErrorFallback error={error}>
         {chatsFromProps && <ChatsList chats={chats ?? chatsFromProps} />}
       </ServerErrorFallback>
