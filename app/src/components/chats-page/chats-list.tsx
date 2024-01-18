@@ -7,7 +7,7 @@ type ChatsListProps = {
 
 export function ChatsList({ chats }: ChatsListProps) {
   return (
-    <ul className="mt-3">
+    <ul>
       {Object.keys(chats).length ? (
         Object.entries(chats).map(([id, chat]) => <ChatItem key={id} id={id} chat={chat} />)
       ) : (
