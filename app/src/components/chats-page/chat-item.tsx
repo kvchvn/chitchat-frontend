@@ -1,4 +1,3 @@
-import classNames from 'classnames';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { UserAvatar } from '~/components/ui/user-avatar';
@@ -6,7 +5,9 @@ import { NO_MESSAGES_TEXT } from '~/constants/chats';
 import { ROUTES } from '~/constants/global';
 import { ChatsRecord } from '~/types/chats';
 import { getTime } from '~/utils/date';
-import { isUserOnline } from '~/utils/is-user-online';
+import { UserAvatarContainer } from '../ui/user-avatar-container';
+import { UserAvatarStatus } from '../ui/user-avatar-status';
+import { ChatUnreadMessagesCount } from './chat-unread-messages-count';
 
 type ChatItemProps = {
   id: string;
@@ -36,39 +37,31 @@ export function ChatItem({
   return (
     <li
       onClick={handleClick}
-      className="flex h-16 items-center gap-3 border-t last-of-type:border-b hover:cursor-pointer hover:bg-stone-100"
+      className="relative flex w-full items-center gap-3 border-t px-1 py-3 last-of-type:border-b hover:cursor-pointer hover:bg-primary-base-50 dark:hover:bg-primary-base-800"
     >
-      <div className="relative h-12 w-12 shrink-0">
+      <UserAvatarContainer className="relative h-12 w-12 shrink-0">
         <UserAvatar
           username={friend.name}
           src={friend.image}
-          className={classNames('rounded-full border-2 border-gray-600', {
-            'scale-75 grayscale': isDisabled,
-          })}
+          className="rounded-full border border-primary-outline-dark dark:border-primary-outline-light"
         />
-        {isUserOnline(friend) && (
-          <span className="absolute bottom-0 right-0 block h-3 w-3 rounded-full border-2 border-gray-600 bg-green-600" />
+        <UserAvatarStatus size="md" userLatestSession={friend.sessions[0]} />
+      </UserAvatarContainer>
+      <div className="flex max-w-[60%] flex-col">
+        {lastMessage ? (
+          <>
+            <p className="truncate text-sm text-primary-base-600 dark:text-primary-base-200">
+              {lastMessage.content}
+            </p>
+            <p className="font-mono text-xs text-gray-400">[{getTime(lastMessage.createdAt)}]</p>
+          </>
+        ) : (
+          <p className="text-sm text-gray-400">{NO_MESSAGES_TEXT}</p>
         )}
       </div>
-      <div className="flex max-w-[70%] flex-col">
-        <p className="truncate text-sm text-gray-600">
-          {lastMessage ? (
-            <>
-              {lastMessage.content}
-              <span className="ml-1 font-mono text-gray-400">
-                [{getTime(lastMessage.createdAt)}]
-              </span>
-            </>
-          ) : (
-            NO_MESSAGES_TEXT
-          )}
-        </p>
-      </div>
-      {unreadMessagesCount && lastMessage && lastMessage.senderId !== session.user.id ? (
-        <span className="my-auto ml-auto h-7 w-7 rounded-full bg-orange-500 text-center font-mono leading-7 text-white">
-          {unreadMessagesCount <= 9 ? unreadMessagesCount : '9+'}
-        </span>
-      ) : null}
+      {lastMessage?.senderId !== session.user.id && (
+        <ChatUnreadMessagesCount unreadMessagesCount={unreadMessagesCount} />
+      )}
     </li>
   );
 }
