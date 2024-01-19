@@ -3,13 +3,13 @@ import { ErrorResponse } from './api';
 
 export type IconId =
   | 'chat'
-  | 'chat-unread'
   | 'users'
   | 'sign-out'
   | 'chevron-left'
   | 'moon'
   | 'sun'
   | 'user'
+  | 'error'
   | 'close'
   | 'return'
   | 'basket'
