@@ -1,13 +1,13 @@
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { UserAvatar } from '~/components/ui/user-avatar';
-import { NO_MESSAGES_TEXT } from '~/constants/chats';
 import { ROUTES } from '~/constants/global';
 import { ChatsRecord } from '~/types/chats';
-import { getTime } from '~/utils/date';
 import { UserAvatarContainer } from '../ui/user-avatar-container';
 import { UserAvatarStatus } from '../ui/user-avatar-status';
+import { ChatPreview } from './chat-preview';
 import { ChatUnreadMessagesCount } from './chat-unread-messages-count';
+import { DisabledChatPreview } from './disabled-chat-preview';
 
 type ChatItemProps = {
   id: string;
@@ -47,18 +47,7 @@ export function ChatItem({
         />
         <UserAvatarStatus size="md" userLatestSession={friend.sessions[0]} />
       </UserAvatarContainer>
-      <div className="flex max-w-[60%] flex-col">
-        {lastMessage ? (
-          <>
-            <p className="truncate text-sm text-primary-base-600 dark:text-primary-base-200">
-              {lastMessage.content}
-            </p>
-            <p className="font-mono text-xs text-gray-400">[{getTime(lastMessage.createdAt)}]</p>
-          </>
-        ) : (
-          <p className="text-sm text-gray-400">{NO_MESSAGES_TEXT}</p>
-        )}
-      </div>
+      {isDisabled ? <DisabledChatPreview /> : <ChatPreview lastChatMessage={lastMessage} />}
       {lastMessage?.senderId !== session.user.id && (
         <ChatUnreadMessagesCount unreadMessagesCount={unreadMessagesCount} />
       )}
