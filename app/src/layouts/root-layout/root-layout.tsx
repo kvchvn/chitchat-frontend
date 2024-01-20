@@ -9,7 +9,7 @@ export function RootLayout({ children }: PropsWithChildren) {
   return (
     <>
       {pathname === ROUTES.home ? null : <Navigation />}
-      <div className="h-full px-2 py-4 dark:bg-primary-bg-darkest">{children}</div>
+      <div className="h-full px-2 py-4 dark:bg-primary-bg-darkest xs:w-full">{children}</div>
     </>
   );
 }

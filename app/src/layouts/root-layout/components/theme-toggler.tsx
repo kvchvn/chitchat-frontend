@@ -26,7 +26,7 @@ export function ThemeToggler() {
   return (
     <button
       onClick={handleClick}
-      className="absolute right-0 h-8 w-8 gap-2 rounded-full p-1 hover:bg-primary-bg-light dark:hover:bg-primary-bg-darker"
+      className="absolute right-0 h-8 w-8 gap-2 rounded-full p-1 hover:bg-primary-bg-light dark:hover:bg-primary-bg-darker xs:bottom-1 xs:right-auto xs:h-10 xs:w-10 lg:right-1"
     >
       {isDark ? <Icon id="moon" /> : <Icon id="sun" />}
     </button>

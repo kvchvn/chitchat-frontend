@@ -14,8 +14,8 @@ export function Navigation() {
   }
 
   return (
-    <nav className="shadow-top relative flex h-14 w-full items-center justify-center bg-primary-bg-lightest px-2 dark:bg-primary-bg-dark dark:shadow-none">
-      <ul className="flex h-full items-center justify-center">
+    <nav className="relative flex h-14 w-full items-center justify-center bg-primary-bg-lightest px-2 dark:bg-primary-bg-dark xs:h-full xs:w-16 xs:px-0 lg:w-fit">
+      <ul className="flex h-full items-center justify-center xs:flex-col">
         <NavigationItem href={ROUTES.community.base}>
           <Icon id="users" />
         </NavigationItem>
