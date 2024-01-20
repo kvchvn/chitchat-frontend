@@ -3,11 +3,22 @@
 @tailwind utilities;
 
 html {
-  @apply text-sm text-primary-outline-dark;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: theme('colors.primary.outline.dark');
+
+  @screen xs {
+    font-size: 1rem;
+    line-height: 1.5rem;
+  }
+
+  @screen lg {
+    font-size: 1.125rem;
+  }
 }
 
 html.dark {
-  @apply text-primary-outline-light;
+  color: theme('colors.primary.outline.light');
 }
 
 body {
