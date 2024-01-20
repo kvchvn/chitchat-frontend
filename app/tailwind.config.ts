@@ -47,8 +47,12 @@ const config = {
       },
       error: {
         base: {
-          light: colors.rose[500],
-          dark: colors.rose[700],
+          light: colors.rose[700],
+          dark: colors.rose[300],
+        },
+        bg: {
+          light: colors.rose[100],
+          dark: colors.rose[500],
         },
         hover: {
           light: colors.rose[600],
