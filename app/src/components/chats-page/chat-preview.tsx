@@ -1,4 +1,4 @@
-import { NO_MESSAGES_TEXT } from '~/constants/chats';
+import { NO_MESSAGES_PREVIEW_TEXT } from '~/constants/chats';
 import { ChatsRecord } from '~/types/chats';
 import { getTime } from '~/utils/date';
 
@@ -17,7 +17,7 @@ export function ChatPreview({ lastChatMessage }: Props) {
           <p className="font-mono text-xs text-gray-400">[{getTime(lastChatMessage.createdAt)}]</p>
         </>
       ) : (
-        <p className="text-sm font-light text-gray-400">{NO_MESSAGES_TEXT}</p>
+        <p className="text-sm font-light italic text-gray-400">{NO_MESSAGES_PREVIEW_TEXT}</p>
       )}
     </div>
   );
