@@ -16,13 +16,13 @@ export function Navigation() {
   return (
     <nav className="relative flex h-14 w-full items-center justify-center bg-primary-bg-lightest px-2 dark:bg-primary-bg-dark xs:h-full xs:w-16 xs:px-0 lg:w-fit">
       <ul className="flex h-full items-center justify-center xs:flex-col">
-        <NavigationItem href={ROUTES.community.base}>
+        <NavigationItem href={ROUTES.community.base} label="users">
           <Icon id="users" />
         </NavigationItem>
-        <NavigationItem href={ROUTES.chats}>
+        <NavigationItem href={ROUTES.chats} label="chats">
           <ChatIcon />
         </NavigationItem>
-        <NavigationItem href={ROUTES.profile}>
+        <NavigationItem href={ROUTES.profile} label="profile">
           <UserIcon />
         </NavigationItem>
       </ul>

@@ -3,11 +3,10 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { PropsWithChildren } from 'react';
 
-type NavigationItemProps = PropsWithChildren & {
-  href?: string;
-};
+type NavigationItemProps = PropsWithChildren &
+  ({ href: string; label: string } | { href?: undefined; label?: undefined });
 
-export function NavigationItem({ href, children }: NavigationItemProps) {
+export function NavigationItem({ href, label, children }: NavigationItemProps) {
   const { pathname } = useRouter();
 
   const isActive = Boolean(href && pathname.startsWith(href));
@@ -25,7 +24,16 @@ export function NavigationItem({ href, children }: NavigationItemProps) {
             }
           )}
         >
-          {children}
+          <div className="flex h-full w-full items-center justify-center">{children}</div>
+          <p
+            className={classNames('hidden w-full py-2 pl-2 font-mono font-medium lg:block', {
+              'bg-primary-bg-light font-semibold dark:bg-primary-bg-darkest': isActive,
+              'group-hover:bg-primary-outline-light dark:group-hover:text-primary-outline-dark':
+                !isActive,
+            })}
+          >
+            {label}
+          </p>
         </Link>
       ) : (
         children
