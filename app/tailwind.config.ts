@@ -1,4 +1,3 @@
-import type { Config } from 'tailwindcss';
 import colors from 'tailwindcss/colors';
 import plugin from 'tailwindcss/plugin';
 import { Config, ResolvableTo, ScreensConfig } from 'tailwindcss/types/config';
@@ -51,21 +50,21 @@ const config = {
       error: {
         base: {
           light: colors.rose[700],
-          dark: colors.rose[300],
+          dark: colors.rose[100],
         },
         bg: {
           light: colors.rose[100],
           dark: colors.rose[500],
         },
         hover: {
-          light: colors.rose[600],
+          light: colors.rose[200],
           dark: colors.rose[800],
         },
       },
       warning: {
         base: {
           light: colors.orange[400],
-          dark: colors.orange[700],
+          dark: colors.orange[600],
         },
       },
       ...colors,
@@ -106,10 +105,16 @@ const config = {
           'box-shadow':
             'rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.09) 0px -3px 5px',
         },
+        '.overflow-anywhere': {
+          overflowWrap: 'anywhere',
+        },
+        '.scrollbar-stable': {
+          'scrollbar-gutter': 'stable',
+        },
       });
       addComponents({
         '.title': {
-          'padding-right': '0.5rem',
+          padding: '0 0.5rem',
           'font-size': '1.5rem',
           'line-height': '2rem',
           'font-weight': '600',
@@ -118,10 +123,45 @@ const config = {
           'background-image': `linear-gradient(transparent 60%, ${colors.teal[300]} 40%)`,
           'background-size': '100%',
           'background-repeat': 'no-repeat',
-          'background-position': '10px',
+          'background-position': '1.25rem',
+          transition: 'background 0.2s, transform 0.2s',
+          '&:hover': {
+            'background-position': '-1rem',
+            transform: 'translateX(0.5rem)',
+          },
         },
         '.dark .title': {
           'background-image': `linear-gradient(transparent 60%, ${colors.teal[700]} 40%)`,
+        },
+        '.btn-context-menu': {
+          position: 'relative',
+          display: 'flex',
+          height: '2rem',
+          'align-items': 'center',
+          gap: '4px',
+          '& > svg': {
+            height: '100%',
+            width: '2rem',
+            fill: 'inherit !important',
+          },
+          '&:hover': {
+            fill: colors.slate[200],
+            color: colors.slate[200],
+            '&:disabled': {
+              fill: 'inherit',
+              color: 'inherit',
+            },
+          },
+          '&:disabled': {
+            opacity: '0.5',
+          },
+        },
+        '.dark .btn-context-menu': {
+          fill: colors.slate[200],
+          '&:hover': {
+            fill: colors.slate[900],
+            color: colors.slate[900],
+          },
         },
       });
     }),
