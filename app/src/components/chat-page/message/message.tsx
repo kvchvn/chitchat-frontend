@@ -2,9 +2,11 @@ import { Message } from '@prisma/client';
 import classnames from 'classnames';
 import { useSession } from 'next-auth/react';
 import React from 'react';
-import { Icon } from '~/components/ui/icon';
+import { UserAvatar } from '~/components/ui/user-avatar';
+import { UserAvatarContainer } from '~/components/ui/user-avatar-container';
 import { useMessageContextMenuActionsSelector } from '~/store/selectors/message-managing-selectors';
 import { useSocketSelector } from '~/store/selectors/socket-selectors';
+import { UserRelevant } from '~/types/users';
 import { MessageStatusBar } from './message-status-bar';
 
 type MessageProps = {
@@ -51,12 +53,19 @@ export function Message({
         'mb-2': isLastMessageBySender,
       })}
     >
+      <UserAvatarContainer
+        className={classnames('hidden h-8 w-8 md:block', {
+          invisible: !isLastMessageBySender,
+        })}
+      >
+        <UserAvatar username={sender?.name} src={sender?.image} className="rounded-full" />
+      </UserAvatarContainer>
       <div
-      onContextMenu={handleContextMenu}
-      onDoubleClick={handleDoubleClick}
-      className={classnames(
+        onContextMenu={handleContextMenu}
+        onDoubleClick={handleDoubleClick}
+        className={classnames(
           'relative w-fit max-w-[45%] cursor-pointer select-none whitespace-pre-line border p-2 overflow-anywhere',
-        {
+          {
             'ml-auto border-primary-base-400 bg-primary-base-50 dark:border-primary-base-300 dark:bg-primary-bg-light dark:text-primary-outline-dark md:ml-0':
               isCurrentUser,
             'border-sky-600 bg-sky-300 text-primary-base-50 dark:border-sky-800 dark:bg-sky-600':
@@ -73,11 +82,8 @@ export function Message({
             '!rounded-lg': isFirstMessageBySender && isLastMessageBySender,
           }
         )}
-        >
-          <Icon id="heart" />
-        </span>
-      )}
-      <p>{message.content}</p>
+      >
+        <p>{message.content}</p>
         <MessageStatusBar message={message} isCurrentUser={isCurrentUser} />
       </div>
     </li>

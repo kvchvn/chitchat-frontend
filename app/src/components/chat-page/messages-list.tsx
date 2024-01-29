@@ -8,9 +8,10 @@ import { ChatMessage } from './message';
 
 type MessagesListProps = {
   messages: ExtendedChatWithMessagesRecord['messages'];
+  users: ExtendedChatWithMessagesRecord['users'];
 };
 
-export function MessagesList({ messages }: MessagesListProps) {
+export function MessagesList({ messages, users }: MessagesListProps) {
   const { data: session } = useSession();
 
   const lowestElementRef = useRef<Nullable<HTMLDivElement>>(null);
