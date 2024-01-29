@@ -12,12 +12,12 @@ export function UserIcon() {
     <UserAvatarContainer
       onlineStatus={Boolean(socket)}
       hiddenOffline={false}
-      className="relative mx-auto h-8 w-8"
+      className="mx-auto h-8 w-8"
     >
       <UserAvatar
         src={session?.user.image}
         username={session?.user.name}
-        className="my-auto cursor-pointer rounded-full border border-primary-outline-dark dark:border-primary-outline-light"
+        className="my-auto cursor-pointer rounded-full border-2 border-primary-outline-dark dark:border-primary-outline-light"
       />
       <UserAvatarStatus size="sm" onlineStatus={Boolean(socket)} hiddenOffline={false} />
     </UserAvatarContainer>
