@@ -34,8 +34,18 @@ export function MessagesList({ messages }: MessagesListProps) {
               {getDateWithMonthName(date)}
             </p>
             <ul className="flex flex-col gap-2">
-              {messagesOfDate.map((messageOfDate) => (
-                <ChatMessage key={messageOfDate.id} message={messageOfDate} />
+              {messagesOfDate.map((messageOfDate, index) => (
+                <ChatMessage
+                  key={messageOfDate.id}
+                  message={messageOfDate}
+                  isFirstMessageBySender={Boolean(
+                    messagesOfDate[index].senderId !== messagesOfDate[index - 1]?.senderId
+                  )}
+                  isLastMessageBySender={Boolean(
+                    messagesOfDate[index].senderId !== messagesOfDate[index + 1]?.senderId
+                  )}
+                  sender={users[messageOfDate.senderId]}
+                />
               ))}
             </ul>
           </div>
