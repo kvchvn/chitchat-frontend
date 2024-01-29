@@ -22,6 +22,7 @@ export type MessagesRecord = Record<string, Message[]>;
 export type ExtendedChatWithMessagesRecord = Chat & {
   users: Record<string, Omit<UserRelevant, 'email' | 'id'>>;
   messages: MessagesRecord;
+  messagesLength: number;
 };
 
 export type UnreadChatsIds = {
