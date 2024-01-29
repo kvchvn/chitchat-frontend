@@ -20,13 +20,13 @@ export function UserAvatarStatus({
   return hiddenOffline && !isOnline ? null : (
     <span
       className={classNames(
-        'absolute bottom-0 right-0 block h-2 w-2 rounded-full border border-primary-outline-dark dark:border-primary-outline-light',
+        'absolute bottom-0 right-0 block rounded-full border-2 border-primary-outline-dark dark:border-primary-outline-light',
         {
-          'h-2 w-2': size === 'sm',
+          'h-[10px] w-[10px]': size === 'sm',
           'h-3 w-3': size === 'md',
           'h-4 w-4': size === 'xl',
           'bg-success-base-light dark:bg-success-base-dark': isOnline,
-          'bg-error-base-light dark:bg-error-base-dark': !isOnline,
+          'dark:bg-error-bg-dark bg-error-base-light': !isOnline,
         }
       )}
     />
