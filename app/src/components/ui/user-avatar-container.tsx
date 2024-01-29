@@ -16,7 +16,7 @@ export function UserAvatarContainer({
   className = '',
 }: Props) {
   return (
-    <div onClick={onClick} className={className}>
+    <div onClick={onClick} className={`relative ${className}`}>
       {children}
     </div>
   );
