@@ -1,6 +1,16 @@
 import type { Config } from 'tailwindcss';
 import colors from 'tailwindcss/colors';
 import plugin from 'tailwindcss/plugin';
+import { Config, ResolvableTo, ScreensConfig } from 'tailwindcss/types/config';
+
+const SCREENS: ResolvableTo<ScreensConfig> = {
+  xs: '480px',
+  sm: '640px',
+  md: '768px',
+  lg: '1024px',
+  xl: '1280px',
+  '2xl': '1400px',
+};
 
 const config = {
   darkMode: 'class',
@@ -11,14 +21,7 @@ const config = {
     './src/**/*.{ts,tsx}',
   ],
   theme: {
-    screens: {
-      xs: '480px',
-      sm: '640px',
-      md: '768px',
-      lg: '1024px',
-      xl: '1280px',
-      '2xl': '1400px',
-    },
+    screens: SCREENS,
     colors: {
       primary: {
         base: colors.slate,
