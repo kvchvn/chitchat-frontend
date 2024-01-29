@@ -5,27 +5,28 @@ import { Icon } from '~/components/ui/icon';
 import { UserAvatar } from '~/components/ui/user-avatar';
 import { DEFAULT_USER } from '~/constants/chats';
 import { useSocketSelector } from '~/store/selectors/socket-selectors';
-import { UserRelevant } from '~/types/users';
-import { Icon } from '~/ui/icon';
-import { UserAvatar } from '~/ui/user-avatar';
+import { ExtendedChatWithMessagesRecord } from '~/types/chats';
+import { UserAvatarContainer } from '../ui/user-avatar-container';
+import { UserAvatarStatus } from '../ui/user-avatar-status';
 
-type HeaderProps = {
+type Props = {
   chatId: string;
-  chatUsers: Omit<UserRelevant, 'email'>[];
+  chatUsers: ExtendedChatWithMessagesRecord['users'];
 };
 
-export function Header({ chatId, chatUsers }: HeaderProps) {
-  const router = useRouter();
-  const socket = useSocketSelector();
+export function ChatHeader({ chatId, chatUsers }: Props) {
   const { data: session } = useSession();
+
   const [friend] = useState(() =>
-    session ? chatUsers.find((user) => user.id !== session.user.id) : undefined
+    session
+      ? Object.entries(chatUsers).find(([userId]) => userId !== session.user.id)?.[1]
+      : undefined
   );
+  const socket = useSocketSelector();
+  const router = useRouter();
 
   const handleClearChat = () => {
-    if (socket) {
-      socket.emit('chat:clear', { chatId });
-    }
+    socket?.emit('chat:clear', { chatId });
   };
 
   return (
@@ -36,13 +37,14 @@ export function Header({ chatId, chatUsers }: HeaderProps) {
       >
         <Icon id="return" />
       </button>
-      <div className="relative h-8 w-8 rounded-full">
+      <UserAvatarContainer className="h-10 w-10 rounded-full">
         <UserAvatar
-          username={friend?.name ?? null}
-          src={friend?.image ?? null}
-          className="rounded-full border border-black"
+          username={friend?.name}
+          src={friend?.image}
+          className="rounded-full border-2 border-primary-outline-dark dark:border-primary-outline-light"
         />
-      </div>
+        <UserAvatarStatus userLatestSession={friend?.sessions[0]} hiddenOffline={false} size="sm" />
+      </UserAvatarContainer>
       <h3 className="text-lg">{friend?.name ?? DEFAULT_USER.name}</h3>
       <button
         onClick={handleClearChat}
