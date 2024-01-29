@@ -1,6 +1,6 @@
 import { useSession } from 'next-auth/react';
 import { useEffect, useRef } from 'react';
-import { NO_MESSAGES_TEXT } from '~/constants/chats';
+import { useMessagesLengthSelector } from '~/store/selectors/message-selectors';
 import { ExtendedChatWithMessagesRecord } from '~/types/chats';
 import { Nullable } from '~/types/global';
 import { getDateWithMonthName } from '~/utils/date';
@@ -14,13 +14,15 @@ type MessagesListProps = {
 export function MessagesList({ messages, users }: MessagesListProps) {
   const { data: session } = useSession();
 
+  const messagesLength = useMessagesLengthSelector();
+
   const lowestElementRef = useRef<Nullable<HTMLDivElement>>(null);
 
   useEffect(() => {
-    if (lowestElementRef.current && messages) {
+    if (lowestElementRef.current && messagesLength) {
       lowestElementRef.current.scrollIntoView();
     }
-  }, [messages]);
+  }, [messagesLength]);
 
   if (!session) {
     return null;
