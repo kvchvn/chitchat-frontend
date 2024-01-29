@@ -46,9 +46,12 @@ export type ChatSlice = {
 
 export type MessageSlice = {
   messages: Nullable<Record<string, Message[]>>;
+  messagesLength: number;
   messageActions: {
     setMessages: (messages: Record<string, Message[]>) => void;
+    setMessagesLength: (length: number) => void;
     resetMessages: () => void;
+    resetMessagesLength: () => void;
     createMessage: (message: Message) => void;
     removeMessage: (messageId: string) => void;
     removeFirstMessageByDate: (args: { messageId: string; messageCreatedAt: Date }) => void;
