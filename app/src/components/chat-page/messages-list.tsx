@@ -1,5 +1,6 @@
 import { useSession } from 'next-auth/react';
 import { useEffect, useRef } from 'react';
+import { NO_MESSAGES_PREVIEW_TEXT } from '~/constants/chats';
 import { useMessagesLengthSelector } from '~/store/selectors/message-selectors';
 import { ExtendedChatWithMessagesRecord } from '~/types/chats';
 import { Nullable } from '~/types/global';
@@ -33,7 +34,7 @@ export function MessagesList({ messages, users }: MessagesListProps) {
       {Object.entries(messages).map(([date, messagesOfDate]) =>
         messagesOfDate.length ? (
           <div key={date} className="mt-auto flex flex-col gap-2">
-            <p className="mx-auto w-fit rounded-xl bg-indigo-100 px-3 py-1 font-mono text-xs text-gray-600">
+            <p className="mx-auto w-fit rounded-xl bg-indigo-100 px-3 py-1 font-mono text-xs text-gray-700 dark:bg-indigo-200">
               {getDateWithMonthName(date)}
             </p>
             <ul className="flex flex-col gap-2">
@@ -58,7 +59,9 @@ export function MessagesList({ messages, users }: MessagesListProps) {
     </>
   ) : (
     <div className="flex h-full items-center justify-center">
-      <p className="font-light text-stone-500">{NO_MESSAGES_TEXT}</p>
+      <p className="font-light italic text-gray-400 dark:text-gray-200">
+        {NO_MESSAGES_PREVIEW_TEXT}
+      </p>
     </div>
   );
 }
