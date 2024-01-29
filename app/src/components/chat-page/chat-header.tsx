@@ -30,12 +30,12 @@ export function ChatHeader({ chatId, chatUsers }: Props) {
   };
 
   return (
-    <header className="flex items-center gap-2 px-2 py-3">
+    <header className="flex items-center gap-2 pb-3">
       <button
         onClick={router.back}
-        className="hover: h-8 w-8 rounded-full border border-black p-1 hover:bg-slate-100"
+        className="hover: h-10 w-10 rounded-full border-2 border-primary-outline-dark hover:bg-primary-bg-lighter dark:border-primary-outline-light dark:hover:bg-primary-bg-darker"
       >
-        <Icon id="return" />
+        <Icon id="chevron-left" />
       </button>
       <UserAvatarContainer className="h-10 w-10 rounded-full">
         <UserAvatar
@@ -48,9 +48,9 @@ export function ChatHeader({ chatId, chatUsers }: Props) {
       <h3 className="text-lg">{friend?.name ?? DEFAULT_USER.name}</h3>
       <button
         onClick={handleClearChat}
-        className="ml-auto h-8 w-8 rounded-full border border-red-900 bg-red-100 p-1 text-white hover:bg-red-200"
+        className="ml-auto h-10 w-10 rounded-full border-2 border-error-base-light bg-error-bg-light p-1 hover:bg-error-hover-light dark:border-error-base-dark dark:bg-error-bg-dark dark:hover:bg-error-hover-dark"
       >
-        <Icon id="basket" />
+        <Icon id="basket" className="!fill-error-base-light dark:!fill-error-base-dark" />
       </button>
     </header>
   );
