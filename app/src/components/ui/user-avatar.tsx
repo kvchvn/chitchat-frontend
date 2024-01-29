@@ -20,6 +20,7 @@ export function UserAvatar({ src, username, className = '' }: UserAvatarProps) {
   return src && !isError ? (
     <Image
       src={src}
+      fill={true}
       onError={handleError}
       alt={`Avatar of ${username ?? DEFAULT_USER.username}`}
       className={className}
