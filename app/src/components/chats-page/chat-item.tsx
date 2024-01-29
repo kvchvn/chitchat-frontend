@@ -39,7 +39,7 @@ export function ChatItem({
       onClick={handleClick}
       className="relative flex w-full items-center gap-3 border-t px-1 py-3 last-of-type:border-b hover:cursor-pointer hover:bg-primary-base-50 dark:hover:bg-primary-base-800"
     >
-      <UserAvatarContainer className="relative h-12 w-12 shrink-0">
+      <UserAvatarContainer className="h-12 w-12 shrink-0">
         <UserAvatar
           username={friend.name}
           src={friend.image}
