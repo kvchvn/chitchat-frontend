@@ -7,6 +7,7 @@ import {
 } from '~/store/selectors/message-managing-selectors';
 import { useSocketSelector } from '~/store/selectors/socket-selectors';
 import { Nullable } from '~/types/global';
+import { NormalizedAllowedMessageLength } from './normalized-allowed-message-length';
 
 type MessageSendingFormProps = {
   chatId: string;
@@ -41,7 +42,6 @@ export function MessageSendingForm({ chatId, userId }: MessageSendingFormProps) 
     if (!socket) return;
 
     const trimmedMessage = messageContent.trim();
-    console.log('click send message');
     if (trimmedMessage) {
       if (isOnEditMode && messageId) {
         socket.emit('message:edit', { chatId, messageId, updatedContent: trimmedMessage });
@@ -53,6 +53,10 @@ export function MessageSendingForm({ chatId, userId }: MessageSendingFormProps) 
 
     setMessageContent('');
   }, [chatId, messageContent, socket, userId, isOnEditMode, messageId, turnOffEditMode]);
+
+  const handleClick = () => {
+    textareaRef.current?.focus();
+  };
 
   useEffect(() => {
     if (messageContent) {
@@ -72,9 +76,7 @@ export function MessageSendingForm({ chatId, userId }: MessageSendingFormProps) 
   }, [handleSendMessage, messageContent]);
 
   useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.focus();
-    }
+    textareaRef.current?.focus();
 
     if (isOnEditMode && editedMessageContent) {
       setMessageContent(editedMessageContent);
@@ -97,23 +99,26 @@ export function MessageSendingForm({ chatId, userId }: MessageSendingFormProps) 
   }, [messageContent]);
 
   return (
-    <section className="flex gap-3 border-t border-black px-2 pt-1">
+    <section onClick={handleClick} className="flex cursor-text pt-2">
       <textarea
         ref={textareaRef}
         name="message"
-        placeholder="Write your message here..."
+        placeholder="Write your message"
         value={messageContent}
-        maxLength={150}
+        maxLength={MESSAGE_MAX_LENGTH}
         onChange={handleChange}
-        className="h-6 max-h-32 w-full resize-none outline-none placeholder:font-thin"
+        className="mr-2 block max-h-32 w-full resize-none bg-transparent outline-none placeholder:font-thin"
       />
-      <p>{MESSAGE_MAX_LENGTH - messageContent.length}</p>
+      <NormalizedAllowedMessageLength
+        allowedLength={MESSAGE_MAX_LENGTH - messageContent.length}
+        digits={String(MESSAGE_MAX_LENGTH).length}
+      />
       <button
         onClick={handleSendMessage}
-        disabled={!messageContent || (isOnEditMode && messageContent == editedMessageContent)}
-        className="h-10 w-10 cursor-pointer self-end rounded-full border-2 border-black p-1 hover:bg-emerald-300 disabled:cursor-not-allowed disabled:bg-gray-200"
+        disabled={!messageContent || (isOnEditMode && messageContent === editedMessageContent)}
+        className="h-12 w-12 shrink-0 cursor-pointer rounded-full hover:bg-teal-300 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:!bg-transparent dark:hover:bg-teal-600"
       >
-        <Icon id={isOnEditMode ? 'save' : 'paper-plane'} />
+        <Icon id={isOnEditMode ? 'save' : 'send'} />
       </button>
     </section>
   );
