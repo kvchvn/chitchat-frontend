@@ -59,7 +59,7 @@ export function MainContent({ chat, userId }: MainContentProps) {
       className="relative flex h-full flex-col gap-2 overflow-y-auto border-b border-t border-primary-outline-light bg-primary-bg-lightest px-2 pb-8 pt-1 scrollbar-stable dark:border-primary-bg-light dark:bg-primary-bg-dark"
     >
       <MessageContextMenu chatId={chat.id} parentRef={containerRef} />
-      <MessagesList messages={messages ?? chat.messages} />
+      <MessagesList messages={messages ?? chat.messages} users={chat.users} />
     </div>
   );
 }
