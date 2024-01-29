@@ -5,13 +5,12 @@ import { Nullable } from '~/types/global';
 import { Icon } from './icon';
 
 type UserAvatarProps = {
-  username?: Nullable<string>;
-  src?: Nullable<string>;
-  size?: number;
+  username: Nullable<string> | undefined;
+  src: Nullable<string> | undefined;
   className?: string;
 };
 
-export function UserAvatar({ src, size, username, className = '' }: UserAvatarProps) {
+export function UserAvatar({ src, username, className = '' }: UserAvatarProps) {
   const [isError, setIsError] = useState(false);
 
   const handleError = () => {
@@ -21,14 +20,11 @@ export function UserAvatar({ src, size, username, className = '' }: UserAvatarPr
   return src && !isError ? (
     <Image
       src={src}
-      width={size}
-      height={size}
-      fill={!size}
       onError={handleError}
       alt={`Avatar of ${username ?? DEFAULT_USER.username}`}
       className={className}
     />
   ) : (
-    <Icon id="user" size={size} className={className} />
+    <Icon id="user" className={className} />
   );
 }
