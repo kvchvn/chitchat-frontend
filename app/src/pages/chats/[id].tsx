@@ -9,19 +9,21 @@ import { getChat } from '~/utils/api';
 import { getSessionData } from '~/utils/get-session-data';
 import { gsspRedirect, gsspRedirectToSignIn } from '~/utils/gssp-redirect';
 import { logError } from '~/utils/log-error';
+import { ChatHeader } from '../../components/chat-page/chat-header';
 import { DisabledChatMessage } from '../../components/chat-page/disabled-chat-message';
 import { EditedMessagePreview } from '../../components/chat-page/edited-message-preview';
-import { Header } from '../../components/chat-page/header';
 import { MainContent } from '../../components/chat-page/main-content';
 import { MessageSendingForm } from '../../components/chat-page/message-sending-form';
 
 type ServerSideProps = BasicServerSideProps & {
   chat: Nullable<ExtendedChatWithMessagesRecord>;
+  friendName: string;
 };
 
 export default function ChatPage({
   session,
   chat,
+  friendName,
   error,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   console.log('ChatPage RENDER');
@@ -29,14 +31,12 @@ export default function ChatPage({
   return (
     <>
       <Head>
-        <title>{`Chat ${
-          chat?.users[0].name ? `with ${chat.users[0].name}` : ''
-        } | Chit-Chat`}</title>
+        <title>{`Chat ${friendName ? `with ${friendName}` : ''} | Chit-Chat`}</title>
       </Head>
       <ServerErrorFallback error={error}>
         {chat && (
           <section className="flex h-full flex-col">
-            <Header chatId={chat.id} chatUsers={chat.users} />
+            <ChatHeader chatId={chat.id} chatUsers={chat.users} />
             <MainContent chat={chat} userId={session.user.id} />
             <EditedMessagePreview />
             {chat.isDisabled ? (
@@ -58,7 +58,7 @@ export const getServerSideProps = (async ({ req, res, params }) => {
     return gsspRedirectToSignIn();
   }
 
-  const props: ServerSideProps = { session, chat: null, error: null };
+  const props: ServerSideProps = { session, chat: null, error: null, friendName: '' };
 
   try {
     const chatId = typeof params?.id === 'string' ? params.id : '';
@@ -68,13 +68,18 @@ export const getServerSideProps = (async ({ req, res, params }) => {
       throw new Error(`Failed to load chat (chatId=${chatId}) in getServerSideProps on ChatPage.`);
     }
 
-    const isSessionUserInChat = Boolean(chat?.users.find((user) => user.id === session.user.id));
+    const isSessionUserInChat = Boolean(chat?.users[session.user.id]);
 
     if (!isSessionUserInChat) {
       return gsspRedirect(ROUTES.chats);
     }
 
+    const friendName = Object.entries(chat.users).find(
+      ([userId]) => session.user.id !== userId
+    )?.[1].name;
+
     props.chat = chat;
+    props.friendName = friendName ?? '';
   } catch (err) {
     logError('ChatPage (getServerSideProps)', err);
     props.error = isErrorResponse(err) ? err : DEFAULT_ERROR_RESPONSE;
