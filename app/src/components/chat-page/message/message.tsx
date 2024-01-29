@@ -5,7 +5,7 @@ import React from 'react';
 import { Icon } from '~/components/ui/icon';
 import { useMessageContextMenuActionsSelector } from '~/store/selectors/message-managing-selectors';
 import { useSocketSelector } from '~/store/selectors/socket-selectors';
-import { getTime } from '~/utils/date';
+import { MessageStatusBar } from './message-status-bar';
 
 type MessageProps = {
   message: Message;
@@ -70,13 +70,7 @@ export function Message({ message }: MessageProps) {
         </span>
       )}
       <p>{message.content}</p>
-      <div className="mt-1 flex items-center justify-end">
-        {message.senderId === session.user.id && message.isRead && (
-          <span className="relative h-5 w-5">
-            <Icon id="check" />
-          </span>
-        )}
-        <p className="font-mono text-xs text-zinc-500">{getTime(message.createdAt)}</p>
+        <MessageStatusBar message={message} isCurrentUser={isCurrentUser} />
       </div>
     </li>
   );
