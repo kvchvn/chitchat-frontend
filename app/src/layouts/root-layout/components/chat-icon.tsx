@@ -6,10 +6,7 @@ export function ChatIcon() {
 
   return (
     <div className="relative h-full">
-      <Icon id="chat" />
-      {unreadChatsIdsCount ? (
-        <span className="absolute right-1 top-2 h-2 w-2 rounded-full border border-primary-outline-dark bg-warning-base-light dark:border-primary-outline-light dark:bg-warning-base-dark" />
-      ) : null}
+      <Icon id={unreadChatsIdsCount ? 'chat-unread' : 'chat'} />
     </div>
   );
 }
