@@ -1,4 +1,5 @@
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+import Head from 'next/head';
 import { useEffect } from 'react';
 import { ServerErrorFallback } from '~/components/community-page/server-error-fallback';
 import { UsersList } from '~/components/community-page/users-list';
@@ -54,14 +55,19 @@ const FriendsPage: NextPageWithLayout<InferGetServerSidePropsType<typeof getServ
   ]);
 
   return (
-    <ServerErrorFallback error={error}>
-      {friendsFromProps && (
-        <UsersList
-          users={storedFriends ?? friendsFromProps}
-          category={UsersCategoriesName.Friends}
-        />
-      )}
-    </ServerErrorFallback>
+    <>
+      <Head>
+        <title>Friends | Community | Chit-Chat</title>
+      </Head>
+      <ServerErrorFallback error={error}>
+        {friendsFromProps && (
+          <UsersList
+            users={storedFriends ?? friendsFromProps}
+            category={UsersCategoriesName.Friends}
+          />
+        )}
+      </ServerErrorFallback>
+    </>
   );
 };
 
@@ -77,8 +83,15 @@ export const getServerSideProps = (async ({ req, res }) => {
   const props: ServerSideProps = { session, friends: null, categoriesCount: null, error: null };
 
   try {
-    const friendsPromise = getGroupOfUsers(session.user.id, 'friends', req.cookies);
-    const categoriesCountPromise = getUserCategoriesCount(session.user.id, req.cookies);
+    const friendsPromise = getGroupOfUsers({
+      userId: session.user.id,
+      group: 'friends',
+      cookies: req.cookies,
+    });
+    const categoriesCountPromise = getUserCategoriesCount({
+      userId: session.user.id,
+      cookies: req.cookies,
+    });
 
     const [friends, categoriesCount] = await Promise.allSettled([
       friendsPromise,

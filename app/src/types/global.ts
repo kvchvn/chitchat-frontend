@@ -3,16 +3,24 @@ import { ErrorResponse } from './api';
 
 export type IconId =
   | 'chat'
+  | 'chat-unread'
   | 'users'
   | 'sign-out'
+  | 'chevron-left'
+  | 'moon'
+  | 'sun'
   | 'user'
-  | 'close-md'
-  | 'return'
+  | 'error'
+  | 'close'
   | 'basket'
-  | 'paper-plane'
+  | 'send'
   | 'pencil'
+  | 'pencil-square'
   | 'save'
-  | 'heart'
+  | 'like'
+  | 'like-outline'
+  | 'dislike-outline'
+  | 'copy'
   | 'warning'
   | 'user-add'
   | 'user-remove'
@@ -39,4 +47,8 @@ export type BasicServerSideProps = {
 export type ServerError = {
   status: number;
   message: string;
+};
+
+export type LocalStorage = {
+  theme: 'dark' | 'light';
 };

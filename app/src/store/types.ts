@@ -25,6 +25,7 @@ export type SocketSlice = {
 export type ChatSlice = {
   chats: Nullable<ChatsRecord>;
   selectedChat: Nullable<{ chatId: string; isDisabled: boolean }>;
+  unreadChatsIds: Set<string>;
   chatActions: {
     setSelectedChat: (args: { chatId: string; isDisabled: boolean }) => void;
     resetSelectedChat: () => void;
@@ -36,16 +37,24 @@ export type ChatSlice = {
       newLastMessage: Pick<Message, 'senderId' | 'content' | 'createdAt'>;
     }) => void;
     resetUnreadMessageCount: (chatId: string) => void;
+    setUnreadChatsIds: (chatIds: string[]) => void;
+    resetUnreadChatsIds: () => void;
+    addUnreadChatId: (chatId: string) => void;
+    removeUnreadChatId: (chatId: string) => void;
   };
 };
 
 export type MessageSlice = {
   messages: Nullable<Record<string, Message[]>>;
+  messagesLength: number;
   messageActions: {
     setMessages: (messages: Record<string, Message[]>) => void;
+    setMessagesLength: (length: number) => void;
     resetMessages: () => void;
+    resetMessagesLength: () => void;
     createMessage: (message: Message) => void;
     removeMessage: (messageId: string) => void;
+    removeFirstMessageByDate: (args: { messageId: string; messageCreatedAt: Date }) => void;
     editMessage: (args: { messageId: string; content: string }) => void;
     reactToMessage: (args: { messageId: string; reactions: Reactions }) => void;
     readMessages: () => void;

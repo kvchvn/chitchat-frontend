@@ -9,6 +9,7 @@ import {
 import { useSocketSelector } from '~/store/selectors/socket-selectors';
 import { Nullable } from '~/types/global';
 import { disableScrolling, enableScrolling } from '~/utils/styles-managing';
+import { Icon } from '../ui/icon';
 export { useSocketSelector } from '~/store/selectors/socket-selectors';
 
 type MessageContextMenuProps = {
@@ -85,17 +86,19 @@ export function MessageContextMenu({ chatId, parentRef }: MessageContextMenuProp
   return isOpen ? (
     <div
       ref={contextMenuRef}
-      className="fixed z-10 rounded-xl border border-black bg-stone-200 py-3"
+      className="fixed z-10 rounded-sm border border-primary-outline-dark bg-primary-bg-dark p-5 pl-3 shadow-2xl shadow-primary-outline-dark dark:bg-primary-bg-darker"
     >
-      <ul className="flex flex-col gap-2">
+      <ul className="flex flex-col gap-6">
         <li>
           <button onClick={handleRemoveMessage} className="btn-context-menu">
+            <Icon id="basket" />
             Remove
           </button>
         </li>
         {session.user.id === message.senderId ? (
           <li>
             <button onClick={handleEditMessage} className="btn-context-menu">
+              <Icon id="pencil-square" />
               Edit
             </button>
           </li>
@@ -103,6 +106,7 @@ export function MessageContextMenu({ chatId, parentRef }: MessageContextMenuProp
         {session.user.id !== message.senderId ? (
           <li>
             <button onClick={handleReactToMessage} className="btn-context-menu">
+              <Icon id={message.isLiked ? 'dislike-outline' : 'like-outline'} />
               {message.isLiked ? 'Unlike' : 'Like'}
             </button>
           </li>
@@ -113,6 +117,7 @@ export function MessageContextMenu({ chatId, parentRef }: MessageContextMenuProp
             disabled={isCopiedText}
             className="btn-context-menu"
           >
+            <Icon id="copy" />
             {isCopiedText ? 'Copied' : 'Copy'}
           </button>
         </li>

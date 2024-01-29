@@ -1,5 +1,6 @@
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { getProviders, signIn } from 'next-auth/react';
+import Head from 'next/head';
 import { useSocketDisconnection } from '~/hooks/use-socket-disconnection';
 import { getSessionData } from '~/utils/get-session-data';
 import { gsspRedirectToHome } from '~/utils/gssp-redirect';
@@ -11,6 +12,9 @@ export default function SignInPage({
   console.log({ providers });
   return (
     <>
+      <Head>
+        <title>Sign In | Chit-Chat</title>
+      </Head>
       <h2 className="text-2xl font-semibold">Please, Sign In to use our app!</h2>
       {providers ? (
         <ul className="mt-5 flex flex-col gap-3">

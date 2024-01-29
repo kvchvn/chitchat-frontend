@@ -1,7 +1,0 @@
-.not-seen {
-  filter: grayscale(0.5) brightness(1.2);
-}
-
-.seen + .not-seen {
-  margin-top: 16px;
-}

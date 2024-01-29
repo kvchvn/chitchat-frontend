@@ -1,6 +1,6 @@
 import { PropsWithChildren } from 'react';
+import { UserAvatar } from '~/components/ui/user-avatar';
 import { UserRelevant, UserRelevantWithStatus } from '~/types/users';
-import { UserAvatar } from '~/ui/user-avatar';
 import { isUserOnline } from '~/utils/is-user-online';
 
 type UserItemProps = PropsWithChildren & {

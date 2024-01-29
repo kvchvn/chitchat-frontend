@@ -2,16 +2,26 @@ import { Message } from '@prisma/client';
 import classnames from 'classnames';
 import { useSession } from 'next-auth/react';
 import React from 'react';
+import { UserAvatar } from '~/components/ui/user-avatar';
+import { UserAvatarContainer } from '~/components/ui/user-avatar-container';
 import { useMessageContextMenuActionsSelector } from '~/store/selectors/message-managing-selectors';
 import { useSocketSelector } from '~/store/selectors/socket-selectors';
-import { Icon } from '~/ui/icon';
-import { getTime } from '~/utils/date';
+import { UserRelevant } from '~/types/users';
+import { MessageStatusBar } from './message-status-bar';
 
 type MessageProps = {
   message: Message;
+  isFirstMessageBySender: boolean;
+  isLastMessageBySender: boolean;
+  sender: Omit<UserRelevant, 'email' | 'id'> | undefined;
 };
 
-export function Message({ message }: MessageProps) {
+export function Message({
+  message,
+  isFirstMessageBySender,
+  isLastMessageBySender,
+  sender,
+}: MessageProps) {
   const { data: session } = useSession();
   const { openContextMenu } = useMessageContextMenuActionsSelector();
   const socket = useSocketSelector();
@@ -20,13 +30,15 @@ export function Message({ message }: MessageProps) {
     return null;
   }
 
+  const isCurrentUser = message.senderId === session.user.id;
+
   const handleContextMenu = (e: React.MouseEvent) => {
     e.preventDefault();
     openContextMenu({ message, coordinates: { x: e.clientX, y: e.clientY } });
   };
 
   const handleDoubleClick = () => {
-    if (socket && session.user.id !== message.senderId) {
+    if (socket && !isCurrentUser) {
       socket.emit('message:react', {
         chatId: message.chatId,
         messageId: message.id,
@@ -37,46 +49,42 @@ export function Message({ message }: MessageProps) {
 
   return (
     <li
-      onContextMenu={handleContextMenu}
-      onDoubleClick={handleDoubleClick}
-      className={classnames(
-        'relative w-fit max-w-[45%] cursor-pointer select-none whitespace-pre-line border px-3 py-1 overflow-anywhere',
-        {
-          'ml-auto self-end rounded-t-xl rounded-bl-xl border-black bg-white':
-            message.senderId === session.user.id,
-          'rounded-t-xl rounded-br-xl border-cyan-800 bg-cyan-500 text-white':
-            message.senderId !== session.user.id,
-        }
-      )}
+      className={classnames('flex items-end gap-2', {
+        'mb-2': isLastMessageBySender,
+      })}
     >
-      {message.isEdited && (
-        <span
-          className={classnames('absolute bottom-0 block h-4 w-4 opacity-70', {
-            '-left-5': message.senderId === session.user.id,
-            '-right-5': message.senderId !== session.user.id,
-          })}
-        >
-          <Icon id="pencil" />
-        </span>
-      )}
-      {message.isLiked && (
-        <span
-          className={classnames('absolute -bottom-2 block h-5 w-5', {
-            '-left-2': message.senderId === session.user.id,
-            '-right-2': message.senderId !== session.user.id,
-          })}
-        >
-          <Icon id="heart" />
-        </span>
-      )}
-      <p>{message.content}</p>
-      <div className="mt-1 flex items-center justify-end">
-        {message.senderId === session.user.id && message.isRead && (
-          <span className="relative h-5 w-5">
-            <Icon id="check" />
-          </span>
+      <UserAvatarContainer
+        className={classnames('hidden h-8 w-8 md:block', {
+          invisible: !isLastMessageBySender,
+        })}
+      >
+        <UserAvatar username={sender?.name} src={sender?.image} className="rounded-full" />
+      </UserAvatarContainer>
+      <div
+        onContextMenu={handleContextMenu}
+        onDoubleClick={handleDoubleClick}
+        className={classnames(
+          'relative w-fit max-w-[45%] cursor-pointer select-none whitespace-pre-line border p-2 overflow-anywhere',
+          {
+            'ml-auto border-primary-base-400 bg-primary-base-50 dark:border-primary-base-300 dark:bg-primary-bg-light dark:text-primary-outline-dark md:ml-0':
+              isCurrentUser,
+            'border-sky-600 bg-sky-300 text-primary-base-50 dark:border-sky-800 dark:bg-sky-600':
+              !isCurrentUser,
+            'rounded-t-lg rounded-bl-lg md:rounded-bl-none md:rounded-br-lg':
+              isFirstMessageBySender && isCurrentUser,
+            'rounded-t-lg rounded-br-lg': isFirstMessageBySender && !isCurrentUser,
+            'rounded-l-lg md:rounded-l-none md:rounded-r-lg':
+              !isFirstMessageBySender && !isLastMessageBySender && isCurrentUser,
+            'rounded-r-lg': !isFirstMessageBySender && !isLastMessageBySender && !isCurrentUser,
+            'rounded-b-lg rounded-tl-lg md:rounded-tl-none md:rounded-tr-lg':
+              isLastMessageBySender && isCurrentUser,
+            'rounded-b-lg rounded-tr-lg': isLastMessageBySender && !isCurrentUser,
+            '!rounded-lg': isFirstMessageBySender && isLastMessageBySender,
+          }
         )}
-        <p className="font-mono text-xs text-zinc-500">{getTime(message.createdAt)}</p>
+      >
+        <p>{message.content}</p>
+        <MessageStatusBar message={message} isCurrentUser={isCurrentUser} />
       </div>
     </li>
   );

@@ -3,7 +3,9 @@ import { SessionProvider } from 'next-auth/react';
 import { AppProps } from 'next/app';
 import { ErrorBoundary } from '~/components/global/error-boundary';
 import { useSocketInitialization } from '~/hooks/use-socket-initialization';
+import { useUnreadChatsIdsFetching } from '~/hooks/use-unread-chats-ids-fetching';
 import { RootLayout } from '~/layouts/root-layout';
+import { onestFont, sometypeMonoFont } from '~/styles/fonts/fonts';
 import '~/styles/globals.css';
 import { PageProps } from '~/types/global';
 
@@ -21,12 +23,19 @@ export default function App({ Component, pageProps }: AppPropsWithLayout<PagePro
     sessionToken: pageProps.session?.sessionToken,
   });
 
+  // for showing indicator if user has unread messages
+  useUnreadChatsIdsFetching({ userId: pageProps.session?.user.id });
+
   const getLayout = Component.getLayout ?? ((page) => page);
 
   return (
     <ErrorBoundary fallback={<p>Error Boundary</p>}>
       <SessionProvider session={pageProps.session}>
-        <RootLayout>{getLayout(<Component {...pageProps} />)}</RootLayout>
+        <main
+          className={`${onestFont.variable} ${sometypeMonoFont.variable} flex h-full flex-col-reverse font-sans xs:flex-row`}
+        >
+          <RootLayout>{getLayout(<Component {...pageProps} />)}</RootLayout>
+        </main>
       </SessionProvider>
     </ErrorBoundary>
   );

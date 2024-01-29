@@ -1,4 +1,5 @@
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+import Head from 'next/head';
 import { useEffect } from 'react';
 import { ServerErrorFallback } from '~/components/community-page/server-error-fallback';
 import { UsersList } from '~/components/community-page/users-list';
@@ -52,11 +53,16 @@ const AllCommunityPage: NextPageWithLayout<
   ]);
 
   return (
-    <ServerErrorFallback error={error}>
-      {allUsersFromProps && (
-        <UsersList users={allUsers ?? allUsersFromProps} category={UsersCategoriesName.All} />
-      )}
-    </ServerErrorFallback>
+    <>
+      <Head>
+        <title>All Users | Community | Chit-Chat</title>
+      </Head>
+      <ServerErrorFallback error={error}>
+        {allUsersFromProps && (
+          <UsersList users={allUsers ?? allUsersFromProps} category={UsersCategoriesName.All} />
+        )}
+      </ServerErrorFallback>
+    </>
   );
 };
 
@@ -74,8 +80,11 @@ export const getServerSideProps = (async ({ req, res }) => {
   const props: ServerSideProps = { session, allUsers: null, categoriesCount: null, error: null };
 
   try {
-    const allUsersPromise = getAllUsers(session.user.id, req.cookies);
-    const categoriesCountPromise = getUserCategoriesCount(session.user.id, req.cookies);
+    const allUsersPromise = getAllUsers({ userId: session.user.id, cookies: req.cookies });
+    const categoriesCountPromise = getUserCategoriesCount({
+      userId: session.user.id,
+      cookies: req.cookies,
+    });
 
     const [allUsers, categoriesCount] = await Promise.allSettled([
       allUsersPromise,

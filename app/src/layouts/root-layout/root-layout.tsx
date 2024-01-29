@@ -1,11 +1,15 @@
+import { useRouter } from 'next/router';
 import { PropsWithChildren } from 'react';
+import { ROUTES } from '~/constants/global';
 import { Navigation } from './components/navigation';
 
 export function RootLayout({ children }: PropsWithChildren) {
+  const { pathname } = useRouter();
+
   return (
-    <main className="flex h-full">
-      <Navigation />
-      <div className="mx-auto w-[90vw] px-10 py-5">{children}</div>
-    </main>
+    <>
+      {pathname === ROUTES.home ? null : <Navigation />}
+      <div className="h-full px-2 py-4 dark:bg-primary-bg-darkest xs:w-full">{children}</div>
+    </>
   );
 }

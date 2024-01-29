@@ -13,7 +13,7 @@ export type Reactions = {
 export type ServerToClientListenersArgs = {
   'chat:read': { chatId: string };
   'chat:clear': { chatId: string };
-  'message:create': Nullable<Message>;
+  'message:create': { newMessage: Nullable<Message>; removedMessage: Nullable<Message> };
   'message:remove': { messageId: string };
   'message:edit': { messageId: string; content: Message['content'] };
   'message:react': { messageId: string; reactions: Reactions };
@@ -27,6 +27,7 @@ export type ClientToServerListenersArgs = {
   'message:remove': { chatId: string; messageId: string };
   'message:edit': { chatId: string; messageId: string; updatedContent: Message['content'] };
   'message:react': { chatId: string; messageId: string; reactions: Reactions };
+  join: { room: string; friendId: string };
 };
 
 export type ServerToClientEvents = SocketEvents<ServerToClientListenersArgs>;

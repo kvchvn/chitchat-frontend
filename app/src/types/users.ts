@@ -17,7 +17,7 @@ export enum UserStatus {
   FriendRequestFromMeReceiver = 'friend-request-receiver',
 }
 
-export type UserRelevant = Omit<User, 'emailVerified'> & { sessions: Session[] };
+export type UserRelevant = Omit<User, 'emailVerified'> & { sessions: Pick<Session, 'expires'>[] };
 
 export type UserRelevantWithStatus = UserRelevant & { status: UserStatus };
 

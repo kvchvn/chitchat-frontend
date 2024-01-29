@@ -5,28 +5,38 @@ import { CustomSocket, ServerToClientListenersArgs } from '~/types/socket';
 import { logError } from '~/utils/log-error';
 
 export const useMessageListeners = ({ userId }: { userId?: string }) => {
-  const { incrementUnreadMessagesCount: incrementUnreadMessagesCount } = useChatActionsSelector();
-  const { createMessage, removeMessage, editMessage, reactToMessage } = useMessageActionsSelector();
+  const { incrementUnreadMessagesCount, addUnreadChatId } = useChatActionsSelector();
+  const { createMessage, removeFirstMessageByDate, removeMessage, editMessage, reactToMessage } =
+    useMessageActionsSelector();
 
   const onCreateMessage = useCallback(
-    (message: ServerToClientListenersArgs['message:create']) => {
-      if (message && userId) {
-        createMessage(message);
-        if (message.senderId !== userId) {
+    ({ newMessage, removedMessage }: ServerToClientListenersArgs['message:create']) => {
+      if (newMessage && userId) {
+        createMessage(newMessage);
+
+        if (removedMessage) {
+          removeFirstMessageByDate({
+            messageId: removedMessage.id,
+            messageCreatedAt: removedMessage.createdAt,
+          });
+        }
+
+        if (newMessage.senderId !== userId) {
           incrementUnreadMessagesCount({
-            chatId: message.chatId,
+            chatId: newMessage.chatId,
             newLastMessage: {
-              content: message.content,
-              senderId: message.senderId,
-              createdAt: message.createdAt,
+              content: newMessage.content,
+              senderId: newMessage.senderId,
+              createdAt: newMessage.createdAt,
             },
           });
+          addUnreadChatId(newMessage.chatId);
         }
       } else {
         logError('Chat Listeners (message:create)', 'Message sending error occurred.');
       }
     },
-    [incrementUnreadMessagesCount, createMessage, userId]
+    [incrementUnreadMessagesCount, createMessage, userId, removeFirstMessageByDate, addUnreadChatId]
   );
 
   const onRemoveMessage = useCallback(

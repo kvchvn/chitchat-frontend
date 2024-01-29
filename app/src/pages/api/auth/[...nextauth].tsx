@@ -17,20 +17,20 @@ export const authConfig = {
   },
   providers: [
     GitHubProvider({
-      clientId: process.env.GITHUB_ID || '',
-      clientSecret: process.env.GITHUB_SECRET || '',
+      clientId: process.env.GITHUB_ID ?? '',
+      clientSecret: process.env.GITHUB_SECRET ?? '',
     }),
     GoogleProvider({
-      clientId: process.env.GOOGLE_ID || '',
-      clientSecret: process.env.GOOGLE_SECRET || '',
+      clientId: process.env.GOOGLE_ID ?? '',
+      clientSecret: process.env.GOOGLE_SECRET ?? '',
     }),
     YandexProvider({
-      clientId: process.env.YANDEX_ID || '',
-      clientSecret: process.env.YANDEX_SECRET || '',
+      clientId: process.env.YANDEX_ID ?? '',
+      clientSecret: process.env.YANDEX_SECRET ?? '',
     }),
     FacebookProvider({
-      clientId: process.env.FACEBOOK_ID || '',
-      clientSecret: process.env.FACEBOOK_SECRET || '',
+      clientId: process.env.FACEBOOK_ID ?? '',
+      clientSecret: process.env.FACEBOOK_SECRET ?? '',
     }),
   ],
   callbacks: {

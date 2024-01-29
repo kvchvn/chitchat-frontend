@@ -1,10 +1,9 @@
-import { GetServerSideProps } from 'next';
-import { getServerSession } from 'next-auth';
-import { authOptions } from './api/auth/[...nextauth]';
+import Head from 'next/head';
 
 export default function AboutPage() {
   return (
     <>
+      <Head>About | Chit-Chat</Head>
       <h2>About Page</h2>
       <p>
         Lorem ipsum dolor sit amet consectetur, adipisicing elit. Repellat, perferendis! Dignissimos
@@ -14,13 +13,3 @@ export default function AboutPage() {
     </>
   );
 }
-
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const session = await getServerSession(ctx.req, ctx.res, authOptions);
-
-  return {
-    props: {
-      session,
-    },
-  };
-};

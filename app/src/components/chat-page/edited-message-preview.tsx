@@ -1,8 +1,8 @@
+import { Icon } from '~/components/ui/icon';
 import {
   useMessageEditModeActionsSelector,
   useMessageEditModeSelector,
 } from '~/store/selectors/message-managing-selectors';
-import { Icon } from '~/ui/icon';
 
 export function EditedMessagePreview() {
   const { isOn, messageContent } = useMessageEditModeSelector();
@@ -17,13 +17,13 @@ export function EditedMessagePreview() {
   };
 
   return (
-    <div className="flex items-center gap-2 bg-stone-300 px-2 py-1">
-      <span className="block h-6 w-7 border-r border-black pr-2">
-        <Icon id="pencil" />
+    <div className="flex items-center gap-2 bg-primary-bg-lighter px-1 dark:bg-primary-bg-darker">
+      <span className="block h-8 w-8 border-r border-primary-bg-light pr-2">
+        <Icon id="pencil-square" />
       </span>
-      <p className="max-w-[80%] truncate">{messageContent}</p>
-      <button onClick={handleClose} className="relative ml-auto h-6 w-6 hover:bg-stone-400">
-        <Icon id="close-md" />
+      <p className="max-w-[70%] truncate font-light">{messageContent}</p>
+      <button onClick={handleClose} className="relative ml-auto h-6 w-6 hover:bg-primary-bg-dark">
+        <Icon id="close" />
       </button>
     </div>
   );
